@@ -1,17 +1,15 @@
 """
- `x,y = findvortices(ψ,normal)`
+
+ `vortices = findvortices(x,y,ψ)`
  Locates vortices as 2π phase windings around plaquettes on a cartesian spatial field.
 
-If the field is 2D then returns vortex coordinates.
-If the field is 3D then returns 2D slices of coordinates normal to direction
-`slice`. The normal vector to slice plane can point along `slice = x,y,z`.
+Requires a 2D wavefunction ψ; for 3D, pass slices.
 """
 
-function findvortices(x,y,ψ,normal="z")
+function findvortices(x,y,ψ)
 
 phase = angle.(ψ)
 Nx,Ny = size(ψ)
-
 # x corresponds to column of ψ
 # y is a row vector
 
@@ -43,12 +41,12 @@ for i = 1:Nx-1
     pos = vortexgrid.>0
     neg = vortexgrid.<0
     indp = find(pos)
-    xp = X[indp];xp = xp[:]
-    yp = Y[indp];yp = yp[:]
+    xp = X[indp]; xp = xp[:]
+    yp = Y[indp]; yp = yp[:]
     indn = find(neg)
-    xn = X[indn];xn = xn[:]
-    yn = Y[indn];yn = yn[:]
-    xv =[xp;xn];yv=[yp;yn];s=[ones(xp);-ones(xn)]
+    xn = X[indn]; xn = xn[:]
+    yn = Y[indn]; yn = yn[:]
+    xv = [xp;xn];yv=[yp;yn]; s = [ones(xp);-ones(xn)]
     vortices = [xv yv s]
     vortices = sortrows(vortices)
     return vortices

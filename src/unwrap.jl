@@ -1,22 +1,22 @@
 """
 
-unwrap(v,inplace=false)
+unwrapped = unwrap(phase,inplace=false)
 
-Given an input phase `v` (an array), returns an unwrapped array.
+Given an input phase `phase` (an array), returns an unwrapped array.
 """
 
-function unwrap(v, inplace=false)
-  # currently assuming an array
-  unwrapped = inplace ? v : copy(v)
-  for i in 2:length(v)
-    while unwrapped[i] - unwrapped[i-1] >= pi
-      unwrapped[i] -= 2pi
+function unwrap(phase, inplace=false)
+
+  unwrapped = inplace ? phase : copy(phase)
+  for i in 2:length(phase)
+    while unwrapped[i] - unwrapped[i-1] >= π
+      unwrapped[i] -= 2π
     end
-    while unwrapped[i] - unwrapped[i-1] <= -pi
-      unwrapped[i] += 2pi
+    while unwrapped[i] - unwrapped[i-1] <= -π
+      unwrapped[i] += 2π
     end
   end
   return unwrapped
 end
 
-unwrap!(v) = unwrap(v, true)
+unwrap!(phase) = unwrap(phase, true)
