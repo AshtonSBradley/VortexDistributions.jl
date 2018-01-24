@@ -22,16 +22,16 @@ for i = 1:Nx-1
 
             m = 0;
             Δ = phase[i+1,j]-phase[i,j]
-            abs(Δ) > π ? m += sign(-Δ) : nothing
+            abs(Δ) > π && (m += sign(-Δ))
 
             Δ = phase[i+1,j+1]-phase[i+1,j]
-            abs(Δ) > π ? m += sign(-Δ) : nothing
+            abs(Δ) > π && (m += sign(-Δ))
 
             Δ = phase[i,j+1]-phase[i+1,j+1]
-            abs(Δ) > π ? m += sign(-Δ) : nothing
+            abs(Δ) > π && (m += sign(-Δ))
 
             Δ = phase[i,j]-phase[i,j+1]
-            abs(Δ) > π ? m += sign(-Δ) : nothing
+            abs(Δ) > π && (m += sign(-Δ))
 
             vortexgrid[i,j] = m
         end

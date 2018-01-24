@@ -6,6 +6,4 @@ include("testallcharges.jl")
 include("testallpositions.jl")
 include("makepsi.jl")
 include("checkpositions.jl")
-tic()
-@testset "Vortex location and charge tests " begin include("vortextests.jl") end
-toc()
+@testset "Vortex location and circulation tests " begin include("vortextests.jl") end
