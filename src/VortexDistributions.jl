@@ -7,9 +7,10 @@ module VortexDistributions
 
 include("findvortices.jl")
 include("unwrap.jl")
-include("makevortex.jl")
 include("vortexcore.jl")
+include("makevortex.jl")
+include("makevortex!.jl")
 
-export findvortices, unwrap, makevortex, vortexcore
+export findvortices, unwrap, makevortex, makevortex!, vortexcore
 
 end # module

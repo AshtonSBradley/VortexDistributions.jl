@@ -1,4 +1,6 @@
-using VortexDistributions, PyPlot
+using Revise, VortexDistributions
+ENV["MPLBACKEND"]="tkagg"
+using PyPlot
 
 Nv = 1
 Lx = 300.
@@ -10,9 +12,9 @@ y = collect(linspace(-Ly/2,Ly/2,Ny))
 dx = x[2]-x[1]
 dy = y[2]-y[1]
 y=y';
+
 #randomly distributed vortices and charges
 testvort=zeros(Nv,3)
-
 #makes sure vortices are away from edges
 k = 1
 while k<=Nv
@@ -28,21 +30,18 @@ end
 testvort = sortrows(testvort)
 
 
-ξ = 0.1
-#construct vortices
-#
-Nv = 2
-vortex = zeros(Nv,3)
-vortex[2,:] = [0.2*Lx,0*Ly,1]
-vortex[1,:] = [0.6*Lx,-0.4*Ly,-1]
+ξ = 5.0
+
 ψ = complex(ones(x*y))
 
 for j=1:Nv
-    makevortex!(ψ,vortex[j,:],x,y,ξ)
+    makevortex!(ψ,testvort[j,:],x,y,ξ)
 end
 
 ϕ = angle.(ψ)
-pcolormesh(x*ones(y)/Lx,ones(x)*y/Ly,ϕ)
+pcolormesh(x*ones(y),ones(x)*y,ϕ)
 colorbar()
 
-vortex
+figure(figsize=(10,5))
+pcolormesh(x*ones(y),ones(x)*y,abs2.(ψ))
+#colorbar()
