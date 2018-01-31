@@ -1,4 +1,6 @@
-function makepsi(Nv)
+using VortexDistributions, PyPlot
+
+Nv = 1
 Lx = 300.
 Ly = 150.
 Nx = 1000
@@ -12,7 +14,7 @@ y=y';
 testvort=zeros(Nv,3)
 
 #makes sure vortices are away from edges
-k=1
+k = 1
 while k<=Nv
 a = -Lx/2+Lx*rand()
 b = -Ly/2+Ly*rand()
@@ -25,13 +27,16 @@ end
 
 testvort = sortrows(testvort)
 
-ψ = ones(x*y)
 
+ξ = 0.1
 #construct vortices
-for j=1:Nv
-    ψ = makevortex(ψ,testvort[j,:],x,y)
+vortex = zeros(2,3)
+vortex[1,:] = [0.2*Lx,0*Ly,1]
+vortex[2,:] = [0.6*Lx,-0.4*Ly,-1]
+ψ = ones(x*y)
+sz=size(vortex)
+for j=1:sz[1]
+    makevortex!(ψ,vortex[j,:],x,y,ξ)
 end
-
-
-return x,y,ψ,testvort
-end
+ϕ = angle.(ψ)
+pcolormesh(x*ones(y)/Lx,ones(x)*y/Ly,ϕ)
