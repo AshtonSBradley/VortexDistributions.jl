@@ -8,10 +8,10 @@ y = collect(linspace(-Ly/2,Ly/2,Ny))
 dx = x[2]-x[1]
 dy = y[2]-y[1]
 y=y';
-#randomly distributed vortices and charges
-testvort=zeros(Nv,3)
 
+#randomly distributed vortices and charges
 #makes sure vortices are away from edges
+testvort=zeros(Nv,3)
 k=1
 while k<=Nv
 a = -Lx/2+Lx*rand()
@@ -25,13 +25,11 @@ end
 
 testvort = sortrows(testvort)
 
+#construct vortex wavefunction
 ψ = ones(x*y)
-
-#construct vortices
 for j=1:Nv
     ψ = makevortex(ψ,testvort[j,:],x,y)
 end
-
 
 return x,y,ψ,testvort
 end
