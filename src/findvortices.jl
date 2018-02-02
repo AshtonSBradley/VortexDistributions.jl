@@ -25,16 +25,16 @@ for i = 1:Nx-1
 
             m = 0;
             Δ = phase[i+1,j]-phase[i,j]
-            abs(Δ) > π && (m += sign(Δ))
+            abs(Δ) > π && (m += sign(-Δ))
 
             Δ = phase[i+1,j+1]-phase[i+1,j]
-            abs(Δ) > π && (m += sign(Δ))
+            abs(Δ) > π && (m += sign(-Δ))
 
             Δ = phase[i,j+1]-phase[i+1,j+1]
-            abs(Δ) > π && (m += sign(Δ))
+            abs(Δ) > π && (m += sign(-Δ))
 
             Δ = phase[i,j]-phase[i,j+1]
-            abs(Δ) > π && (m += sign(Δ))
+            abs(Δ) > π && (m += sign(-Δ))
 
             vortexgrid[i,j] = m
         end
@@ -47,7 +47,7 @@ for i = 1:Nx-1
     indn = find(neg)
     xn = X[indn]; xn = xn[:]
     yn = Y[indn]; yn = yn[:]
-    xv = [xp;xn];yv=[yp;yn]; s = [ones(xp);-ones(xn)]
+    xv = [xp;xn]; yv=[yp;yn]; s = [ones(xp);-ones(xn)]
     vortices = [xv yv s]
     vortices = sortrows(vortices)
     return vortices
