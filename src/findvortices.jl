@@ -7,7 +7,9 @@ Requires a 2D wavefunction ψ; for 3D, pass slices.
 """
 
 function findvortices(x,y,ψ)
-#@assert typeof(y)==Array{Float64,1}
+@assert typeof(x)==Array{Float64,1}
+@assert typeof(y)==Array{Float64,1}
+@assert typeof(ψ)==Array{Complex{Float64},2}
 
 phase = angle.(ψ)
 Nx,Ny = size(ψ)
