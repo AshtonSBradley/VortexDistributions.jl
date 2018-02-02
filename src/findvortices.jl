@@ -7,14 +7,15 @@ Requires a 2D wavefunction ψ; for 3D, pass slices.
 """
 
 function findvortices(x,y,ψ)
+#@assert typeof(y)==Array{Float64,1}
 
 phase = angle.(ψ)
 Nx,Ny = size(ψ)
 # x corresponds to column of ψ
 # y is a row vector
 
-X = x*ones(y)
-Y = ones(x)*y
+X = x*ones(y')
+Y = ones(x)*y'
 vortexgrid = zeros(Nx,Ny)
 
 for i = 1:Nx-1
@@ -36,8 +37,6 @@ for i = 1:Nx-1
             vortexgrid[i,j] = m
         end
     end
-    X = x*ones(y)
-    Y = ones(x)*y
     pos = vortexgrid.>0
     neg = vortexgrid.<0
     indp = find(pos)
