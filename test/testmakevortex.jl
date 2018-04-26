@@ -1,6 +1,4 @@
-using Revise, VortexDistributions
-ENV["MPLBACKEND"]="tkagg"
-using PyPlot
+using Revise, VortexDistributions, PyPlot
 
 Nv = 1
 Lx = 300.
