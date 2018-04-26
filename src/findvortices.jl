@@ -15,14 +15,11 @@ phase = angle.(ψ)
 Nx,Ny = size(ψ)
 # x corresponds to column of ψ
 # y is a row vector
-
 X = x*ones(y')
 Y = ones(x)*y'
 vortexgrid = zeros(Nx,Ny)
 
-for i = 1:Nx-1
-    for j = 1:Ny-1
-
+    for i = 1:Nx-1, j = 1:Ny-1
             m = 0;
             Δ = phase[i+1,j]-phase[i,j]
             abs(Δ) > π && (m += sign(-Δ))
@@ -37,8 +34,8 @@ for i = 1:Nx-1
             abs(Δ) > π && (m += sign(-Δ))
 
             vortexgrid[i,j] = m
-        end
     end
+    
     pos = vortexgrid.>0
     neg = vortexgrid.<0
     indp = find(pos)
