@@ -1,5 +1,6 @@
 using Revise, VortexDistributions, PyPlot
 
+#create some grids
 Nv = 1
 Lx = 300.
 Ly = 150.
