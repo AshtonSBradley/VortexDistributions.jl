@@ -13,10 +13,7 @@ function findvortices(x,y,ψ)
 
 phase = angle.(ψ)
 Nx,Ny = size(ψ)
-# x corresponds to column of ψ
-# y is a row vector
-X = x*ones(y')
-Y = ones(x)*y'
+
 vortexgrid = zeros(Nx,Ny)
 
     for i = 1:Nx-1, j = 1:Ny-1
@@ -44,18 +41,4 @@ vortexgrid = zeros(Nx,Ny)
 
         vortices = [xn yn -vn; xp yp vp] |> sortrows
         return vortices
-        #= old
-    pos = vortexgrid .> 0
-    neg = vortexgrid .< 0
-    indp = find(pos)
-    xp = X[indp]; xp = xp[:]
-    yp = Y[indp]; yp = yp[:]
-    indn = find(neg)
-    xn = X[indn]; xn = xn[:]
-    yn = Y[indn]; yn = yn[:]
-    xv = [xp;xn]; yv=[yp;yn]; s = [ones(xp);-ones(xn)]
-    vortices = [xv yv s]
-    vortices = sortrows(vortices)
-    return vortices
-    =#
 end
