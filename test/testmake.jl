@@ -2,8 +2,8 @@ Lx = 300.
 Ly = 150.
 Nx = 1000
 Ny = 500
-x = collect(linspace(-Lx/2,Lx/2,Nx))
-y = collect(linspace(-Ly/2,Ly/2,Ny))
+x = linspace(-Lx/2,Lx/2,Nx) |> collect
+y = linspace(-Ly/2,Ly/2,Ny) |> collect
 dx = x[2]-x[1]
 dy = y[2]-y[1]
 
@@ -13,10 +13,10 @@ Nv = 5
 testvort=zeros(Nv,3)
 k=1
 while k<=Nv
-a = -Lx/2+Lx*rand()
-b = -Ly/2+Ly*rand()
+a = -Lx/2 + Lx*rand()
+b = -Ly/2 + Ly*rand()
 σ = rand([-1,1],1)
-    if (-Lx/2+dx<a<Lx/2-dx && -Ly/2+dy<b<Ly/2-dy)
+    if (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
         testvort[k,:] = [a b σ]
         k+=1
     end

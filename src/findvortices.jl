@@ -1,6 +1,6 @@
 """
     vortices = findvortices(x,y,ψ)
-    
+
  Locates vortices as 2π phase windings around plaquettes on a cartesian spatial field.
 
 Requires a 2D wavefunction ψ; for 3D, pass slices.
@@ -36,6 +36,15 @@ vortexgrid = zeros(Nx,Ny)
             vortexgrid[i,j] = m
     end
 
+        ixp,iyp,vp = findnz(vortexgrid.>0.)
+        xp = x[ixp]; yp = y[iyp]
+
+        ixn,iyn,vn = findnz(vortexgrid.<0.)
+        xn = x[ixn]; yn = y[iyn];
+
+        vortices = [xn yn -vn; xp yp vp] |> sortrows
+        return vortices
+        #= old
     pos = vortexgrid .> 0
     neg = vortexgrid .< 0
     indp = find(pos)
@@ -48,4 +57,5 @@ vortexgrid = zeros(Nx,Ny)
     vortices = [xv yv s]
     vortices = sortrows(vortices)
     return vortices
+    =#
 end

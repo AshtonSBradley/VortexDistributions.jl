@@ -14,6 +14,6 @@ include("circmask.jl")
 include("findvortmask.jl")
 
 
-export findvortices, unwrap, makevortex, makevortex!, vortexcore, circmask, findvortmask
+export findvortices, unwrap, unwrap!, makevortex, makevortex!, vortexcore, circmask, findvortmask
 
 end # module
