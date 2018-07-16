@@ -1,44 +1,37 @@
 """
-    vortices = findvortices(x,y,ψ)
+   vortices = findvortices(ψ,x,y)
 
- Locates vortices as 2π phase windings around plaquettes on a cartesian spatial field.
+Locates vortices as 2π phase windings around plaquettes on a cartesian spatial field.
 
-Requires a 2D wavefunction ψ; for 3D, pass slices.
+Requires a 2D wavefunction ψ(x,y) specified on a cartesian grid.
 """
 
-function findvortices(x,y,ψ)
+function findvortices(ψ,x,y)
 @assert typeof(x)==Array{Float64,1}
 @assert typeof(y)==Array{Float64,1}
 @assert typeof(ψ)==Array{Complex{Float64},2}
 
-phase = angle.(ψ)
-Nx,Ny = size(ψ)
+   phase = angle.(ψ)
+   diffx = countphasejumps(phase,1)
+   diffy = countphasejumps(phase,2)
+   #circ = diffx .- circshift(diffx,(0,1)) .- diffy .+ circshift(diffy,(1,0))
+   #diffx .-= circshift(diffx,(0,1))
+   #diffx .-= diffy
+   #diffx .+= circshift(diffy,(1,0))
 
-vortexgrid = zeros(Nx,Ny)
+   #use in-place memory recycling
+   circshift!(phase,diffx,(0,1))
+   diffx .-= phase
+   diffx .-= diffy
+   circshift!(phase,diffy,(1,0))
+   diffx .+= phase
 
-    for i = 1:Nx-1, j = 1:Ny-1
-            m = 0;
-            Δ = phase[i+1,j]-phase[i,j]
-            abs(Δ) > π && (m += sign(-Δ))
+   ixp,iyp,vp = findnz(diffx.>0.)
+   xp = x[ixp]; yp = y[iyp]
 
-            Δ = phase[i+1,j+1]-phase[i+1,j]
-            abs(Δ) > π && (m += sign(-Δ))
+   ixn,iyn,vn = findnz(diffx.<0.)
+   xn = x[ixn]; yn = y[iyn];
 
-            Δ = phase[i,j+1]-phase[i+1,j+1]
-            abs(Δ) > π && (m += sign(-Δ))
-
-            Δ = phase[i,j]-phase[i,j+1]
-            abs(Δ) > π && (m += sign(-Δ))
-
-            vortexgrid[i,j] = m
-    end
-
-        ixp,iyp,vp = findnz(vortexgrid.>0.)
-        xp = x[ixp]; yp = y[iyp]
-
-        ixn,iyn,vn = findnz(vortexgrid.<0.)
-        xn = x[ixn]; yn = y[iyn];
-
-        vortices = [xn yn -vn; xp yp vp] |> sortrows
-        return vortices
+   vortices = [xn yn -vn; xp yp vp] |> sortrows
+   return vortices
 end
