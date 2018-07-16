@@ -10,10 +10,11 @@ include("unwrap.jl")
 include("vortexcore.jl")
 include("makevortex.jl")
 include("circmask.jl")
+include("edgemask.jl")
 include("findvortmask.jl")
 include("countphasejumps.jl")
 
 
-export findvortices, unwrap, unwrap!, makevortex, makevortex!, vortexcore, circmask, findvortmask
+export findvortices, unwrap, unwrap!, makevortex, makevortex!, vortexcore, circmask, edgemask, findvortmask
 
 end # module

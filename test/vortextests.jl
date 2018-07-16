@@ -1,9 +1,9 @@
 
-@test testallpositions(5)
-@test testallcharges(5)
+@test testall_charges(10)
+@test testall_charges(50)
+@test testall_charges(100)
 
-@test testallpositions(7)
-@test testallcharges(7)
 
-@test testallpositions(10)
-@test testallcharges(10)
+@test testall_positions(10)
+@test testall_positions(50)
+@test testall_positions(100)
