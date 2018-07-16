@@ -13,6 +13,7 @@ include("circmask.jl")
 include("edgemask.jl")
 include("findvortmask.jl")
 include("countphasejumps.jl")
+include("remove_edgevortices.jl")
 
 
 export findvortices, unwrap, unwrap!, makevortex, makevortex!, vortexcore, circmask, edgemask, findvortmask
