@@ -28,10 +28,13 @@ function findvortices(ψ,x,y)
 
    ixp,iyp,vp = findnz(diffx.>0.)
    xp = x[ixp]; yp = y[iyp]
+   np = length(vp)
 
    ixn,iyn,vn = findnz(diffx.<0.)
    xn = x[ixn]; yn = y[iyn];
+   nn = length(vn)
+   nt = np + nn
 
    vortices = [xn yn -vn; xp yp vp] |> sortrows
-   return vortices
+   return np,nn,nt,vortices
 end

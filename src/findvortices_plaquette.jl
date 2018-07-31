@@ -35,10 +35,13 @@ vortexgrid = zeros(Nx,Ny)
 
         ixp,iyp,vp = findnz(vortexgrid.>0.)
         xp = x[ixp]; yp = y[iyp]
+        np = length(vp)
 
         ixn,iyn,vn = findnz(vortexgrid.<0.)
         xn = x[ixn]; yn = y[iyn];
-
+        nn = length(vn)
+        nt = np + nn
+        
         vortices = [xn yn -vn; xp yp vp] |> sortrows
-        return vortices
+        return np,nn,nt,vortices
 end
