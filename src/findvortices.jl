@@ -1,5 +1,5 @@
 """
-   np,nn,nt,vortices = findvortices(ψ,x,y)
+   `np,nn,nt,vortices = findvortices(ψ,x,y)`
 
 Locates vortices as 2π phase windings around plaquettes on a cartesian spatial grid. Uses an optimized plaquette method.
 
@@ -11,10 +11,10 @@ Requires a 2D wavefunction ψ(x,y) on a cartesian grid specified by vectors x, y
 
 `nt` - total number of vortices
 
-`vortices` - array of vortex coordinates `(xv,yv)` and circulations `(cv)`. Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order according to the `xv` coordinates
+`vortices` - array of vortex coordinates `xv,yv` and circulations `cv`. Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order according to the `xv` coordinates
 """
 
-function findvortices(ψ,x,y)
+function findvortices(ψ,x,y;geometry="torus")
 @assert typeof(x)==Array{Float64,1}
 @assert typeof(y)==Array{Float64,1}
 @assert typeof(ψ)==Array{Complex{Float64},2}
@@ -43,6 +43,23 @@ function findvortices(ψ,x,y)
    nn = length(vn)
    nt = np + nn
 
-   vortices = [xn yn -vn; xp yp vp] |> sortrows
-   return np,nn,nt,vortices
+if geometry == "sphere"
+    #find polar winding
+    vortices = [xn yn -vn; xp yp vp]
+
+    # to do: optimize this step at start of method to avoid extra angle call:
+    windvals = countphasejumps(angle.(ψ),2)
+
+    #test north pole for winding. - sign means polar vortex co-rotating with w > 0
+    w1 = sum(windvals[1,:])
+    (sign(w1) != 0) && (vortices = [vortices; 0.0 0.0 -w1])
+
+    #test south pole for winding. + sign means co-rotating with w > 0
+    w2 = sum(windvals[end,:])
+    (sign(w2) != 0) && (vortices = [vortices; pi 0.0 w2])
+elseif geometry == "torus"
+    vortices = [xn yn -vn; xp yp vp]
+end
+    vortices = vortices |> sortrows
+return np,nn,nt,vortices
 end

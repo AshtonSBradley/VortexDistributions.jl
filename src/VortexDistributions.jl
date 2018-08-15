@@ -16,6 +16,6 @@ include("countphasejumps.jl")
 include("remove_edgevortices.jl")
 
 
-export findvortices, unwrap, unwrap!, makevortex, makevortex!, vortexcore, circmask, edgemask, findvortmask, remove_edgevortices
+export findvortices, unwrap, unwrap!, countphasejumps, makevortex, makevortex!, vortexcore, circmask, edgemask, findvortmask, remove_edgevortices
 
 end # module
