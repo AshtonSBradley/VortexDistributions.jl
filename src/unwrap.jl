@@ -4,9 +4,9 @@ unwrap(phase,dim=1)
 
 Given an input phase `phase` and dimension to unwrap `dim`, returns an unwrapped array.
 
-unwrap!(unwrapped,phase,dim) writes in-place to unwrapped. 
+unwrap!(unwrapped,phase,dim) writes in-place to unwrapped.
 """
-function unwrap(phase,dim=1)
+function unwrap(phase::Array{Float64,2},dim=1)
     @assert (dim==1 || dim==2)
     Nx,Ny = size(phase)
     uphase = copy(phase)
@@ -38,7 +38,7 @@ function unwrap(phase,dim=1)
   return uphase
 end
 
-function unwrap!(uphase,phase,dim=1)
+function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
     @assert (dim==1 || dim==2)
     Nx,Ny = size(phase)
     uphase .= phase
@@ -68,16 +68,24 @@ function unwrap!(uphase,phase,dim=1)
     end
 end
 
-#= old
-function unwrap(phase, inplace=false)
-
-  unwrapped = inplace ? phase : copy(phase)
-  for i in 2:length(phase)
-    unwrapped[i] - unwrapped[i-1] >= π && (unwrapped[i] -= 2π)
-    unwrapped[i] - unwrapped[i-1] <= -π && (unwrapped[i] += 2π)
-  end
-  return unwrapped
+function unwrap(phase::Array{Float64,1})
+    uphase = copy(phase)
+    Nx = length(phase)
+        for i in 2:Nx
+        (uphase[i] - uphase[i-1] >= π) && (uphase[i] -= 2π)
+        (uphase[i] - uphase[i-1] <= -π) && (uphase[i] += 2π)
+        end
+        (uphase[1] - uphase[Nx] >= π) && (uphase[1] -= 2π)
+        (uphase[1] - uphase[Nx] <= -π) && (uphase[1] += 2π)
+        return uphase
 end
 
-unwrap!(phase) = unwrap(phase, true)
-=#
+function unwrap!(uphase::Array{Float64,1},phase::Array{Float64,1})
+    Nx = length(phase)
+        for i in 2:Nx
+        (uphase[i] - uphase[i-1] >= π) && (uphase[i] -= 2π)
+        (uphase[i] - uphase[i-1] <= -π) && (uphase[i] += 2π)
+        end
+        (uphase[1] - uphase[Nx] >= π) && (uphase[1] -= 2π)
+        (uphase[1] - uphase[Nx] <= -π) && (uphase[1] += 2π)
+end
