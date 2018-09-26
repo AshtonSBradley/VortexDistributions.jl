@@ -7,10 +7,8 @@ module VortexDistributions
 
 include("findvortices.jl")
 include("unwrap.jl")
-include("vortexcore.jl")
 include("makevortex.jl")
 include("circmask.jl")
-include("edgemask.jl")
 include("findvortmask.jl")
 include("countphasejumps.jl")
 include("remove_edgevortices.jl")
