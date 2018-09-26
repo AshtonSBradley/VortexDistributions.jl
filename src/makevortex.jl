@@ -12,6 +12,6 @@ function makevortex!(ψ,vortex,x,y,ξ)
     @assert typeof(y)==Array{Float64,1}
     @assert typeof(ψ)==Array{Complex{Float64},2}
     x0, y0, σ0 = vortex
-    R = @. sqrt(X^2+Y^2)
+    R(x,y) = sqrt(x^2+y^2)
     ψ .= @. ψ*vortexcore(R(x.-x0,y'.-y0),ξ)*exp(im*σ0*atan(x .- x0,y' .- y0))
 end
