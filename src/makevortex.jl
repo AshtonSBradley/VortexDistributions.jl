@@ -1,4 +1,4 @@
-function makevortex(ψ,vortex,x,y,ξ)
+function makevortex(ψ,vortex,x,y,ξ=1.0)
     @assert typeof(x)==Array{Float64,1}
     @assert typeof(y)==Array{Float64,1}
     @assert typeof(ψ)==Array{Complex{Float64},2}
@@ -7,7 +7,7 @@ function makevortex(ψ,vortex,x,y,ξ)
     return  @. ψ*vortexcore(R(x.-x0,y'.-y0),ξ)*exp(im*σ0*atan(x .- x0,y' .- y0))
 end
 
-function makevortex!(ψ,vortex,x,y,ξ)
+function makevortex!(ψ,vortex,x,y,ξ=1.0)
     @assert typeof(x)==Array{Float64,1}
     @assert typeof(y)==Array{Float64,1}
     @assert typeof(ψ)==Array{Complex{Float64},2}
