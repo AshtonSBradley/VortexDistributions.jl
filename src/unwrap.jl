@@ -1,8 +1,7 @@
 """
+unwrapped = unwrap(phase,dim=1)
 
-unwrap(phase,dim=1)
-
-Given an input phase `phase` and dimension to unwrap `dim`, returns an unwrapped array.
+Unwraps 2d array `phase` along dimension `dim`.
 
 unwrap!(unwrapped,phase,dim) writes in-place to unwrapped.
 """

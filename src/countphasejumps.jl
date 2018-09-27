@@ -1,8 +1,7 @@
 """
+jumps = countphasejumps(phase,dim)
 
-unwrap(phase,dim=1)
-
-Given an input phase `phase` and dimension to unwrap `dim`, returns an unwrapped array.
+Count jumps greater than π in `phase` along dimension `dim`
 """
 function countphasejumps(phase,dim=1)
     @assert (dim==1 || dim==2)

@@ -31,7 +31,7 @@ testvort = sortrows(testvort)
 
 ξ = 5.0
 
-ψ = complex(ones(x*y))
+ψ = ones(size(x.*y')) |> complex
 
 for j=1:Nv
     makevortex!(ψ,testvort[j,:],x,y,ξ)

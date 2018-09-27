@@ -25,7 +25,7 @@ end
 testvort = sortrows(testvort)
 
 #construct vortex wavefunction
-ψ = complex(ones(x.*y'))
+ψ = ones(size(x.*y')) |> complex
 for j=1:Nv
     makevortex!(ψ,testvort[j,:],x,y,.1)
 end
