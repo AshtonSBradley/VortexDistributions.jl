@@ -6,7 +6,7 @@ Count jumps greater than π in `phase` along dimension `dim`
 function countphasejumps(phase,dim=1)
     @assert (dim==1 || dim==2)
     Nx,Ny = size(phase)
-    pdiff = zeros(phase)
+    pdiff = zero(phase)
 
     if dim == 1
     for j in 1:Ny

@@ -41,7 +41,7 @@ vortexgrid = zeros(Nx,Ny)
         xn = x[ixn]; yn = y[iyn];
         nn = length(vn)
         nt = np + nn
-        
+
         vortices = [xn yn -vn; xp yp vp] |> sortrows
         return np,nn,nt,vortices
 end

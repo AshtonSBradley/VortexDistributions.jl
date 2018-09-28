@@ -26,3 +26,11 @@ function circmask!(phi,psi,x,y,R)
             (x[j]^2+y[k]^2 > R^2) && (phi[j,k] = complex(0.))
     end
 end
+
+function findnz(A)
+I = findall(!iszero,A)
+v = A[I]
+ix = [I[i][1] for i in eachindex(I)]
+iy = [I[i][2] for i in eachindex(I)]
+return ix,iy,v
+end
