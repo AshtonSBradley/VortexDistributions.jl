@@ -6,10 +6,10 @@ function vortexcore(r,ξ)
 end
 
 function edgemask(psi,x,y)
-    psi[:,1] = zeros(x)
-    psi[:,end] = zeros(x)
-    psi[1,:] = zeros(y')
-    psi[end,:] = zeros(y')
+    psi[:,1] = zero(x)
+    psi[:,end] = zero(x)
+    psi[1,:] = zero(y')
+    psi[end,:] = zero(y')
 return psi
 end
 
