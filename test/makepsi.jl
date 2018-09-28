@@ -21,7 +21,7 @@ b = rand(y[2:end-1])
         xdist = abs.(a.-testvort[:,1])
             if minimum(xdist) > 2*dx
                 testvort[k,:] = [a b σ]
-                global k += 1
+                k += 1
             end
 
 end
