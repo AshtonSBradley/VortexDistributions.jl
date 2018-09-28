@@ -22,7 +22,7 @@ b = -Ly/2 + Ly*rand()
 σ = rand([-1,1],1)
     if (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
         testvort[k,:] = [a b σ]
-        global k+=1
+        k+=1
     end
 end
 
