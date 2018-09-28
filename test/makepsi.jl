@@ -18,15 +18,15 @@ a = rand(x[2:end-1])
 b = rand(y[2:end-1])
 σ = rand([-1,1],1)
 
-        xdist = abs.(a-testvort[:,1])
+        xdist = abs.(a.-testvort[:,1])
             if minimum(xdist) > 2*dx
                 testvort[k,:] = [a b σ]
-                k += 1
+                global k += 1
             end
 
 end
 
-testvort = sortrows(testvort)
+testvort = sortslices(testvort,dims=1)
 
 #construct vortex wavefunction
 ψ = ones(size(x.*y')) |> complex

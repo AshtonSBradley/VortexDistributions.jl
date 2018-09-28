@@ -18,11 +18,11 @@ b = -Ly/2 + Ly*rand()
 σ = rand([-1,1],1)
     if (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
         testvort[k,:] = [a b σ]
-        k+=1
+        global k+=1
     end
 end
 
-testvort = sortrows(testvort)
+testvort = sortslices(testvort,dims=1)
 
 #construct vortex wavefunction
 ψ = ones(size(x.*y')) |> complex
