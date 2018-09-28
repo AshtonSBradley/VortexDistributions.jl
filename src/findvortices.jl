@@ -60,6 +60,6 @@ if geometry == "sphere"
 elseif geometry == "torus"
     vortices = [xn yn -vn; xp yp vp]
 end
-    vortices = vortices |> sortrows
+    vortices = vortices |> sortslices
 return np,nn,nt,vortices
 end
