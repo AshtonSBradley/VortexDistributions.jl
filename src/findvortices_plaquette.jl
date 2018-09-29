@@ -33,11 +33,11 @@ vortexgrid = zeros(Nx,Ny)
             vortexgrid[i,j] = m
     end
 
-        ixp,iyp,vp = findnz(vortexgrid.>0.)
+        ixp,iyp,vp = findnonzero(vortexgrid.>0.)
         xp = x[ixp]; yp = y[iyp]
         np = length(vp)
 
-        ixn,iyn,vn = findnz(vortexgrid.<0.)
+        ixn,iyn,vn = findnonzero(vortexgrid.<0.)
         xn = x[ixn]; yn = y[iyn];
         nn = length(vn)
         nt = np + nn

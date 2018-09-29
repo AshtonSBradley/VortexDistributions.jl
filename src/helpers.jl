@@ -27,7 +27,7 @@ function circmask!(phi,psi,x,y,R)
     end
 end
 
-function findnz(A)
+function findnonzero(A)
     I = findall(!iszero,A)
     v = A[I]
     ix = [I[i][1] for i in eachindex(I)]

@@ -10,6 +10,6 @@ for j = 1:Nfound
     not_edge = !(xedge || yedge)
     not_edge && push!(keep,j)
 end
-vortices=vortices[keep,:]
+vortices = vortices[keep,:]
     return vortices
 end

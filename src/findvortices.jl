@@ -34,14 +34,14 @@ function findvortices(ψ,x,y;geometry="torus")
    circshift!(phase,diffy,(1,0))
    diffx .+= phase
 
-   ixp,iyp,vp = findnz(diffx.>0.)
+   ixp,iyp,vp = findnonzero(diffx.>0.)
    xp = x[ixp]; yp = y[iyp]
    np = length(vp)
 
-   ixn,iyn,vn = findnz(diffx.<0.)
+   ixn,iyn,vn = findnonzero(diffx.<0.)
    xn = x[ixn]; yn = y[iyn];
    nn = length(vn)
-   
+
    nt = np + nn
 
 if geometry == "sphere"
@@ -58,6 +58,7 @@ if geometry == "sphere"
     #test south pole for winding. + sign means co-rotating with w > 0
     w2 = sum(windvals[end,:])
     (sign(w2) != 0) && (vortices = [vortices; pi 0.0 w2])
+    
 elseif geometry == "torus"
     vortices = [xn yn -vn; xp yp vp]
 end
