@@ -61,5 +61,5 @@ elseif geometry == "torus"
     vortices = [xn yn -vn; xp yp vp]
 end
     vortices = sortslices(vortices,dims=1)
-return np,nn,nt,vortices
+return nt,np,nn,vortices
 end

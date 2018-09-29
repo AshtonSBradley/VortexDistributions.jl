@@ -43,5 +43,5 @@ vortexgrid = zeros(Nx,Ny)
         nt = np + nn
 
         vortices = sortslices([xn yn -vn; xp yp vp],dims=1)
-        return np,nn,nt,vortices
+        return nt,np,nn,vortices
 end
