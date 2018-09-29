@@ -41,6 +41,7 @@ function findvortices(ψ,x,y;geometry="torus")
    ixn,iyn,vn = findnz(diffx.<0.)
    xn = x[ixn]; yn = y[iyn];
    nn = length(vn)
+   
    nt = np + nn
 
 if geometry == "sphere"

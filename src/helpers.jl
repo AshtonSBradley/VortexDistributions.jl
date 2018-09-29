@@ -28,29 +28,35 @@ function circmask!(phi,psi,x,y,R)
 end
 
 function findnz(A)
-I = findall(!iszero,A)
-v = A[I]
-ix = [I[i][1] for i in eachindex(I)]
-iy = [I[i][2] for i in eachindex(I)]
-return ix,iy,v
+    I = findall(!iszero,A)
+    v = A[I]
+    ix = [I[i][1] for i in eachindex(I)]
+    iy = [I[i][2] for i in eachindex(I)]
+    return ix,iy,v
+end
+
+function isinterior(a,b,x,y)
+    Lx = x[end]-x[1]; Ly = y[end] - y[1]
+    dx = x[2] - x[1]; dy = y[2] - y[1]
+    return (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
 end
 
 function randomvortices(x,y,Nv)
-Lx = x[end]-x[1]; Ly = x[end] - x[1]
-dx = diff(x)[1]; dy = diff(y)[1]
-testvort = zeros(Nv,3)
+    Lx = x[end]-x[1]; Ly = y[end] - y[1]
+    dx = x[2] - x[1]; dy = y[2] - y[1]
+    testvort = zeros(Nv,3)
 
-k = 1
+    k = 1
     while k<=Nv
         a = -Lx/2 + Lx*rand()
         b = -Ly/2 + Ly*rand()
-        σ = rand([-1,1],1)
+        σ = rand([-1 1])
 
-#make sure vortices are away from edges
-        if (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
+        #make sure vortices are away from edges
+        if isinterior(a,b,x,y)
             testvort[k,:] = [a b σ]
             k+=1
         end
     end
-return sortslices(testvort,dims=1)
+    return sortslices(testvort,dims=1)
 end
