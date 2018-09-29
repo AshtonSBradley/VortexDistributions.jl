@@ -1,7 +1,7 @@
 using VortexDistributions, PyPlot, LinearAlgebra, Revise
 
 # create some grids
-Nv = 50
+Nv = 10
 Lx = 300.; Ly = 150.
 Nx = 1000; Ny = 500
 x = linspace(-Lx/2,Lx/2,Nx)
@@ -13,11 +13,6 @@ testvort = randomvortices(x,y,Nv)
 
 ψ = ones(size(x.*y')) |> complex
 
-#=
-for j=1:Nv
-    makeallvortex!(ψ,testvort[j,:],x,y,ξ)
-end
-=#
 makeallvortices!(ψ,testvort,x,y,ξ)
 
 psi = zeros(Ny,Nx) |> complex
@@ -30,3 +25,9 @@ colorbar()
 
 nt,np,nn,vortices = findvortices(ψ,x,y)
 vortices = remove_edgevortices(vortices,x,y)
+
+chargesfound = (vortices[:,3] == testvort[:,3])
+
+vortfound = checkvortexlocations(testvort,vortices,x,y,Nv)
+
+vortfound == Nv
