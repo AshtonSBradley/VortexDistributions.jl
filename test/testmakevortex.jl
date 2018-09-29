@@ -38,9 +38,10 @@ end
 
 psi = zeros(Ny,Nx) |> complex
 transpose!(psi,ψ)
-psi = reverse(psi,dims=1)
+#psi = reverse(psi,dims=1)
 ϕ = angle.(psi)
 pcolormesh(x,y,ϕ)
+xlabel("x");ylabel("y")
 colorbar()
 
 nt,np,nn,vortices = findvortices(ψ,x,y)
