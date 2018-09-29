@@ -38,7 +38,7 @@ end
 function isinterior(a,b,x,y)
     Lx = x[end]-x[1]; Ly = y[end] - y[1]
     dx = x[2] - x[1]; dy = y[2] - y[1]
-    return (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
+    return (-Lx/2 + 2dx < a < Lx/2 - 2dx && -Ly/2 + 2dy < b < Ly/2 - 2dy)
 end
 
 function randomvortices(x,y,Nv)
