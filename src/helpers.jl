@@ -35,7 +35,7 @@ iy = [I[i][2] for i in eachindex(I)]
 return ix,iy,v
 end
 
-function place_randomvortices(x,y,Nv)
+function randomvortices(x,y,Nv)
 Lx = x[end]-x[1]; Ly = x[end] - x[1]
 dx = diff(x)[1]; dy = diff(y)[1]
 testvort = zeros(Nv,3)

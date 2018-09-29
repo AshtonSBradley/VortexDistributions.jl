@@ -2,14 +2,12 @@ using VortexDistributions, PyPlot, LinearAlgebra, Revise
 
 #create some grids
 Nv = 1
-Lx = 300.
-Ly = 150.
-Nx = 1000
-Ny = 500
+Lx = 300.; Ly = 150.
+Nx = 1000; Ny = 500
 x = linspace(-Lx/2,Lx/2,Nx)
 y = linspace(-Ly/2,Ly/2,Ny)
 
-testvort = cast_randomvortices(x,y,1)
+testvort = randomvortices(x,y,Nv)
 
 ξ = 1.0
 
