@@ -1,4 +1,4 @@
-using Revise, VortexDistributions, PyPlot
+using VortexDistributions, PyPlot, LinearAlgebra, Revise
 
 #create some grids
 Nv = 1
@@ -10,7 +10,6 @@ x = linspace(-Lx/2,Lx/2,Nx) |> collect
 y = linspace(-Ly/2,Ly/2,Ny) |> collect
 dx = x[2]-x[1]
 dy = y[2]-y[1]
-y=y';
 
 #randomly distributed vortices and charges
 testvort = zeros(Nv,3)
@@ -22,14 +21,14 @@ b = -Ly/2 + Ly*rand()
 σ = rand([-1,1],1)
     if (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
         testvort[k,:] = [a b σ]
-        k+=1
+        global k+=1
     end
 end
 
 testvort = sortslices(testvort,dims=1)
 
 
-ξ = 5.0
+ξ = 1.0
 
 ψ = ones(size(x.*y')) |> complex
 
@@ -37,10 +36,12 @@ for j=1:Nv
     makevortex!(ψ,testvort[j,:],x,y,ξ)
 end
 
-ϕ = angle.(ψ)
-pcolormesh(x*ones(y),ones(x)*y,ϕ)
+psi = zeros(Ny,Nx) |> complex
+transpose!(psi,ψ)
+psi = reverse(psi,dims=1)
+ϕ = angle.(psi)
+pcolormesh(x,y,ϕ)
 colorbar()
 
-figure(figsize=(10,5))
-pcolormesh(x*ones(y),ones(x)*y,abs2.(ψ))
-#colorbar()
+nt,np,nn,vortices = findvortices(ψ,x,y)
+vortices = remove_edgevortices(vortices,x,y)
