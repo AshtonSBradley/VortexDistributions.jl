@@ -8,10 +8,11 @@ include("makepsi.jl")
 include("checkvortexlocations.jl")
 @testset "Vortex location and circulation tests " begin include("vortextests.jl") end
 
-
+#=
 Nv = 5
 x,y,psi,testvort = makepsi(Nv)
 testvort
 nt,np,nn,vortices = findvortices(psi,x,y)
 vortices = remove_edgevortices(vortices,x,y)
 chargesfound = (vortices[:,3] == testvort[:,3])
+=#
