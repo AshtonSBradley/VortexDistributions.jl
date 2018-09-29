@@ -1,7 +1,7 @@
 using VortexDistributions, PyPlot, LinearAlgebra, Revise
 
 # create some grids
-Nv = 8
+Nv = 15
 Lx = 300.; Ly = 150.
 Nx = 1000; Ny = 500
 x = linspace(-Lx/2,Lx/2,Nx)
