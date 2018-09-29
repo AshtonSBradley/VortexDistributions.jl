@@ -1,7 +1,7 @@
 using VortexDistributions, PyPlot, LinearAlgebra, Revise
 
 # create some grids
-Nv = 15
+Nv = 50
 Lx = 300.; Ly = 150.
 Nx = 1000; Ny = 500
 x = linspace(-Lx/2,Lx/2,Nx)
@@ -13,9 +13,12 @@ testvort = randomvortices(x,y,Nv)
 
 ψ = ones(size(x.*y')) |> complex
 
+#=
 for j=1:Nv
-    makevortex!(ψ,testvort[j,:],x,y,ξ)
+    makeallvortex!(ψ,testvort[j,:],x,y,ξ)
 end
+=#
+makeallvortices!(ψ,testvort,x,y,ξ)
 
 psi = zeros(Ny,Nx) |> complex
 transpose!(psi,ψ)
