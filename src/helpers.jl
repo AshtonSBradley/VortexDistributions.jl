@@ -35,10 +35,9 @@ iy = [I[i][2] for i in eachindex(I)]
 return ix,iy,v
 end
 
-function place_randomvortices(x,y,Nx)
-    Lx = x[end]-x[1]; Ly = x[end] - x[1]
-    dx = diff(x)[1]; dy = diff(y)[1]
-#randomly distributed vortices and charges
+function place_randomvortices(x,y,Nv)
+Lx = x[end]-x[1]; Ly = x[end] - x[1]
+dx = diff(x)[1]; dy = diff(y)[1]
 testvort = zeros(Nv,3)
 #makes sure vortices are away from edges
 k = 1
