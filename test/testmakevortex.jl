@@ -1,6 +1,6 @@
 using VortexDistributions, PyPlot, LinearAlgebra, Revise
 
-#create some grids
+# create some grids
 Nv = 1
 Lx = 300.; Ly = 150.
 Nx = 1000; Ny = 500

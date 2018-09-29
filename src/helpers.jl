@@ -39,18 +39,18 @@ function randomvortices(x,y,Nv)
 Lx = x[end]-x[1]; Ly = x[end] - x[1]
 dx = diff(x)[1]; dy = diff(y)[1]
 testvort = zeros(Nv,3)
-#makes sure vortices are away from edges
-k = 1
-while k<=Nv
-a = -Lx/2 + Lx*rand()
-b = -Ly/2 + Ly*rand()
-σ = rand([-1,1],1)
-    if (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
-        testvort[k,:] = [a b σ]
-        k+=1
-    end
-end
 
-testvort = sortslices(testvort,dims=1)
-return testvort
+k = 1
+    while k<=Nv
+        a = -Lx/2 + Lx*rand()
+        b = -Ly/2 + Ly*rand()
+        σ = rand([-1,1],1)
+
+#make sure vortices are away from edges
+        if (-Lx/2 + dx < a < Lx/2 - dx && -Ly/2 + dy < b < Ly/2 - dy)
+            testvort[k,:] = [a b σ]
+            k+=1
+        end
+    end
+return sortslices(testvort,dims=1)
 end
