@@ -44,6 +44,10 @@ function findvortices(ψ,x,y;geometry="torus")
 
    nt = np + nn
 
+   #offest for plaquette size (TODO: add accurate solver a-la Ricardo)
+   dx = x[2]-x[1]; dy = y[2] - y[1]
+   xp += -dx/2; yp += -dx/2; xn += -dx/2; yn += -dx/2
+   
 if geometry == "sphere"
     #find polar winding
     vortices = [xn yn -vn; xp yp vp]
@@ -58,7 +62,7 @@ if geometry == "sphere"
     #test south pole for winding. + sign means co-rotating with w > 0
     w2 = sum(windvals[end,:])
     (sign(w2) != 0) && (vortices = [vortices; pi 0.0 w2])
-    
+
 elseif geometry == "torus"
     vortices = [xn yn -vn; xp yp vp]
 end

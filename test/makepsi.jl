@@ -14,9 +14,7 @@ testvort = randomvortices(x,y,Nv)
 
 #construct vortex wavefunction
 ψ = ones(size(x.*y')) |> complex
-for j=1:Nv
-    makevortex!(ψ,testvort[j,:],x,y,.1)
-end
+makeallvortices!(ψ,testvort,x,y,.1)
 
 return x,y,ψ,testvort
 end
