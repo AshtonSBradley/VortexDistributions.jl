@@ -1,9 +1,9 @@
 """
-unwrapped = unwrap(phase,dim=1)
+`unwrapped = unwrap(phase,dim=1)`
 
 Unwraps 2d array `phase` along dimension `dim`.
 
-unwrap!(unwrapped,phase,dim) writes in-place to unwrapped.
+`unwrap!(unwrapped,phase,dim)` writes in-place to `unwrapped`.
 """
 function unwrap(phase::Array{Float64,2},dim=1)
     @assert (dim==1 || dim==2)
