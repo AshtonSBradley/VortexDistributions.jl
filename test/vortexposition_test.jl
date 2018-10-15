@@ -9,7 +9,7 @@ x = x[1:end-1];y = y[1:end-1]
 dx = x[2]-x[1]; dy = y[2]-y[1]
 
 # Vortex at origin
-x1,y1 = (0.,0.)
+x1,y1 = (dx/2,1.1dy)
 vort = [x1 y1 1]
 
 #construct vortex wavefunction (core ansatz)
