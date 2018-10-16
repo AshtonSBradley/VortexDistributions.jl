@@ -6,7 +6,6 @@ using Reexport
 @reexport using Interpolations
 
 Interpolations.interpolate(A::Array{Complex{Float64},2})=interpolate(real(A))+im*interpolate(imag(A))
-
 include("findvortices.jl")
 include("unwrap.jl")
 include("makevortex.jl")
