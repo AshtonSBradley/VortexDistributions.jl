@@ -80,7 +80,7 @@ function findvortices_interp(ψ,x,y)
 end
 
 function findvortices(ψ,x,y,interp::Bool=true)
-    if iterp
+    if interp
         nt,np,nn,vortices = findvortices_interp(ψ,x,y)
     elseif !interp
         nt,np,nn,vortices = findvortices_grid(ψ,x,y)
