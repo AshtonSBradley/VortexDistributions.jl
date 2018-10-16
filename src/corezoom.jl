@@ -3,6 +3,7 @@
 
 Uses local interpolation to resolve core location to ~ 5 figures"""
 function corezoom(vortices,psi,x,y,winhalf=2,Nz=30)
+    println("this one")
     xv,yv = vortices[1:2]
     dx=x[2]-x[1];dy=y[2]-y[1]
     ixv = isapprox.(x,xv,atol=dx) |> findlast
