@@ -1,4 +1,7 @@
 #find single vortex position to machine precision
+using Pkg
+pkg"activate ."
+
 using VortexDistributions, LinearAlgebra, Plots, BenchmarkTools, Revise
 
 # via interpolation on window:
@@ -37,7 +40,7 @@ psi = ones(size(x.*y')) |> complex
 makeallvortices!(psi,vort,x,y,1.0)
 heatmap(x,y,angle.(psi),xlabel="x",ylabel="y",transpose = true)
 
-np,nn,nt,vortices = findvortices(psi,x,y)
+nt,np,nn,vortices = findvortices(psi,x,y)
 nt,np,nn,vortices = remove_edgevortices(vortices,x,y)
 
 xv,yv = vortices[1:2]
@@ -59,27 +62,28 @@ xv,yv = vortices[1:2]
 #knots = (xw,yw)
 #itp = interpolate(knots, psiw, Gridded(Linear()))
 
-knots = (x,y)
-itp = interpolate(knots, psi, Gridded(Linear()))
-
-#corezoom function (might need to disambiguiate multivortex states)
-function corezoom(vortices,psi,x,y,winhalf=2,Nz=30)
-    xv,yv = vortices[1:2]
-    dx=x[2]-x[1];dy=y[2]-y[1]
-    ixv = isapprox.(x,xv,atol=dx) |> findlast
-    iyv = isapprox.(y,yv,atol=dy) |> findlast
-    ixwin = (ixv-winhalf):(ixv+winhalf-1)
-    iywin = (iyv-winhalf):(iyv+winhalf-1)
-    xw = x[ixwin]; yw = y[iywin]; psiw = psi[ixwin,iywin]
-    xz = LinRange(xw[1],xw[end],Nz)
-    yz = LinRange(yw[1],yw[end],Nz)
-    knots = (xw,yw)
-    itp = interpolate(knots, psiw, Gridded(Linear()))
-    psiz = itp(xz,yz)
-    np,nn,nt,vortz = findvortices(psiz,xz|>Vector,yz|>Vector)
-    nt,np,nn,vortz = remove_edgevortices(vortz,xz|>Vector,yz|>Vector)
-    return vortz,psiz,xz,yz
-end
+# THIS BLOCK
+# knots = (x,y)
+# itp = interpolate(knots, psi, Gridded(Linear()))
+#
+# corezoom function (might need to disambiguiate multivortex states)
+# function corezoom(vortices,psi,x,y,winhalf=2,Nz=30)
+#     xv,yv = vortices[1:2]
+#     dx=x[2]-x[1];dy=y[2]-y[1]
+#     ixv = isapprox.(x,xv,atol=dx) |> findlast
+#     iyv = isapprox.(y,yv,atol=dy) |> findlast
+#     ixwin = (ixv-winhalf):(ixv+winhalf-1)
+#     iywin = (iyv-winhalf):(iyv+winhalf-1)
+#     xw = x[ixwin]; yw = y[iywin]; psiw = psi[ixwin,iywin]
+#     xz = LinRange(xw[1],xw[end],Nz)
+#     yz = LinRange(yw[1],yw[end],Nz)
+#     knots = (xw,yw)
+#     itp = interpolate(knots, psiw, Gridded(Linear()))
+#     psiz = itp(xz,yz)
+#     np,nn,nt,vortz = findvortices(psiz,xz|>Vector,yz|>Vector)
+#     nt,np,nn,vortz = remove_edgevortices(vortz,xz|>Vector,yz|>Vector)
+#     return vortz,psiz,xz,yz
+# end
 
 
 winhalf = 2
@@ -90,6 +94,48 @@ vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz,winhalf,Nz)
 #heatmap(xz,yz,angle.(psiz),xlabel="x",ylabel="y",transpose = true)
 
 xv,yv = vortz[1:2]
+
+show(xv)
+show(x1)
+
+show(yv)
+show(y1)
+
+#testing in package
+using Test
+include("makepsi.jl")
+psi,x,y,vortices = makepsi(3)
+
+xv,yv = vortices[1:2,1]
+
+#THIS BLOCK
+# knots = (x,y)
+# itp = interpolate(knots, psi, Gridded(Linear()))
+
+#corezoom function (might need to disambiguiate multivortex states)
+# function corezoom(vortices,psi,x,y,winhalf=2,Nz=30)
+#     xv,yv = vortices[1:2]
+#     dx=x[2]-x[1];dy=y[2]-y[1]
+#     ixv = isapprox.(x,xv,atol=dx) |> findlast
+#     iyv = isapprox.(y,yv,atol=dy) |> findlast
+#     ixwin = (ixv-winhalf):(ixv+winhalf-1)
+#     iywin = (iyv-winhalf):(iyv+winhalf-1)
+#     xw = x[ixwin]; yw = y[iywin]; psiw = psi[ixwin,iywin]
+#     xz = LinRange(xw[1],xw[end],Nz)
+#     yz = LinRange(yw[1],yw[end],Nz)
+#     knots = (xw,yw)
+#     itp = interpolate(knots, psiw, Gridded(Linear()))
+#     psiz = itp(xz,yz)
+#     np,nn,nt,vortz = findvortices(psiz,xz|>Vector,yz|>Vector)
+#     nt,np,nn,vortz = remove_edgevortices(vortz,xz|>Vector,yz|>Vector)
+#     return vortz,psiz,xz,yz
+# end
+
+winhalf = 2
+Nz = 30
+vortz,psiz,xz,yz = corezoom(vortices,psi,x,y,winhalf,Nz)
+vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz,winhalf,Nz)
+vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz,winhalf,Nz)
 
 show(xv)
 show(x1)
