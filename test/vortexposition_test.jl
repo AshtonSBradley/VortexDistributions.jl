@@ -41,29 +41,33 @@ np,nn,nt,vortices = findvortices(psi,x,y)
 vortices = remove_edgevortices(vortices,x,y)
 
 xv,yv = vortices[1:2]
-ixv = isapprox.(x,xv,atol=dx/2) |> findlast
-iyv = isapprox.(y,yv,atol=dy/2) |> findlast
 
-winhalf = 4
-xwin = (ixv-winhalf):(ixv+winhalf-1)
-xw = x[xwin]
+# ixv = isapprox.(x,xv,atol=dx/2) |> findlast
+# iyv = isapprox.(y,yv,atol=dy/2) |> findlast
 
-ywin = (iyv-winhalf):(iyv+winhalf-1)
-yw = y[ywin]
+# winhalf = 6
+# xwin = (ixv-winhalf):(ixv+winhalf-1)
+# xw = x[xwin]
+#
+# ywin = (iyv-winhalf):(iyv+winhalf-1)
+# yw = y[ywin]
+#
+# psiw = psi[xwin,ywin]
+#
+# heatmap(xw,yw,angle.(psiw),xlabel="x",ylabel="y",transpose = true)
 
-psiw = psi[xwin,ywin]
+#knots = (xw,yw)
+#itp = interpolate(knots, psiw, Gridded(Linear()))
 
-heatmap(xw,yw,angle.(psiw),xlabel="x",ylabel="y",transpose = true)
-
-knots = (xw,yw)
-itp = interpolate(knots, psiw, Gridded(Linear()))
+knots = (x,y)
+itp = interpolate(knots, psi, Gridded(Linear()))
 
 #corezoom function (might need to disambiguiate multivortex states)
 function corezoom(vortices,psi,x,y,itp,knots,winhalf=4,Nz=20)
     xv,yv = vortices[1:2]
     dx=x[2]-x[1];dy=y[2]-y[1]
-    ixv = isapprox.(x,xv,atol=dx/2) |> findlast
-    iyv = isapprox.(y,yv,atol=dy/2) |> findlast
+    ixv = isapprox.(x,xv,atol=dx) |> findlast
+    iyv = isapprox.(y,yv,atol=dy) |> findlast
     ixwin = (ixv-winhalf):(ixv+winhalf-1)
     iywin = (iyv-winhalf):(iyv+winhalf-1)
     xw = x[ixwin]; yw = y[iywin]; psiw = psi[ixwin,iywin]
@@ -78,19 +82,16 @@ function corezoom(vortices,psi,x,y,itp,knots,winhalf=4,Nz=20)
 end
 
 
-winhalf = 4
+winhalf = 2
 Nz = 50
 vortz,psiz,xz,yz = corezoom(vortices,psi,x,y,itp,knots,winhalf,Nz)
-heatmap(xz,yz,angle.(psiz),xlabel="x",ylabel="y",transpose = true)
 vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz,itp,knots,winhalf,Nz)
-heatmap(xz,yz,angle.(psiz),xlabel="x",ylabel="y",transpose = true)
-vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz,itp,knots,winhalf,Nz)
-heatmap(xz,yz,angle.(psiz),xlabel="x",ylabel="y",transpose = true)
+#heatmap(xz,yz,angle.(psiz),xlabel="x",ylabel="y",transpose = true)
 
 xv,yv = vortz[1:2]
 
-xv
-x1
+show(xv)
+show(x1)
 
-yv
-y1
+show(yv)
+show(y1)
