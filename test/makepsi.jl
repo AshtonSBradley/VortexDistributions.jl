@@ -1,4 +1,4 @@
-function makepsi(Nv,Lx,Ly,Nx,Ny)
+function makepsi(Nv,Lx=200,Ly=200,Nx=400,Ny=400)
 
 x = linspace(-Lx/2,Lx/2,Nx)
 y = linspace(-Ly/2,Ly/2,Ny)

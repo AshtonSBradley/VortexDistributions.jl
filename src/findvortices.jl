@@ -70,6 +70,7 @@ end
 function findvortices_interp(psi,x,y)
     nt,np,nn,vortices = findvortices_grid(psi,x,y)
     nt,np,nn,vortices = remove_edgevortices(vortices,x,y)
+    #TODO: allow for interp with periodic data (here edges are stripped to avoid)
     for j in 1:nt
         vortex = vortices[j,:]
         vortz,psiz,xz,yz = corezoom(vortex,psi,x,y)

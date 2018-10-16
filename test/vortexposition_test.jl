@@ -85,6 +85,26 @@ xv,yv = vortices[1:2]
 #     nt,np,nn,vortz = remove_edgevortices(vortz,xz|>Vector,yz|>Vector)
 #     return vortz,psiz,xz,yz
 # end
+winhalf = 2
+Nz = 30
+xv,yv=vortices[1:2]
+dx=x[2]-x[1];dy=y[2]-y[1]
+ixv = isapprox.(x,xv,atol=dx) |> findlast
+iyv = isapprox.(y,yv,atol=dy) |> findlast
+ixwin = (ixv-winhalf):(ixv+winhalf-1)
+iywin = (iyv-winhalf):(iyv+winhalf-1)
+xw = x[ixwin];yw = y[iywin]; psiw = psi[ixwin,iywin]
+xz = LinRange(xw[1],xw[end],Nz)
+yz = LinRange(yw[1],yw[end],Nz)
+knots = (xw,yw)
+itp = interpolate(knots,psiw,Gridded(Linear()))
+psiz = itp(xz,yz)
+nt,np,nn,vortz = findvortices_grid(psiz,xz|>Vector,yz|>Vector)
+nt,np,nn,vortz = remove_edgevortices(vortz,xz|>Vector,yz|>Vector)
+
+
+
+
 
 vortz,psiz,xz,yz = corezoom(vortices,psi,x,y)
 vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
@@ -102,6 +122,9 @@ show(y1)
 
 #DOESN'T:
 #testing in package
+using Pkg
+pkg"activate ."
+
 using VortexDistributions
 include("makepsi.jl")
 Lx = 100.
@@ -111,7 +134,7 @@ Ny = 300
 Nv = 2
 x,y,psi,testvortices = makepsi(Nv,Lx,Ly,Nx,Ny)
 
-nt,np,nn,vortices = findvortices_grid(psi,x,y)
+nt,np,nn,vortices = findvortices(psi,x,y)
 nt,np,nn,vortices = remove_edgevortices(vortices,x,y)
 
 

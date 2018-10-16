@@ -15,7 +15,7 @@ function corezoom(vortices,psi,x,y,winhalf=2,Nz=30)
     knots = (xw,yw)
     itp = interpolate(knots, psiw, Gridded(Linear()))
     psiz = itp(xz,yz)
-    np,nn,nt,vortz = findvortices(psiz,xz|>Vector,yz|>Vector)
+    nt,np,nn,vortz = findvortices_grid(psiz,xz|>Vector,yz|>Vector)
     nt,np,nn,vortz = remove_edgevortices(vortz,xz|>Vector,yz|>Vector)
     return vortz,psiz,xz,yz
 end
