@@ -17,6 +17,6 @@ include("corezoom.jl")
 include("helpers.jl")
 
 
-export findvortices, unwrap, unwrap!, countphasejumps, makevortex, makevortex!, makeallvortices!, vortexcore, circmask, edgemask, findvortmask, remove_edgevortices, linspace, findnonzero, randomvortices, isinterior, checkvortexlocations, corezoom
+export findvortices_grid, findvortices_interp, findvortices, unwrap, unwrap!, countphasejumps, makevortex, makevortex!, makeallvortices!, vortexcore, circmask, edgemask, findvortmask, remove_edgevortices, linspace, findnonzero, randomvortices, isinterior, checkvortexlocations, corezoom
 
 end # module

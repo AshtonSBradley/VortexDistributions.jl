@@ -14,7 +14,7 @@ Requires a 2D wavefunction ψ(x,y) on a cartesian grid specified by vectors x, y
 `vortices` - array of vortex coordinates `xv,yv` and circulations `cv`. Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order according to the `xv` coordinates
 """
 
-function findvortices(ψ,x,y;geometry="torus")
+function findvortices_grid(ψ,x,y;geometry="torus")
 @assert typeof(x)==Array{Float64,1}
 @assert typeof(y)==Array{Float64,1}
 @assert typeof(ψ)==Array{Complex{Float64},2}
@@ -65,4 +65,25 @@ elseif geometry == "torus"
 end
     vortices = sortslices(vortices,dims=1)
 return nt,np,nn,vortices
+end
+
+function findvortices_interp(ψ,x,y)
+    nt,np,nn,vortices = findvortices_grid(ψ,x,y)
+    for j in 1:nt
+        vortex = vortices[j,:]
+        vortz,psiz,xz,yz = corezoom(vortex,psi,x,y)
+        vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
+        vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
+        vortices[j,1:2] = vortz[1:2]
+    end
+    return nt,np,nn,vortices
+end
+
+function findvortices(ψ,x,y,interp::Bool=true)
+    if iterp
+        nt,np,nn,vortices = findvortices_interp(ψ,x,y)
+    elseif !interp
+        nt,np,nn,vortices = findvortices_grid(ψ,x,y)
+    end
+    return nt,np,nn,vortices
 end

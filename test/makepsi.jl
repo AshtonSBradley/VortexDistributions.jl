@@ -1,8 +1,5 @@
-function makepsi(Nv)
-Lx = 300.
-Ly = 150.
-Nx = 1000
-Ny = 500
+function makepsi(Nv,Lx,Ly,Nx,Ny)
+
 x = linspace(-Lx/2,Lx/2,Nx)
 y = linspace(-Ly/2,Ly/2,Ny)
 
