@@ -67,8 +67,8 @@ end
 return nt,np,nn,vortices
 end
 
-function findvortices_interp(ψ,x,y)
-    nt,np,nn,vortices = findvortices_grid(ψ,x,y)
+function findvortices_interp(psi,x,y)
+    nt,np,nn,vortices = findvortices_grid(psi,x,y)
     for j in 1:nt
         vortex = vortices[j,:]
         vortz,psiz,xz,yz = corezoom(vortex,psi,x,y)
@@ -79,11 +79,11 @@ function findvortices_interp(ψ,x,y)
     return nt,np,nn,vortices
 end
 
-function findvortices(ψ,x,y,interp::Bool=true)
+function findvortices(psi,x,y,interp::Bool=true)
     if interp
-        nt,np,nn,vortices = findvortices_interp(ψ,x,y)
+        nt,np,nn,vortices = findvortices_interp(psi,x,y)
     elseif !interp
-        nt,np,nn,vortices = findvortices_grid(ψ,x,y)
+        nt,np,nn,vortices = findvortices_grid(psi,x,y)
     end
     return nt,np,nn,vortices
 end

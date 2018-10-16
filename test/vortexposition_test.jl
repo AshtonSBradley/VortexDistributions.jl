@@ -101,6 +101,7 @@ show(y1)
 
 #DOESN'T:
 #testing in package
+using VortexDistributions
 include("makepsi.jl")
 Lx = 100.
 Ly = 100.
@@ -108,7 +109,7 @@ Nx = 300
 Ny = 300
 Nv = 2
 x,y,psi,testvortices = makepsi(Nv,Lx,Ly,Nx,Ny)
-nt,np,nn,vortices = findvortices_grid(psi,x,y)
+nt,np,nn,vortices = findvortices(psi,x,y)
 
 vortices[1:2]
 
@@ -119,31 +120,31 @@ nt,np,nn,vortices = remove_edgevortices(vortices,x,y)
 #heatmap(x,y,angle.(psi),xlabel="x",ylabel="y",transpose = true)
 
 
-for j in 1:nt
-    vortex = vortices[j,:]
-    vortz,psiz,xz,yz = corezoom(vortex,psi,x,y)
-    vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
-    vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
-    vortices[j,1:2] = vortz[1:2]
-end
-
-vortices[1:2]
-
-
-testvortices[1:2]
-
-
-
-for j in 1:nt
-    xv,yv = vortices[j,1:2]
-    x1,y1 = testvortices[j,1:2]
-    println(" ")
-    show(xv)
-    println(" ")
-    show(x1)
-    println(" ")
-    show(yv)
-    println(" ")
-    show(y1)
-    println(" ")
-end
+# for j in 1:nt
+#     vortex = vortices[j,:]
+#     vortz,psiz,xz,yz = corezoom(vortex,psi,x,y)
+#     vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
+#     vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
+#     vortices[j,1:2] = vortz[1:2]
+# end
+#
+# vortices[1:2]
+#
+#
+# testvortices[1:2]
+#
+#
+#
+# for j in 1:nt
+#     xv,yv = vortices[j,1:2]
+#     x1,y1 = testvortices[j,1:2]
+#     println(" ")
+#     show(xv)
+#     println(" ")
+#     show(x1)
+#     println(" ")
+#     show(yv)
+#     println(" ")
+#     show(y1)
+#     println(" ")
+# end
