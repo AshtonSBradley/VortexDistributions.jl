@@ -102,7 +102,6 @@ show(yv)
 show(y1)
 
 #testing in package
-using Test
 include("makepsi.jl")
 psi,x,y,vortices = makepsi(3)
 
