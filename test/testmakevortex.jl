@@ -22,7 +22,7 @@ xlabel("x");ylabel("y")
 colorbar()
 
 nt,np,nn,vortices = findvortices(ψ,x,y)
-vortices = remove_edgevortices(vortices,x,y)
+nt,np,nn,vortices = remove_edgevortices(vortices,x,y)
 
 chargesfound = (vortices[:,3] == testvort[:,3])
 
