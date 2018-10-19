@@ -1,10 +1,11 @@
 # vortex core construction
 
 function vortexcore(r,ξ,ansatz=true,charge=1)
-    !ansatz ? (return gpecore(charge)) : (return r/sqrt(r^2 + ξ^2))
+    ansatz ? (return r/sqrt(r^2 + ξ^2)) : (return gpecore(r/ξ,charge))
 end
 
-function gpecore(Κ,L=2,N=100,R=Κ)
+function gpecore(r,Κ,L=2,N=100,R=Κ)
+    #currently r does  nothing!
     #N = 100
     #L = 2
     #Κ = 1

@@ -1,2 +1,7 @@
 julia 0.6
 Interpolations
+SpecialFunctions
+Reexport
+LinearAlgebra
+ToeplitzMatrices
+SparseArrays
