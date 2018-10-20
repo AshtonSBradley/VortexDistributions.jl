@@ -147,3 +147,55 @@ nt,np,nn,vortices = remove_edgevortices(vortices,x,y)
 #     vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
 #     vortices[j,1:2] = vortz[1:2]
 # end
+
+# Chebeychev interpolation
+using ApproxFun
+linspace(a,b,n) = LinRange(a,b,n) |> Vector
+x0 = 10.
+x1 = 10.8
+S = Chebyshev(x0 .. x1)
+
+n = 8; m = 8
+
+p = LinRange(x0,x1,n) |> Vector
+
+v = exp.(p)
+
+V = Array{Float64}(undef,n,m)
+
+for k = 1:m
+    V[:,k] = Fun(S,[zeros(k-1);1]).(p)
+end
+
+f = Fun(S,V\v)
+
+f(10.1)
+
+exp(10.1)
+# seems to work very well in 1d for a smooth function
+
+# 2d example
+x0=1.
+x1=2.
+S = Chebyshev(x0..x1)^2
+
+n = 30; m = 29
+
+x = linspace(x0,x1,n); y = linspace(x0,x1,n)
+
+v = exp.(x .* cos.(y))  # values at the non-default grid
+
+V = Array{Float64}(undef,n,m) # Create a Vandermonde matrix by evaluating the basis at the grid
+
+for k = 1:m
+          V[:,k] = Fun(S,[zeros(k-1);1]).(x,y)
+end
+
+
+f = Fun(S,V\v)
+
+#choose point in supported interval
+x1,y1 = 1.1*x0,1.2*x0
+f(x1,y1)
+
+exp(x1*cos(y1))
