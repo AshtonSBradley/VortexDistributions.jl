@@ -8,8 +8,9 @@
 
 Tools for working with distributions of two-dimensional quantum vortices in Bose-Einstein condendates.
 
--[ ] Fast, accurate vortex detection.
--[ ] Vortex creation, including density and phase imprinting of arbitrary-charge vortex cores.
+-[x] Fast, accurate vortex detection.
+
+-[x] Vortex creation, including density and phase imprinting of arbitrary-charge vortex cores.
 
 Future
 
