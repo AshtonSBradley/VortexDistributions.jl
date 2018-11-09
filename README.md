@@ -8,3 +8,4 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 - [ ] Vortex creation: including density and phase imprinting of arbitrary-charge vortex cores.
 - [ ] Compressible/incompressible decomposition
 - [ ] Recursive cluster algorithm
+- [ ] Vortex correlation functions
