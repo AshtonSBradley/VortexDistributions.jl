@@ -5,8 +5,6 @@
 Tools for working with distributions of two-dimensional quantum vortices in Bose-Einstein condendates.
 
 - [x] Fast, accurate vortex detection.
-- [ ] Vortex creation, including density and phase imprinting of arbitrary-charge vortex cores.
-
-Future
-
+- [ ] Vortex creation: including density and phase imprinting of arbitrary-charge vortex cores.
+- [ ] Compressible/incompressible decomposition
 - [ ] Recursive cluster algorithm
