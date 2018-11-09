@@ -9,3 +9,12 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 - [ ] Compressible/incompressible decomposition
 - [ ] Recursive cluster algorithm
 - [ ] Vortex correlation functions
+
+# External links
+___Signatures of Coherent Vortex Structures in a Disordered 2D Quantum Fluid___,\
+Matthew T. Reeves, Thomas P. Billam, Brian P. Anderson, and Ashton S. Bradley, \
+[Physical Review A 89, 053631 (2014)](http://journals.aps.org/pra/abstract/10.1103/PhysRevA.89.053631)
+
+___Onsager-Kraichnan Condensation in Decaying Two-Dimensional Quantum Turbulence___,\
+Thomas P. Billam, Matthew T. Reeves, Brian P. Anderson, and Ashton S. Bradley, \
+[Physical Review Letters 112, 145301 (2014)](http://dx.doi.org/10.1103/PhysRevLett.112.145301)
