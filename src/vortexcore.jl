@@ -64,20 +64,20 @@ Ymat = repeat(1 ./y,1,N);
 
 # Second Derivative
 residuals = -0.5*( (Q.*(D2z*ψ) + 2*(z .-1).*(Dz*ψ) ).*Q/(4*R^2)
-        + (Q/(2*R) ./y).*(Dz*ψ) )+ 0.5*Κ^2 *ψ ./y.^2 + ψ.^3 .- ψ
+        + (Q/(2*R) ./y).*(Dz*ψ) )+ 0.5*K^2 *ψ ./y.^2 + ψ.^3 .- ψ
 residuals[1] = 0; residuals[end] =0
 
 while sum(abs.(residuals).^2) > 1e-12
     # Second Derivative
     residuals = -0.5*( (Q.*(D2z*ψ) + 2*(z .-1).*(Dz*ψ) ).*Q/(4*R^2)
-            + (Q/(2*R) ./y).*(Dz*ψ) )+ 0.5*Κ^2 *ψ ./y.^2 + ψ.^3 .- ψ
+            + (Q/(2*R) ./y).*(Dz*ψ) )+ 0.5*K^2 *ψ ./y.^2 + ψ.^3 .- ψ
     residuals[1] = 0; residuals[end] =0
 
     #println(sum(abs.(residuals).^2))
 
 
     Jacobi = -0.5*( (Qmat.*(D2z) + Zmat.*(Dz) ).*(Qmat/(4*R^2))
-    + (Qmat/(2*R).*Ymat).*(Dz) ) + diagm(0 => 0.5*Κ^2 ./y.^2)+ diagm(0 => 3*ψ.^2 .- 1)
+    + (Qmat/(2*R).*Ymat).*(Dz) ) + diagm(0 => 0.5*K^2 ./y.^2)+ diagm(0 => 3*ψ.^2 .- 1)
 
 
     Jacobi[1,:] = [1 zeros(1,N-1)]
