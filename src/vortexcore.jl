@@ -32,7 +32,7 @@ end
 """
 Evaluate the gpe for vortex core solution. Slow: for testing and initializing.
 """
-function gpecore(Κ,L=2,N=100,R=Κ)
+function gpecore(K,L=2,N=100,R = K)
     #currently r does  nothing!
     #N = 100
     #L = 2
@@ -48,7 +48,7 @@ Dz = -2*Dz./L
 D2z = 4*D2z./L.^2
 
 # y is the physical coordinate, range [0 infinity] (i.e y = r)
-y =  R*(1 .+z)./(1 .-z)  ;
+y =  R*(1 .+z)./(1 .-z)
 
 #initial guess based on ansatz
 Λ = 0.8248
