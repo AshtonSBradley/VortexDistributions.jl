@@ -1,10 +1,38 @@
 # vortex core construction
 
 function vortexcore(r,ξ,ansatz=true,charge=1)
-    ansatz ? (return r/sqrt(r^2 + ξ^2)) : (return gpecore(r/ξ,charge))
+    ansatz ? (return r/sqrt(r^2 + ξ^2)) : (return core_chargen(r/ξ,charge))
 end
 
-function gpecore(r,Κ,L=2,N=100,R=Κ)
+"""
+Make and evaluate the vortex core interpolation for charge `n`
+"""
+function core_chargen(x,n,ξ=1)
+    y,ψ,res = gpecore(n)
+    ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
+    return ψi(x/ξ)
+end
+
+"""
+Make the vortex core interpolation for charge `n`
+"""
+function make_fastcore(n)
+    y,ψ,res = gpecore(n)
+    ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
+    return ψi
+end
+
+"""
+Evaluate fast core interpolation
+"""
+function vortexcore(r,ψi::Interpolations.GriddedInterpolation,ξ=1)
+    return ψi(r/ξ)
+end
+
+"""
+Evaluate the gpe for vortex core solution. Slow: for testing and initializing.
+"""
+function gpecore(Κ,L=2,N=100,R=Κ)
     #currently r does  nothing!
     #N = 100
     #L = 2
