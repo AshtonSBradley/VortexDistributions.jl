@@ -1,7 +1,7 @@
 #make true gpe
-using Pkg, Test
-pkg"activate ."
-using VortexDistributions, Plots, LaTeXStrings, Revise
+# using Pkg, Test
+# pkg"activate ."
+using VortexDistributions, Plots, LaTeXStrings, Test, Revise
 
 Κ = 1
 Λ = 0.8248
@@ -9,22 +9,21 @@ r = linspace(0,6,100)
 y,ψ,res = gpecore(Κ)
 plt = plot()
 xlims!(0,10*Κ);ylims!(0,1.2)
-plot!(y,ψ,label=L"k=1",marker="o")
+plot!(y,ψ,label=L"k=1")
 xlabel!(L"$r/\xi$")
 ylabel!(L"$\chi(r/\xi)$")
 plot!(y,y*Λ,label=L"\Lambda r/\xi")
 
 for j = 2:10
     y,ψ,res = gpecore(j)
-    plot!(y,ψ,label=latexstring("k=$(j)"),marker="o",legend = :bottomright)
+    plot!(y,ψ,label=latexstring("k=$(j)"),legend = :bottomright)
     display(plt)
 end
 plt
 
-
 y,ψ,res = gpecore(Κ)
-lt = plot()
-plot!(y,ψ,label=L"k=1",marker="o")
+plt = plot()
+plot!(y,ψ,label=L"k=1")
 xlims!(0,10*Κ)
 
 ψi = make_fastcore(2)
