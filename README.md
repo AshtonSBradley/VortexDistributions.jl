@@ -7,7 +7,8 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 - [x] Fast, accurate vortex detection.
   - Uses a highly optimized version of the plaquette method (phase intergral around each 4-point plaquette), with recursive interpolation to acheive a good balance between speed and accuracy. 
   - At present only tests for charge +/-1 in 2D
-- [ ] Vortex creation
+  
+- [x] Vortex creation
   - Solves the 2D GPE problem for charge n on the infinite domain
   - Interpolates vortex solution to density and phase imprint on arbitrary 2D domains
 - [ ] Compressible/incompressible decomposition
