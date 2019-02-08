@@ -73,7 +73,7 @@ scatter!([vortices[1]], [vortices[2]],legend=false)
 scatter!([testvort[1]], [testvort[2]],m=:cross,ms=10,c=:white)
 q=plot(q1,q2,q3,layout=(1,3),size=(700,200))
 ```
-![](/examples/phase.png)
+![](/examples/density.png)
 
 In this example the vortex was created at
 ```julia
