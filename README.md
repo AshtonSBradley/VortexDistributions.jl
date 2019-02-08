@@ -5,10 +5,18 @@
 Tools for working with distributions of two-dimensional quantum vortices in Bose-Einstein condendates.
 
 - [x] Fast, accurate vortex detection.
-- [ ] Vortex creation: including density and phase imprinting of arbitrary-charge vortex cores.
+  - Uses a highly optimized version of the plaquette method (phase intergral around each 4-point plaquette), with recursive interpolation to acheive a good balance between speed and accuracy. 
+  - At present only tests for charge +/-1 in 2D
+  
+- [x] Vortex creation
+  - Solves the 2D GPE problem for charge n on the infinite domain
+  - Interpolates vortex solution to density and phase imprint on arbitrary 2D domains
 - [ ] Compressible/incompressible decomposition
 - [ ] Recursive cluster algorithm
 - [ ] Vortex correlation functions
+
+#### Acknowledgements
+Matthew Reeves provided the code for solving the charge n vortex problem.
 
 # External links
 ___Signatures of Coherent Vortex Structures in a Disordered 2D Quantum Fluid___,\
