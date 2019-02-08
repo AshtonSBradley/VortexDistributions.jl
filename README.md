@@ -53,7 +53,7 @@ Out[26]:
  10.3274  10.3178  1.0
  ```
 
-Plotting the results, we have the phase at successive zoom levels with vortex location and detected location (see examples):
+Plotting the results, we have the phase at successive zoom levels with vortex location, `+`, and detected location, `o` (see examples):
 
 ![](/examples/phase.png)
 
