@@ -1,8 +1,8 @@
-# VortexDistributions
+# VortexDistributions <img align="right" src="/examples/vortfluid.gif" width="100" height="100">
 
 [![Build Status](https://travis-ci.org/AshtonSBradley/VortexDistributions.jl.svg?branch=master)](https://travis-ci.org/AshtonSBradley/VortexDistributions.jl)  [![Coverage Status](https://coveralls.io/repos/AshtonSBradley/VortexDistributions.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/AshtonSBradley/VortexDistributions.jl?branch=master)  [![codecov.io](http://codecov.io/github/AshtonSBradley/VortexDistributions.jl/coverage.svg?branch=master)](http://codecov.io/github/AshtonSBradley/VortexDistributions.jl?branch=master)
 
-<img align="right" src="/examples/vortfluid.gif" width="100" height="100">
+
 
 Tools for working with distributions of two-dimensional quantum vortices in Bose-Einstein condendates.
 
@@ -16,6 +16,7 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 - [ ] Compressible/incompressible decomposition
 - [ ] Recursive cluster algorithm
 - [ ] Vortex correlation functions
+- [ ] 3d vortex detection
 
 # Detection Example
 ```julia
@@ -37,7 +38,7 @@ testvort = [10+dx*facx 10+dy*facy 1.0]
 makevortex!(ψ,testvort,x,y);
 ```
 
-In this example the vortex is created at
+In this example the vortex is created with values `(x,y,charge)` 
 ```julia
 julia> testvort
 Out[25]:
@@ -48,7 +49,7 @@ Out[25]:
  ```julia
  nt,np,nn,vortices = findvortices(ψ,x,y)
  ```
- For our single vortex example, the values `(x,y,charge)` are
+ For our single vortex example 
  ```julia
  julia> vortices
 Out[26]:
