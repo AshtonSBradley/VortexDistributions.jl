@@ -1,8 +1,6 @@
-# VortexDistributions
+# VortexDistributions <img align="right" src="/examples/vortfluid.gif" width="100" height="100">
 
 [![Build Status](https://travis-ci.org/AshtonSBradley/VortexDistributions.jl.svg?branch=master)](https://travis-ci.org/AshtonSBradley/VortexDistributions.jl)  [![Coverage Status](https://coveralls.io/repos/AshtonSBradley/VortexDistributions.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/AshtonSBradley/VortexDistributions.jl?branch=master)  [![codecov.io](http://codecov.io/github/AshtonSBradley/VortexDistributions.jl/coverage.svg?branch=master)](http://codecov.io/github/AshtonSBradley/VortexDistributions.jl?branch=master)
-
-<img align="right" src="/examples/vortfluid.gif" width="100" height="100">
 
 Tools for working with distributions of two-dimensional quantum vortices in Bose-Einstein condendates.
 
@@ -22,13 +20,15 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 using VortexDistributions, Plots
 gr(transpose=true,xlabel="x",ylabel="y",legend=false)
 
-# Our example system has grid point spacing of two points per healing length (the following is in units of healing length)
+# Our example system has grid point spacing
+# of two points per healing length
+# (the following is in units of healing length)
 Lx=200;Nx=400;
 Ly=200;Ny=400
 x = linspace(-Lx/2,Lx/2,Nx);dx=diff(x)[1]
 y = linspace(-Ly/2,Ly/2,Ny);dy=diff(y)[1]
 
-#make vortex near the point (x,y)=(10,10)
+#make charge-1 vortex near the point (x,y)=(10,10)
 facx,facy = rand(2)
 testvort = [10+dx*facx 10+dy*facy 1.0]
 
@@ -48,7 +48,7 @@ Out[25]:
  ```julia
  nt,np,nn,vortices = findvortices(ψ,x,y)
  ```
- For our single vortex example, the values `(x,y,charge)` are
+ For our single vortex example, the vortex is detected with `(x,y,charge)`
  ```julia
  julia> vortices
 Out[26]:
