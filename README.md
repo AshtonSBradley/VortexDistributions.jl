@@ -36,7 +36,7 @@ testvort = [10+dx*facx 10+dy*facy 1.0]
 makevortex!(ψ,testvort,x,y);
 ```
 
-In this example the vortex is created at
+In this example the vortex is created with values `(x,y,charge)` 
 ```julia
 julia> testvort
 Out[25]:
@@ -47,7 +47,7 @@ Out[25]:
  ```julia
  nt,np,nn,vortices = findvortices(ψ,x,y)
  ```
- For our single vortex example, the values `(x,y,charge)` are
+ For our single vortex example 
  ```julia
  julia> vortices
 Out[26]:
