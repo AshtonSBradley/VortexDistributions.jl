@@ -22,12 +22,13 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 using VortexDistributions, Plots
 gr(transpose=true,xlabel="x",ylabel="y",legend=false)
 
+# Our example system has grid point spacing of two points per healing length (the following is in units of healing length)
 Lx=200;Nx=400;
 Ly=200;Ny=400
 x = linspace(-Lx/2,Lx/2,Nx);dx=diff(x)[1]
 y = linspace(-Ly/2,Ly/2,Ny);dy=diff(y)[1]
 
-#make vortex near the (x,y)=(10,10)
+#make vortex near the point (x,y)=(10,10)
 facx,facy = rand(2)
 testvort = [10+dx*facx 10+dy*facy 1.0]
 
