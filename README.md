@@ -16,6 +16,7 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 - [ ] Compressible/incompressible decomposition
 - [ ] Recursive cluster algorithm
 - [ ] Vortex correlation functions
+- [ ] 3d vortex detection
 
 # Detection Example
 ```julia
