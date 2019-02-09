@@ -57,7 +57,7 @@ Plotting the results, we have the phase at successive zoom levels with vortex lo
 
 ![](/examples/phase.png)
 
-and densit at successive zoom levels with vortex location and detected location:
+and density at successive zoom levels with vortex location and detected location:
 
 ![](/examples/density.png)
 
