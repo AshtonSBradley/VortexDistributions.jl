@@ -6,6 +6,8 @@ function findvortices_grid(ψ,x,y;geometry="torus")
    phase = angle.(ψ)
    diffx = countphasejumps(phase,1)
    diffy = countphasejumps(phase,2)
+
+   #slightly more verbose:
    #circ = diffx .- circshift(diffx,(0,1)) .- diffy .+ circshift(diffy,(1,0))
    #diffx .-= circshift(diffx,(0,1))
    #diffx .-= diffy
@@ -68,7 +70,7 @@ end
 """
    `np,nn,nt,vortices = findvortices(ψ,x,y)`
 
-Locates vortices as 2π phase windings around plaquettes on a cartesian spatial grid. Uses an optimized plaquette method.
+Locates vortices as 2π phase windings around plaquettes on a cartesian spatial grid. Uses an optimized plaquette method followed by recursive interpolation.
 
 Requires a 2D wavefunction ψ(x,y) on a cartesian grid specified by vectors x, y.
 
