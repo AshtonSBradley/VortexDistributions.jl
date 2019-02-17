@@ -1,19 +1,3 @@
-"""
-   `np,nn,nt,vortices = findvortices(ψ,x,y)`
-
-Locates vortices as 2π phase windings around plaquettes on a cartesian spatial grid. Uses an optimized plaquette method.
-
-Requires a 2D wavefunction ψ(x,y) on a cartesian grid specified by vectors x, y.
-
-`np` - number of positive vortices
-
-`nn` - number of negative vortices
-
-`nt` - total number of vortices
-
-`vortices` - array of vortex coordinates `xv,yv` and circulations `cv`. Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order according to the `xv` coordinates
-"""
-
 function findvortices_grid(ψ,x,y;geometry="torus")
 @assert typeof(x)==Array{Float64,1}
 @assert typeof(y)==Array{Float64,1}
@@ -81,6 +65,21 @@ function findvortices_interp(psi,x,y)
     return nt,np,nn,vortices
 end
 
+"""
+   `np,nn,nt,vortices = findvortices(ψ,x,y)`
+
+Locates vortices as 2π phase windings around plaquettes on a cartesian spatial grid. Uses an optimized plaquette method.
+
+Requires a 2D wavefunction ψ(x,y) on a cartesian grid specified by vectors x, y.
+
+`np` - number of positive vortices
+
+`nn` - number of negative vortices
+
+`nt` - total number of vortices
+
+`vortices` - array of vortex coordinates `xv,yv` and circulations `cv`. Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order according to the `xv` coordinates
+"""
 function findvortices(psi,x,y,interp::Bool=true)
     if interp
         nt,np,nn,vortices = findvortices_interp(psi,x,y)
