@@ -6,6 +6,7 @@ using Reexport
 @reexport using LinearAlgebra
 @reexport using ToeplitzMatrices
 @reexport using SparseArrays
+@reexport using FFTW
 
 Interpolations.interpolate(A::Array{Complex{Float64},2})=interpolate(real(A))+im*interpolate(imag(A))
 
