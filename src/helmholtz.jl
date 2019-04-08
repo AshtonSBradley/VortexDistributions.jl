@@ -11,6 +11,9 @@ function helmholtzdecomp(wx,wy,kx,ky,k2)
 end
 
 function helmholtzdecomp(wx,wy,wz,kx,ky,kz,k2)
+    #TODO check k sizes and do some careful tests!
+    # ky = ky'
+    # kz = reshape(kz,1,1,length(ky))
     wxk = fft(wx); wyk = fft(wy); wzk = fft(wz);
     kdotw = @. kx*wxk + ky*wyk + kz*wzk
     wxkc = @. kdotw*kx/k2; wxkc[1,1] = zero(wxkc[1,1])
