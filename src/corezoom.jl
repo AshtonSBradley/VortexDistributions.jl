@@ -1,5 +1,5 @@
 """
-`vortz,psiz,xz,yz = zcorezoom(vortices,psi,x,y,winhalf=2,Nz=30)`
+`vortz,psiz,xz,yz = corezoom(vortices,psi,x,y,winhalf=2,Nz=30)`
 
 Uses local interpolation to resolve core location to ~ 5 figures"""
 function corezoom(vortices,psi,x,y,winhalf=2,Nz=30)

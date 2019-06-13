@@ -1,8 +1,10 @@
 using Pkg
 pkg"activate ."
 
-using VortexDistributions, Plots, JLD2, Revise
+using Plots, JLD2, Test, Revise, VortexDistributions
 
-@load "one_frame.jld2"
+@load "./examples/one_frame.jld2"
+
+heatmap(x,y,abs2.(ψ1'))
 
 nt,np,nn,vortices = findvortices(ψ1,x,y)
