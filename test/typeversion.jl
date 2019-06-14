@@ -2,8 +2,18 @@ using Plots, JLD2, Parameters
 
 @load "./examples/one_frame.jld2"
 
-heatmap(x,y,abs2.(ψ1'))
+gr(transpose=false)
+heatmap(abs2.(ψ1'))
 heatmap(x,y,angle.(ψ1'))
+
+xind = 100:400
+yind = 200:800
+xwin = x[xind]
+ywin = y[yind]
+ψwin = ψ1[xind,yind]
+heatmap(xwin,ywin,abs2.(ψwin'))
+heatmap(xwin,ywin,angle.(ψwin'))
+
 abstract type Topology end
 
 struct Torus <: Topology
@@ -19,6 +29,7 @@ struct Sphere <: Topology
 end
 
 psi = Torus(x,y,ψ1)
+psiw = Torus(xwin,ywin,ψwin)
 
 function findnonzero(A)
     I = findall(!iszero,A)
@@ -165,10 +176,8 @@ function findvortices(psi::Sphere)
     return nt,np,nn,vortices
 end
 
-nt,np,nn,vortices = findvortices(psi)
-
-
-
+#this test appears to work:
+nt,np,nn,vortices = findvortices(psiw)
 
 function findvortices_interp(psi,x,y)
     nt,np,nn,vortices = findvortices_grid(psi,x,y)
