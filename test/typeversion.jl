@@ -6,7 +6,7 @@ gr(transpose=false)
 heatmap(abs2.(ψ1'))
 heatmap(x,y,angle.(ψ1'))
 
-xind = 100:400
+xind = 100:400 #100:300 for no vortices
 yind = 200:800
 xwin = x[xind]
 ywin = y[yind]
@@ -31,7 +31,7 @@ end
 psi = Torus(x,y,ψ1)
 psiw = Torus(xwin,ywin,ψwin)
 
-function findnonzero(A)
+function findallwhere(A)
     I = findall(!iszero,A)
     v = A[I]
     ix = [I[i][1] for i in eachindex(I)]
@@ -40,11 +40,11 @@ function findnonzero(A)
 end
 
 """
-jumps = countphasejumps(phase,dim)
+    jumps = phasejumps(phase,dim)
 
-Count jumps greater than π in `phase` along dimension `dim`
+Count phase jumps greater than π in `phase` along dimension `dim`
 """
-function countphasejumps(phase,dim=1)
+function phasejumps(phase,dim=1)
     @assert (dim==1 || dim==2)
     Nx,Ny = size(phase)
     pdiff = zero(phase)
@@ -75,7 +75,7 @@ function countphasejumps(phase,dim=1)
   return pdiff
 end
 
-function countphasejumps!(pdiff,phase,dim=1)
+function phasejumps!(pdiff,phase,dim=1)
     @assert (dim==1 || dim==2)
     Nx,Ny = size(phase)
 
@@ -107,8 +107,8 @@ end
 function findvortices(psi::Torus)
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
-    diffx = countphasejumps(phase,1)
-    diffy = countphasejumps(phase,2)
+    diffx = phasejumps(phase,1)
+    diffy = phasejumps(phase,2)
 
     #use in-place memory recycling
     circshift!(phase,diffx,(0,1))
@@ -117,15 +117,15 @@ function findvortices(psi::Torus)
     circshift!(phase,diffy,(1,0))
     diffx .+= phase
 
-    ixp,iyp,vp = findnonzero(diffx.>0.)
+    ixp,iyp,vp = findallwhere(diffx.>0.)
     xp = x[ixp]; yp = y[iyp]; np = length(vp)
 
-    ixn,iyn,vn = findnonzero(diffx.<0.)
+    ixn,iyn,vn = findallwhere(diffx.<0.)
     xn = x[ixn]; yn = y[iyn]; nn = length(vn)
 
     nt = np + nn
 
-    dx = x[2]-x[1]; dy = y[2] - y[1]
+    dx = x[2]-x[1]; dy = y[2]-y[1]
     xp .+= -dx/2; yp .+= -dy/2; xn .+= -dx/2; yn .+= -dy/2
 
     vortices = [xn yn -vn; xp yp vp]
@@ -137,8 +137,8 @@ end
 function findvortices(psi::Sphere)
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
-    diffx = countphasejumps(phase,1)
-    diffy = countphasejumps(phase,2)
+    diffx = phasejumps(phase,1)
+    diffy = phasejumps(phase,2)
 
     #use in-place memory recycling
     circshift!(phase,diffx,(0,1))
@@ -147,10 +147,10 @@ function findvortices(psi::Sphere)
     circshift!(phase,diffy,(1,0))
     diffx .+= phase
 
-    ixp,iyp,vp = findnonzero(diffx.>0.)
+    ixp,iyp,vp = findallwhere(diffx.>0.)
     xp = x[ixp]; yp = y[iyp]; np = length(vp)
 
-    ixn,iyn,vn = findnonzero(diffx.<0.)
+    ixn,iyn,vn = findallwhere(diffx.<0.)
     xn = x[ixn]; yn = y[iyn]; nn = length(vn)
 
     nt = np + nn
@@ -162,7 +162,7 @@ function findvortices(psi::Sphere)
     vortices = [xn yn -vn; xp yp vp]
 
     # to do: optimize this step at start of method to avoid extra angle call:
-    windvals = countphasejumps(angle.(ψ),2)
+    windvals = phasejumps(angle.(ψ),2)
 
     #test north pole for winding. - sign means polar vortex co-rotating with w > 0
     w1 = sum(windvals[1,:])
@@ -178,6 +178,7 @@ end
 
 #this test appears to work:
 nt,np,nn,vortices = findvortices(psiw)
+
 
 function findvortices_interp(psi,x,y)
     nt,np,nn,vortices = findvortices_grid(psi,x,y)
