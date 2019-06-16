@@ -59,10 +59,17 @@ function findvortices_interp(psi,x,y)
     #TODO: allow for interp with periodic data (here edges are stripped to avoid)
     for j in 1:nt
         vortex = vortices[j,:]
+    try
         vortz,psiz,xz,yz = corezoom(vortex,psi,x,y)
         vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
         vortz,psiz,xz,yz = corezoom(vortz,psiz,xz,yz)
         vortices[j,1:2] = vortz[1:2]
+    catch
+        nothing
+        # if zoom fails, return grid result
+        # some boundary artifacts cause zoom interpolation to fail
+        # due to the interpolation causing the vortex to drift out of frame
+    end
     end
     return nt,np,nn,vortices
 end
