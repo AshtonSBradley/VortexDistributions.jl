@@ -14,6 +14,10 @@ struct Sphere <: Topology
     ψ::Array{Complex{Float64},2}
 end
 
+"""
+    ix,iy,v = findwhere(A)
+Finds indices `ix`, `iy`, and values where `A` returns true.
+"""
 function findwhere(A)
     I = findall(!iszero,A)
     v = A[I]
@@ -87,6 +91,10 @@ function phasejumps!(pdiff,phase,dim=1)
     end
 end
 
+"""
+    `nt,np,nn,vortices = findvortices(psi<:Topology;shift=true)`
+Returns `nt` total vortices, consisting of `np` positive, `nn` negative, and housed in the array `vortices`.
+"""
 function findvorticesgrid(psi::Torus;shift=true)
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
@@ -249,7 +257,7 @@ end
 """
     vortz,psiz,xz,yz = corezoom(vortices,psi,x,y,winhalf=2,Nz=30)
 
-Uses local interpolation to resolve core location to ~ 5 figures.
+Uses local interpolation to resolve core location to 4-5 figures.
 """
 function corezoom(vortices,psi,x,y,winhalf=2,Nz=30)
     xv,yv = vortices[1:2]

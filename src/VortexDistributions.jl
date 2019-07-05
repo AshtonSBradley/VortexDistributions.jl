@@ -19,9 +19,9 @@ include("remove_edgevortices.jl")
 include("vortexcore.jl")
 include("corezoom.jl")
 include("helpers.jl")
-include("velocities.jl")
-include("helmholtz.jl")
-include("energydecomposition.jl")
+# include("velocities.jl")
+# include("helmholtz.jl")
+# include("energydecomposition.jl")
 
 
 export findvortices_grid, findvortices_interp, findvortices,
@@ -31,6 +31,6 @@ findvortmask, remove_edgevortices, linspace, findnonzero,
 randomvortices, isinterior, checkvortexlocations, corezoom,
 core_chargen, make_fastcore
 
-export velocities, helmholtzdecomp, energydecomp
+# export velocities, helmholtzdecomp, energydecomp
 
 end # module
