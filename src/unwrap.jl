@@ -11,8 +11,8 @@ function unwrap(phase::Array{Float64,2},dim=1)
     uphase = copy(phase)
 
     if dim == 1
-    for j in 1:Ny
-        for i in 2:Nx
+    @inbounds for j in 1:Ny
+        @inbounds for i in 2:Nx
         (uphase[i,j] - uphase[i-1,j] >= π) && (uphase[i,j] -= 2π)
         (uphase[i,j] - uphase[i-1,j] <= -π) && (uphase[i,j] += 2π)
         end
@@ -21,20 +21,20 @@ function unwrap(phase::Array{Float64,2},dim=1)
     end
 
     elseif dim == 2
-    for j in 2:Ny
-        for i in 1:Nx
+    @inbounds for j in 2:Ny
+        @inbounds for i in 1:Nx
         (uphase[i,j] - uphase[i,j-1] >= π) && (uphase[i,j] -= 2π)
         (uphase[i,j] - uphase[i,j-1] <= -π) && (uphase[i,j] += 2π)
         end
 
     end
-        for i in 1:Nx
+        @inbounds for i in 1:Nx
         (uphase[i,1] - uphase[i,Ny] >= π) && (uphase[i,1] -= 2π)
         (uphase[i,1] - uphase[i,Ny] <= -π) && (uphase[i,1] += 2π)
         end
     end
 
-  return uphase
+    return uphase
 end
 
 function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
@@ -43,8 +43,8 @@ function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
     uphase .= phase
 
     if dim == 1
-    for j in 1:Ny
-        for i in 2:Nx
+    @inbounds for j in 1:Ny
+        @inbounds for i in 2:Nx
         (uphase[i,j] - uphase[i-1,j] >= π) && (uphase[i,j] -= 2π)
         (uphase[i,j] - uphase[i-1,j] <= -π) && (uphase[i,j] += 2π)
         end
@@ -53,14 +53,14 @@ function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
     end
 
     elseif dim == 2
-    for j in 2:Ny
-        for i in 1:Nx
+    @inbounds for j in 2:Ny
+        @inbounds for i in 1:Nx
         (uphase[i,j] - uphase[i,j-1] >= π) && (uphase[i,j] -= 2π)
         (uphase[i,j] - uphase[i,j-1] <= -π) && (uphase[i,j] += 2π)
         end
 
     end
-        for i in 1:Nx
+        @inbounds for i in 1:Nx
         (uphase[i,1] - uphase[i,Ny] >= π) && (uphase[i,1] -= 2π)
         (uphase[i,1] - uphase[i,Ny] <= -π) && (uphase[i,1] += 2π)
         end
@@ -70,7 +70,7 @@ end
 function unwrap(phase::Array{Float64,1})
     uphase = copy(phase)
     Nx = length(phase)
-        for i in 2:Nx
+        @inbounds for i in 2:Nx
         (uphase[i] - uphase[i-1] >= π) && (uphase[i] -= 2π)
         (uphase[i] - uphase[i-1] <= -π) && (uphase[i] += 2π)
         end
@@ -81,7 +81,7 @@ end
 
 function unwrap!(uphase::Array{Float64,1},phase::Array{Float64,1})
     Nx = length(phase)
-        for i in 2:Nx
+        @inbounds for i in 2:Nx
         (uphase[i] - uphase[i-1] >= π) && (uphase[i] -= 2π)
         (uphase[i] - uphase[i-1] <= -π) && (uphase[i] += 2π)
         end

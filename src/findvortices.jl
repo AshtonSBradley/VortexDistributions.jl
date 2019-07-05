@@ -4,8 +4,8 @@ function findvortices_grid(ψ,x,y;geometry="torus")
 @assert typeof(ψ)==Array{Complex{Float64},2}
 
    phase = angle.(ψ)
-   diffx = countphasejumps(phase,1)
-   diffy = countphasejumps(phase,2)
+   diffx = phasejumps(phase,1)
+   diffy = phasejumps(phase,2)
 
    #slightly more verbose:
    #circ = diffx .- circshift(diffx,(0,1)) .- diffy .+ circshift(diffy,(1,0))
@@ -36,7 +36,7 @@ if geometry == "sphere"
     vortices = [xn yn -vn; xp yp vp]
 
     # to do: optimize this step at start of method to avoid extra angle call:
-    windvals = countphasejumps(angle.(ψ),2)
+    windvals = phasejumps(angle.(ψ),2)
 
     #test north pole for winding. - sign means polar vortex co-rotating with w > 0
     w1 = sum(windvals[1,:])

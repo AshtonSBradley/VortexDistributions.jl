@@ -10,6 +10,7 @@ Make and evaluate the vortex core interpolation for charge `n`
 function core_chargen(x,n,ξ=1)
     y,ψ,res = gpecore(n)
     ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
+    # isdefined(VortexDistributions,:ψi) && (ψi = make_fastcore(n))
     return ψi(x/ξ)
 end
 
@@ -17,8 +18,13 @@ end
 Make the vortex core interpolation for charge `n`
 """
 function make_fastcore(n)
-    y,ψ,res = gpecore(n)
-    ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
+    if n==1
+        loadpath = dirname(pathof(VortexDistributions))
+        @load loadpath*"/vortexcore.jld2" y ψ
+    else
+        y,ψ,res = gpecore(n)
+    end
+        ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
     return ψi
 end
 
