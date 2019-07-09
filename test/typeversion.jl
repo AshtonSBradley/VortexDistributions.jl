@@ -1,7 +1,7 @@
 using Parameters, Interpolations
 
 abstract type FieldTopology end
-abstract type AbstractVortex end
+abstract type Vortex end
 abstract type VortexCore end
 
 struct Ansatz <: VortexCore end
@@ -19,13 +19,13 @@ struct Sphere <: FieldTopology
     ψ::Array{Complex{Float64},2}
 end
 
-struct Vortex2 <: AbstractVortex
+struct Vortex2 <: Vortex
     x::Float64
     y::Float64
     q::Int64
 end
 
-struct Vortex3 <: AbstractVortex
+struct Vortex3 <: Vortex
     x::Float64
     y::Float64
     z::Float64
