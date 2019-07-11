@@ -19,10 +19,10 @@ struct Sphere <: FieldTopology
     ψ::Array{Complex{Float64},2}
 end
 
-struct Vortex2 <: Vortex
-    x::Float64
-    y::Float64
-    q::Int64
+struct PointVortex <: Vortex
+    xv::Float64
+    yv::Float64
+    qv::Int64
 end
 
 struct Vortex3 <: Vortex
@@ -292,10 +292,10 @@ end
 
 
 
-vort = Vortex2(.1,.2,1)
+vort = PointVortex(.1,.2,1)
 
 x = randn(10);y = randn(10); charge = rand([-1,1])
 
-vort = Vortex2.(x,y,charge)
+vort = PointVortex.(x,y,charge)
 
 vort[3]
