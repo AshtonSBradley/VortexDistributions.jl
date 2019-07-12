@@ -25,7 +25,7 @@ struct PointVortex <: Vortex
     qv::Int64
 end
 
-function find_on_grid_unsorted(psi::FieldTopology,shift=true) where T<:FieldTopology
+function vorticesgrid(psi::T,shift=true) where T<:FieldTopology
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
     diffx = phasejumps(phase,1); diffy = phasejumps(phase,2)
@@ -53,19 +53,19 @@ function find_on_grid_unsorted(psi::FieldTopology,shift=true) where T<:FieldTopo
     return nt,np,nn,vortices
 end
 
-function findvorticesgrid(psi::Torus,shift=true)
+function findvortices(psi::Torus,shift=true)
     @unpack x,y,ψ = psi
 
-    nt,np,nn,vortices = find_on_grid_unsorted(psi,shift)
+    nt,np,nn,vortices = vorticesgrid(psi,shift)
 
     vortices = sortslices(vortices,dims=1)
 
     return nt,np,nn,vortices
 end
 
-function findvorticesgrid(psi::Sphere,shift=true)
+function findvortices(psi::Sphere,shift=true)
 
-    nt,np,nn,vortices = find_on_grid_unsorted(psi,shift)
+    nt,np,nn,vortices = vorticesgrid(psi,shift)
 
     # to do: optimize this step at start of method to avoid extra angle call:
     windvals = phasejumps(angle.(ψ),2)
@@ -256,8 +256,6 @@ function checkvortexlocations(testvort,vortices,x,y,Nv)
     end
     return vortfound
 end
-
-
 
 function makevortex(ψ,vortex,x,y,ξ=1.0)
     @assert typeof(x)==Array{Float64,1}
