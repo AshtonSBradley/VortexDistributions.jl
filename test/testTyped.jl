@@ -1,19 +1,19 @@
 # test typed version
 include("typeversion.jl")
-v1 = Vortex(.1,.2,1)
-v2 = Vortex(randn(),randn(),rand([1,-1]))
+v1 = PointVortex(.1,.2,1)
+v2 = PointVortex(randn(),randn(),rand([1,-1]))
 
-function randvortex()
-    return Vortex(randn(),randn(),rand([1,-1]))
+function randvortex(n)
+    return PointVortex.(randn(n),randn(n),rand([1,-1],n))
 end
 
-randvortex()
+getx(v::PointVortex) = (p->p.xv)(v)
+gety(v::PointVortex) = (p->p.yv)(v)
+getq(v::PointVortex) = (p->p.qv)(v)
 
-varray = Vortex.(randn(2),randn(2),[1; -1])
+function rawdata(v::Array{PointVortex,1})
+    return [getx.(v) gety.(v) getq.(v)]
+end
 
-v3 = [randn(2) randn(2) [1;-1]]
-varray2 = Vortex.(v3[:,1],v3[:,2],v3[:,3])
-
-varray3 = Vortex.(v3[1,:]...)
-
-vort=Vortex(.1,.2,-1)
+@time varray = randvortex(10000)
+@time vd = rawdata(varray)

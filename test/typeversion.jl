@@ -25,13 +25,6 @@ struct PointVortex <: Vortex
     qv::Int64
 end
 
-struct Vortex3 <: Vortex
-    x::Float64
-    y::Float64
-    z::Float64
-    q::Int64
-end
-
 function find_on_grid_unsorted(psi::FieldTopology,shift=true) where T<:FieldTopology
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
@@ -95,7 +88,7 @@ function findvorticesinterp(psi::T) where T<:FieldTopology
     @unpack ψ,x,y = psi
     nt,np,nn,vortices = findvorticesgrid(psi;shift=false)
     nt,np,nn,vortices = removeedgevortices(vortices,x,y)
-    #TODO: allow for interp with periodic data (here edges are stripped to avoid)
+    #TODO: allow for interp with periodic data (here edges are stripped)
     for j in 1:nt
         vortex = vortices[j,:]
         vortz,psiz,xz,yz = corezoom(vortex,ψ,x,y)
@@ -289,13 +282,3 @@ function makeallvortices!(ψ,vortices,x,y,ξ=1.0)
         makevortex!(ψ,vortices[j,:],x,y,ξ)
     end
 end
-
-
-
-vort = PointVortex(.1,.2,1)
-
-x = randn(10);y = randn(10); charge = rand([-1,1])
-
-vort = PointVortex.(x,y,charge)
-
-vort[3]
