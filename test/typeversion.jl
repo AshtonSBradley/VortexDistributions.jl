@@ -25,6 +25,12 @@ struct PointVortex <: Vortex
     qv::Int64
 end
 
+PointVortex(v::Array{Float64,2}) = PointVortex.(v[:,1],v[:,2],v[:,3])
+RawVortex(v::PointVortex) = [v.xv v.yv v.qv]
+RawVortex(v::Array{PointVortex,1}) = reduce(vcat,RawVortex.(v))
+randvortex(n) = PointVortex.(randn(n), randn(n), rand([1,-1],n))
+
+
 function vorticesgrid(psi::T,shift=true) where T<:FieldTopology
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
