@@ -6,14 +6,6 @@ function findvortices_grid(ψ,x,y;geometry="torus")
    phase = angle.(ψ)
    diffx = phasejumps(phase,1)
    diffy = phasejumps(phase,2)
-
-   #slightly more verbose:
-   #circ = diffx .- circshift(diffx,(0,1)) .- diffy .+ circshift(diffy,(1,0))
-   #diffx .-= circshift(diffx,(0,1))
-   #diffx .-= diffy
-   #diffx .+= circshift(diffy,(1,0))
-
-   #use in-place memory recycling
    circshift!(phase,diffx,(0,1))
    diffx .-= phase
    diffx .-= diffy

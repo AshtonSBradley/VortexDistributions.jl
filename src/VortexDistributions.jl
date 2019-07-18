@@ -12,11 +12,12 @@ using Reexport
 
 Interpolations.interpolate(A::Array{Complex{Float64},2})=interpolate(real(A))+im*interpolate(imag(A))
 
+const Λ = 0.8249
+
 include("findvortices.jl")
-include("unwrap.jl")
+include("detection.jl")
 include("makevortex.jl")
 include("findvortmask.jl")
-include("phasejumps.jl")
 include("remove_edgevortices.jl")
 include("vortexcore.jl")
 include("corezoom.jl")
