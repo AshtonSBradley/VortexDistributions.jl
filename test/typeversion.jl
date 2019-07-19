@@ -192,11 +192,12 @@ function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:FieldTopo
     itp = interpolate(knots, psiw, Gridded(Linear()))
     psiz = itp(xz,yz)
     ψv = T(psiz,xz |> Vector,yz |> Vector)
-    vortz = findvortices_grid(ψv,shift=false) #TODO Really need this???
-    vortz = removeedgevortices(vortz,ψv)
-    return vortz[1],ψv
+    vortz = findvortices_grid(ψv,shift=false)
+    vortz = removeedgevortices(vortz,ψv)[1]
+    return vortz,ψv
 end
 
+#TODO tidy this up!
 corezoom(vortex::Array{PointVortex,1},psi::FieldTopology,winhalf=2,Nz=30) = corezoom(vortex[1],psi,2,30)
 
 N = 100
@@ -304,28 +305,4 @@ function checkvortexlocations(testvort,vortices,x,y,Nv)
         end
     end
     return vortfound
-end
-
-function makevortex(ψ,vortex,x,y,ξ=1.0)
-    @assert typeof(x)==Array{Float64,1}
-    @assert typeof(y)==Array{Float64,1}
-    @assert typeof(ψ)==Array{Complex{Float64},2}
-    x0, y0, σ0 = vortex
-    R(x,y) = sqrt(x^2+y^2)
-    return  @. ψ*vortexcore(R(x.-x0,y'.-y0),ξ)*exp(im*σ0*atan(y'.-y0,x.-x0))
-end
-
-function makevortex!(ψ,vortex,x,y,ξ=1.0)
-    @assert typeof(x)==Array{Float64,1}
-    @assert typeof(y)==Array{Float64,1}
-    @assert typeof(ψ)==Array{Complex{Float64},2}
-    x0, y0, σ0 = vortex
-    R(x,y) = sqrt(x^2+y^2)
-    ψ .= @. ψ*vortexcore(R(x.-x0,y'.-y0),ξ)*exp(im*σ0*atan(y'.-y0,x.-x0))
-end
-
-function makeallvortices!(ψ,vortices,x,y,ξ=1.0)
-    for j = 1:size(vortices)[1]
-        makevortex!(ψ,vortices[j,:],x,y,ξ)
-    end
 end
