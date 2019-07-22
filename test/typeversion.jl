@@ -200,14 +200,14 @@ end
 #TODO tidy this up!
 corezoom(vortex::Array{PointVortex,1},psi::FieldTopology,winhalf=2,Nz=30) = corezoom(vortex[1],psi,2,30)
 
-N = 100
+N = 200
 L = 100.0
 x = LinRange(-L/2,L/2,N)
 y = x
 psi0 = one.(x*y') |> complex
 psi = Torus(psi0,x,y)
 
-vtest = randvortex(500,psi)
+vtest = randvortex(2,psi)
 makevortex!(psi,vtest)
 @unpack ψ = psi
 heatmap(x,y,angle.(ψ),transpose=true)
@@ -217,6 +217,7 @@ vgridraw = removeedgevortices(vgridraw,psi)
 vgrid = findvortices_grid(psi)
 vgrid = removeedgevortices(vgrid,psi)
 vint = findvortices_interp(psi)
+
 
 # ======================
 # ==== Masking
