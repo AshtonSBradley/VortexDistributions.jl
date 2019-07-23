@@ -1,19 +1,19 @@
 using Parameters, Interpolations, Plots, Test
 
-abstract type FieldTopology end
+abstract type Field end
 abstract type Vortex end
 abstract type VortexCore end
 
 struct Ansatz <: VortexCore end
 struct Exact <: VortexCore end
 
-@with_kw mutable struct Torus <: FieldTopology
+@with_kw mutable struct Torus <: Field
     ψ::Array{Complex{Float64},2}
     x::Vector{Float64}
     y::Vector{Float64}
 end
 
-@with_kw mutable struct Sphere <: FieldTopology
+@with_kw mutable struct Sphere <: Field
     ψ::Array{Complex{Float64},2}
     x::Vector{Float64}
     y::Vector{Float64}
@@ -29,7 +29,7 @@ PointVortex(v::Array{Float64,2}) = PointVortex.(v[:,1],v[:,2],v[:,3])
 RawVortex(v::PointVortex) = [v.xv v.yv v.qv]
 RawVortex(v::Array{PointVortex,1}) = reduce(vcat,RawVortex.(v))
 randvortex(n) = PointVortex.(randn(n), randn(n), rand([1,-1],n))
-function randvortex(n,psi::FieldTopology)
+function randvortex(n,psi::Field)
     @unpack ψ,x,y = psi
     return PointVortex.(rand(x,n),rand(y,n),rand([1,-1],n))
 end
@@ -44,7 +44,7 @@ function findwhere(A)
     return ix,iy,v
 end
 
-function findvortices_jumps(psi::FieldTopology;shift=true)
+function findvortices_jumps(psi::Field;shift=true)
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
 
@@ -120,7 +120,7 @@ function findvortices_grid(psi::Sphere;shift=true)
 end
 
 
-function findvortices_interp(psi::FieldTopology)
+function findvortices_interp(psi::Field)
     vort = findvortices_grid(psi,shift=false)
     vort = removeedgevortices(vort,psi)
     #TODO: allow for interp with periodic data (here edges are stripped)
@@ -139,7 +139,7 @@ function findvortices_interp(psi::FieldTopology)
 end
 
 """
-    vortices = findvortices(psi::T,interp=true) where T<:FieldTopology
+    vortices = findvortices(psi::T,interp=true) where T<:Field
 
 Locates vortices as 2π phase windings around plaquettes on a cartesian spatial grid. Uses an optimized plaquette method followed by recursive interpolation.
 
@@ -147,7 +147,7 @@ Requires a 2D wavefunction ψ(x,y) on a cartesian grid specified by vectors x, y
 
 `vortices` - array of vortex coordinates `xv,yv` and charges `qv`. Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order according to the `xv` coordinates
 """
-function findvortices(psi::FieldTopology,interp=true)
+function findvortices(psi::Field,interp=true)
     if interp
         return findvortices_interp(psi)
     else
@@ -159,7 +159,7 @@ end
 `vortices = removeedgevortices(vort::Array{PointVortex,1},x,y,edge=1)`
 
 Strips edgevortices due to periodic phase differencing."""
-function removeedgevortices(vort::Array{PointVortex,1},psi::FieldTopology,edge=1)
+function removeedgevortices(vort::Array{PointVortex,1},psi::Field,edge=1)
     @unpack x,y = psi; dx=x[2]-x[1]; dy=y[2]-y[1]
     keep = []
     for j = 1:length(vort)
@@ -173,11 +173,11 @@ function removeedgevortices(vort::Array{PointVortex,1},psi::FieldTopology,edge=1
 end
 
 """
-    vortz,psiz,xz,yz = corezoom(vortex,psi::T,winhalf=2,Nz=30) where T<: FieldTopology
+    vortz,psiz,xz,yz = corezoom(vortex,psi::T,winhalf=2,Nz=30) where T<: Field
 
 Uses local interpolation to resolve core location to ~ 5 figures.
 """
-function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:FieldTopology
+function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     @unpack ψ,x,y = psi
     xv,yv,qv = RawVortex(vortex)
     dx=x[2]-x[1]; dy=y[2]-y[1]
@@ -198,7 +198,7 @@ function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:FieldTopo
 end
 
 #TODO tidy this up!
-corezoom(vortex::Array{PointVortex,1},psi::FieldTopology,winhalf=2,Nz=30) = corezoom(vortex[1],psi,2,30)
+corezoom(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom(vortex[1],psi,2,30)
 
 N = 200
 L = 100.0
@@ -218,13 +218,12 @@ vgrid = findvortices_grid(psi)
 vgrid = removeedgevortices(vgrid,psi)
 vint = findvortices_interp(psi)
 
+#TODO more testing after here
 
-# ======================
-# ==== Masking
-function findvortexmask(psi::T,R) where T<: FieldTopology
+function findvortexmask(psi::T,R) where T<: Field
     @unpack x,y,ψ = psi
-    ψ = circmask(ψ,x,y,1.1*R)
-    ϕ = T(ψ,x,y)
+    ψ = circmask(psi,1.1*R)
+    ϕ = T(x,y,ψ)
     vortices = findvortices(ϕ)
 
 # TODO more tests
@@ -244,24 +243,24 @@ end
 #some helpers
 linspace(a,b,n) = LinRange(a,b,n) |> collect
 
-function edgemask(psi::T) where T<:FieldTopology
+function edgemask!(psi::T) where T<:Field
     @unpack ψ,x,y = psi
-    ψ[:,1] = zero(x)
-    ψ[:,end] = zero(x)
-    ψ[1,:] = zero(y')
-    ψ[end,:] = zero(y')
-    return T(x,y,ψ)
+    ψ[:,1] = zero(x) |> complex
+    ψ[:,end] = zero(x) |> complex
+    ψ[1,:] = zero(y') |> complex
+    ψ[end,:] = zero(y') |> complex
+    return T(ψ,x,y)
 end
 
-function circmask(psi::T,R) where T<:FieldTopology
+function circmask(psi::T,R) where T<:Field
     @unpack ψ,x,y = psi
     for j in eachindex(x), k in eachindex(y)
         (x[j]^2+y[k]^2 > R^2) && (ψ[j,k] = complex(0.))
     end
-    return ψ
+    return T(x,y,ψ)
 end
 
-function circmask!(phi::T,psi::T,R) where T<: FieldTopology
+function circmask!(phi::T,psi::T,R) where T<: Field
     @unpack ψ,x,y = psi
     phi.ψ .= psi.ψ
     for j in eachindex(x), k in eachindex(y)
@@ -276,26 +275,51 @@ function isinterior(a,b,x,y)
     return (-Lx/2 + 2dx < a < Lx/2 - 2dx && -Ly/2 + 2dy < b < Ly/2 - 2dy)
 end
 
-function randomvortices(x,y,Nv)
-    Lx = x[end]-x[1]; Ly = y[end] - y[1]
-    dx = x[2] - x[1]; dy = y[2] - y[1]
-    testvort = zeros(Nv,3)
+# function randomvortices(x,y,Nv)
+#     Lx = x[end]-x[1]; Ly = y[end] - y[1]
+#     dx = x[2] - x[1]; dy = y[2] - y[1]
+#     testvort = zeros(Nv,3)
+#
+#     k = 1
+#     while k<=Nv
+#         a = -Lx/2 + Lx*rand()
+#         b = -Ly/2 + Ly*rand()
+#         σ = rand([-1 1])
+#
+#         #make sure vortices are away from edges
+#         if isinterior(a,b,x,y)
+#             testvort[k,:] = [a b σ]
+#             k+=1
+#         end
+#     end
+#     return sortslices(testvort,dims=1)
+# end
 
-    k = 1
-    while k<=Nv
-        a = -Lx/2 + Lx*rand()
-        b = -Ly/2 + Ly*rand()
-        σ = rand([-1 1])
-
-        #make sure vortices are away from edges
-        if isinterior(a,b,x,y)
-            testvort[k,:] = [a b σ]
-            k+=1
-        end
-    end
-    return sortslices(testvort,dims=1)
+function uniform(a,b)
+    @assert a<b
+    return a + (b-a)*rand()
 end
 
+function uniform(a,b,n)
+    a = a*ones(n)
+    return uniform.(a,b)
+end
+
+uniform() = uniform(-.5,.5)
+
+randcharge(n) = rand([-1 1],n)
+
+#TODO
+
+function randomvortices(psi::Field,n)
+    @unpack ψ,x,y = psi
+    dx = x[2]-x[1]; dy = y[2]=y[1]
+    xi,xf = x[1]+2dx,x[end]-2dx
+    yi,yf = y[1]+2dy,y[end]-2dy
+    return PointVortex(uniform(xi,xf,n),uniform(yi,yf,n),randcharge(n))
+end
+
+#TODO update this function
 function checkvortexlocations(testvort,vortices,x,y,Nv)
 #check detection to 2 x grid resolution
     dx = x[2] - x[1]; dy = y[2] - y[1]
