@@ -2,10 +2,6 @@ using Parameters, Interpolations, Plots, Test
 
 abstract type Field end
 abstract type Vortex end
-abstract type VortexCore end
-
-struct Ansatz <: VortexCore end
-struct Exact <: VortexCore end
 
 @with_kw mutable struct Torus <: Field
     ψ::Array{Complex{Float64},2}
@@ -26,13 +22,37 @@ end
 end
 
 PointVortex(v::Array{Float64,2}) = PointVortex.(v[:,1],v[:,2],v[:,3])
-RawVortex(v::PointVortex) = [v.xv v.yv v.qv]
-RawVortex(v::Array{PointVortex,1}) = reduce(vcat,RawVortex.(v))
-randvortex(n) = PointVortex.(randn(n), randn(n), rand([1,-1],n))
-function randvortex(n,psi::Field)
-    @unpack ψ,x,y = psi
-    return PointVortex.(rand(x,n),rand(y,n),rand([1,-1],n))
+RawData(v::PointVortex) = [v.xv v.yv v.qv]
+RawData(v::Array{PointVortex,1}) = reduce(vcat,RawData.(v))
+
+function uniform(a,b)
+    @assert a<b
+    return a + (b-a)*rand()
 end
+
+function uniform(a,b,n)
+    a = a*ones(n)
+    return uniform.(a,b)
+end
+
+uniform(n) = uniform(-.5,.5,n)
+randcharge(n) = rand([-1 1],n)
+randPointVortex(n) = PointVortex.(uniform(n), uniform(n), randcharge(n))
+
+function randPointVortex(n,psi::Field)
+    @unpack ψ,x,y = psi
+    dx = x[2]-x[1]; dy = y[2]-y[1]
+    xi,xf = x[1]+2dx,x[end]-2dx
+    yi,yf = y[1]+2dy,y[end]-2dy
+    return PointVortex.(uniform(xi,xf,n),uniform(yi,yf,n),randcharge(n))
+end
+
+#TODO
+# function randvortex!(psi:Field,n)
+#     @unpack ψ,x,y = psi
+#     vort = randPointVortex(n,psi)
+#     makevortex!()
+# end
 
 include("../src/detection.jl")
 
@@ -63,41 +83,68 @@ function findvortices_jumps(psi::Field;shift=true)
     ixn,iyn,vn = findwhere(diffx .< 0.0)
     xn = x[ixn]; yn = y[iyn]; nn = length(vn)
 
-    nt = np + nn
-
     if shift
         dx = x[2]-x[1]; dy = y[2] - y[1]
-        xp .+= -dx/2; yp .+= -dy/2; xn .+= -dx/2; yn .+= -dy/2
+        xp .-= dx/2; yp .-= dy/2; xn .-= dx/2; yn .-= dy/2
     end
+
     vortices = [xn yn -vn; xp yp vp]
 
     return PointVortex(vortices)
 end
 
+# Construction
+
+# ansatz vortex wavefunction
 Λ = 0.8249
 r(x,y) = sqrt(x^2+y^2)
-vcore(r) = (Λ*r)^2/(1+(Λ*r)^2)
-vdensity(x,y) = sqrt(vcore(r(x,y)))
+vcore(r) = sqrt((Λ*r)^2/(1+(Λ*r)^2))
+vcore(x,y) = vcore(r(x,y))
 vphase(x,y) = atan(y,x)
-vortexgrid(x,y,x0,y0,q0) = vdensity(x - x0, y - y0)*exp(im*q0*vphase(x-x0,y-y0))
+vortexgrid(x,y,x0,y0,q0) = vcore(x - x0, y - y0)*exp(im*q0*vphase(x-x0,y-y0))
 
-function makevortex!(psi::Torus,vort::PointVortex)
+function gpeansatz!(psi::Torus,vort::PointVortex)
     @unpack ψ,x,y = psi
-    xv,yv,qv = RawVortex(vort)
+    xv,yv,qv = RawData(vort)
     @. ψ *= vortexgrid(x,y',xv,yv,qv)
     @pack! psi = ψ
     return psi
 end
 
-function makevortex!(psi::Torus,vort::Array{PointVortex,1})
+function gpeansatz!(psi::Torus,vort::Array{PointVortex,1})
     for j in eachindex(vort)
-        makevortex!(psi,vort[j])
+        gpeansatz!(psi,vort[j])
     end
 end
 
+# TODO create and save some decent interpolations
+# function gpeexact!(psi:Torus,vort::PointVortex)
+#     @unpack ψ,x,y = psi
+#     xv,yv,qv = RawData(vort)
+#     if !isdefined(VortexDistributions,:gpecore)
+#     loadpath = dirname(pathof(VortexDistributions))
+#     @load joinpath(loadpath,"gpecore.jld2") y gpecore
+#     end
+#
+#     return psi
+# end
+
+# function make_fastcore(n)
+#     if n==1
+#         loadpath = dirname(pathof(VortexDistributions))
+#         @load loadpath*"/vortexcore.jld2" y ψ
+#     else
+#         y,ψ,res = gpecore(n)
+#     end
+#         ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
+#     return ψi
+# end
+
+# Detection
+
 function findvortices_grid(psi::Torus;shift=true)
     vort = findvortices_jumps(psi,shift=shift)
-    rawvort = RawVortex(vort)
+    rawvort = RawData(vort)
     vort = sortslices(rawvort,dims=1)
     return PointVortex(vort)
 end
@@ -106,7 +153,7 @@ function findvortices_grid(psi::Sphere;shift=true)
     @unpack ψ = psi
     windvals = phasejumps(angle.(ψ),2)
     vort = findvortices_jumps(psi,shift=shift)
-    rawvort = RawVortex(vort)
+    rawvort = RawData(vort)
 
     # North pole winding. - sign means polar vortex co-rotating with w > 0
     w1 = sum(windvals[1,:])
@@ -121,7 +168,7 @@ end
 
 
 function findvortices_interp(psi::Field)
-    vort = findvortices_grid(psi,shift=false)
+    vort = findvortices_grid(psi,shift=true)
     vort = removeedgevortices(vort,psi)
     #TODO: allow for interp with periodic data (here edges are stripped)
 
@@ -163,7 +210,7 @@ function removeedgevortices(vort::Array{PointVortex,1},psi::Field,edge=1)
     @unpack x,y = psi; dx=x[2]-x[1]; dy=y[2]-y[1]
     keep = []
     for j = 1:length(vort)
-        xi,yi,qi = RawVortex(vort[j])
+        xi,yi,qi = RawData(vort[j])
         xedge = isapprox(xi,x[1],atol=edge*dx) || isapprox(xi,x[end],atol=edge*dx)
         yedge = isapprox(yi,y[1],atol=edge*dy) || isapprox(yi,y[end],atol=edge*dy)
         not_edge = !(xedge || yedge)
@@ -179,7 +226,7 @@ Uses local interpolation to resolve core location to ~ 5 figures.
 """
 function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     @unpack ψ,x,y = psi
-    xv,yv,qv = RawVortex(vortex)
+    xv,yv,qv = RawData(vortex)
     dx=x[2]-x[1]; dy=y[2]-y[1]
     ixv = isapprox.(x,xv,atol=dx) |> findlast
     iyv = isapprox.(y,yv,atol=dy) |> findlast
@@ -200,25 +247,7 @@ end
 #TODO tidy this up!
 corezoom(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom(vortex[1],psi,2,30)
 
-N = 200
-L = 100.0
-x = LinRange(-L/2,L/2,N)
-y = x
-psi0 = one.(x*y') |> complex
-psi = Torus(psi0,x,y)
-
-vtest = randvortex(2,psi)
-makevortex!(psi,vtest)
-@unpack ψ = psi
-heatmap(x,y,angle.(ψ),transpose=true)
-
-vgridraw = findvortices_grid(psi,shift=false)
-vgridraw = removeedgevortices(vgridraw,psi)
-vgrid = findvortices_grid(psi)
-vgrid = removeedgevortices(vgrid,psi)
-vint = findvortices_interp(psi)
-
-#TODO more testing after here
+# Masking
 
 function findvortexmask(psi::T,R) where T<: Field
     @unpack x,y,ψ = psi
@@ -240,7 +269,7 @@ end
 return vortfound[1]
 end
 
-#some helpers
+# Helpers
 linspace(a,b,n) = LinRange(a,b,n) |> collect
 
 function edgemask!(psi::T) where T<:Field
@@ -275,50 +304,6 @@ function isinterior(a,b,x,y)
     return (-Lx/2 + 2dx < a < Lx/2 - 2dx && -Ly/2 + 2dy < b < Ly/2 - 2dy)
 end
 
-# function randomvortices(x,y,Nv)
-#     Lx = x[end]-x[1]; Ly = y[end] - y[1]
-#     dx = x[2] - x[1]; dy = y[2] - y[1]
-#     testvort = zeros(Nv,3)
-#
-#     k = 1
-#     while k<=Nv
-#         a = -Lx/2 + Lx*rand()
-#         b = -Ly/2 + Ly*rand()
-#         σ = rand([-1 1])
-#
-#         #make sure vortices are away from edges
-#         if isinterior(a,b,x,y)
-#             testvort[k,:] = [a b σ]
-#             k+=1
-#         end
-#     end
-#     return sortslices(testvort,dims=1)
-# end
-
-function uniform(a,b)
-    @assert a<b
-    return a + (b-a)*rand()
-end
-
-function uniform(a,b,n)
-    a = a*ones(n)
-    return uniform.(a,b)
-end
-
-uniform() = uniform(-.5,.5)
-
-randcharge(n) = rand([-1 1],n)
-
-#TODO
-
-function randomvortices(psi::Field,n)
-    @unpack ψ,x,y = psi
-    dx = x[2]-x[1]; dy = y[2]=y[1]
-    xi,xf = x[1]+2dx,x[end]-2dx
-    yi,yf = y[1]+2dy,y[end]-2dy
-    return PointVortex(uniform(xi,xf,n),uniform(yi,yf,n),randcharge(n))
-end
-
 #TODO update this function
 function checkvortexlocations(testvort,vortices,x,y,Nv)
 #check detection to 2 x grid resolution
@@ -330,4 +315,149 @@ function checkvortexlocations(testvort,vortices,x,y,Nv)
         end
     end
     return vortfound
+end
+
+
+# Testing
+
+N = 200
+L = 100.0
+x = LinRange(-L/2,L/2,N)
+y = x
+psi0 = one.(x*y') |> complex
+psi = Torus(psi0,x,y)
+
+vtest = randPointVortex(1,psi)
+gpeansatz!(psi,vtest)
+@unpack ψ = psi
+heatmap(x,y,angle.(ψ),transpose=true)
+
+
+
+
+# test detection
+vgridraw = findvortices_grid(psi,shift=false)
+vgridraw = removeedgevortices(vgridraw,psi)
+
+
+
+vgrid = findvortices_grid(psi)
+vgrid = removeedgevortices(vgrid,psi)
+
+
+
+# creation
+N = 200
+L = 100.0
+x = LinRange(-L/2,L/2,N)
+y = x
+psi0 = one.(x*y') |> complex
+psi = Torus(psi0,x,y)
+
+vtest = randPointVortex(1,psi)
+xv,yv,qv = RawData(vtest)
+y,ψ,res = gpecore(n)
+
+function gpeexact!(psi:Torus,vort::PointVortex)
+    @unpack ψ,x,y = psi
+    xv,yv,qv = RawData(vort)
+    if !isdefined(VortexDistributions,:gpecore)
+    loadpath = dirname(pathof(VortexDistributions))
+    @load joinpath(loadpath,"gpecore.jld2") y gpecore
+    end
+
+    return psi
+end
+
+"""
+Make and evaluate the vortex core interpolation for charge `n`
+"""
+function core_chargen(x,n,ξ=1)
+    y,ψ,res = gpecore(n)
+    ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
+    # isdefined(VortexDistributions,:ψi) && (ψi = make_fastcore(n))
+    return ψi(x/ξ)
+end
+
+"""
+Make the vortex core interpolation for charge `n`
+"""
+function make_fastcore(n)
+    if n==1
+        loadpath = dirname(pathof(VortexDistributions))
+        @load loadpath*"/vortexcore.jld2" y ψ
+    else
+        y,ψ,res = gpecore(n)
+    end
+        ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
+    return ψi
+end
+
+"""
+Evaluate fast core interpolation
+"""
+function vortexcore(r,ψi::Interpolations.GriddedInterpolation,ξ=1)
+    return ψi(r/ξ)
+end
+
+function gpecore(K,L=2,N=100,R = K)
+    #currently r does  nothing!
+    #N = 100
+    #L = 2
+    #Κ = 1
+    #R = 2 # Stretching coordinate.  R ~ kappa seems to be a good ballpark
+
+# Convert Chebyshev grid to [0,L] from [1 -1];
+z,Dz = getChebDMatrix(N)
+blank,D2z = getChebD2Matrix(N)
+z = vec(reverse(z,dims=2))
+z = (z)*L./2
+Dz = -2*Dz./L
+D2z = 4*D2z./L.^2
+
+# y is the physical coordinate, range [0 infinity] (i.e y = r)
+y =  R*(1 .+z)./(1 .-z)
+
+#initial guess based on ansatz
+Λ = 0.8248
+ψ = @. y/sqrt(y^2 + Λ^-2)
+ψ[1] = 0
+ψ[end] = 1
+ψ0 = vec(ψ)
+
+Q = vec(z.^2 .- 2*z .+ 1)
+Qmat = repeat(Q,1,N)
+Zmat = repeat(2*(z .-1),1,N)
+Ymat = repeat(1 ./y,1,N);
+
+# Second Derivative
+residuals = -0.5*( (Q.*(D2z*ψ) + 2*(z .-1).*(Dz*ψ) ).*Q/(4*R^2)
+        + (Q/(2*R) ./y).*(Dz*ψ) )+ 0.5*K^2 *ψ ./y.^2 + ψ.^3 .- ψ
+residuals[1] = 0; residuals[end] =0
+
+while sum(abs.(residuals).^2) > 1e-12
+    # Second Derivative
+    residuals = -0.5*( (Q.*(D2z*ψ) + 2*(z .-1).*(Dz*ψ) ).*Q/(4*R^2)
+            + (Q/(2*R) ./y).*(Dz*ψ) )+ 0.5*K^2 *ψ ./y.^2 + ψ.^3 .- ψ
+    residuals[1] = 0; residuals[end] =0
+
+    #println(sum(abs.(residuals).^2))
+
+
+    Jacobi = -0.5*( (Qmat.*(D2z) + Zmat.*(Dz) ).*(Qmat/(4*R^2))
+    + (Qmat/(2*R).*Ymat).*(Dz) ) + diagm(0 => 0.5*K^2 ./y.^2)+ diagm(0 => 3*ψ.^2 .- 1)
+
+
+    Jacobi[1,:] = [1 zeros(1,N-1)]
+    Jacobi[N,:] = [zeros(1,N-1) 1]
+
+
+    Δ = vec(-4/7*(Jacobi\residuals))
+
+    ψ = ψ + Δ
+    ψ[1] = 0
+    ψ[end] =1
+end
+    res = sum(abs.(residuals).^2)
+    return y,ψ,res
 end
