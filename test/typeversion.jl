@@ -361,6 +361,3 @@ scatter!([RawData(vgridraw)[1]],[RawData(vgridraw)[2]])
 vgrid = findvortices_grid(psi)
 vgrid = removeedgevortices(vgrid,psi)
 scatter!([RawData(vgrid)[1]],[RawData(vgrid)[2]])
-
-vgridi = findvortices(psi)
-scatter!([RawData(vgridi)[1]],[RawData(vgridi)[2]])
