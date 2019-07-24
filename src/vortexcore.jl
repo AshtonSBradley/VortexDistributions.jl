@@ -11,7 +11,7 @@ function core_chargen(x,n,ξ=1)
     y,ψ,res = gpecore(n)
     ψi = interpolate(tuple(y[1:end-1]), ψ[1:end-1], Gridded(Linear()))
     # isdefined(VortexDistributions,:ψi) && (ψi = make_fastcore(n))
-    return ψi(x/ξ)
+    return ψi(x)
 end
 
 """
@@ -79,19 +79,13 @@ while sum(abs.(residuals).^2) > 1e-12
             + (Q/(2*R) ./y).*(Dz*ψ) )+ 0.5*K^2 *ψ ./y.^2 + ψ.^3 .- ψ
     residuals[1] = 0; residuals[end] =0
 
-    #println(sum(abs.(residuals).^2))
-
-
     Jacobi = -0.5*( (Qmat.*(D2z) + Zmat.*(Dz) ).*(Qmat/(4*R^2))
     + (Qmat/(2*R).*Ymat).*(Dz) ) + diagm(0 => 0.5*K^2 ./y.^2)+ diagm(0 => 3*ψ.^2 .- 1)
-
 
     Jacobi[1,:] = [1 zeros(1,N-1)]
     Jacobi[N,:] = [zeros(1,N-1) 1]
 
-
     Δ = vec(-4/7*(Jacobi\residuals))
-
     ψ = ψ + Δ
     ψ[1] = 0
     ψ[end] =1
