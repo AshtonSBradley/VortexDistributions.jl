@@ -3,6 +3,7 @@ using LinearAlgebra, ToeplitzMatrices, FileIO, JLD2
 
 abstract type Field end
 abstract type Vortex end
+abstract type VortexCore end
 
 @with_kw mutable struct Torus <: Field
     ψ::Array{Complex{Float64},2}
@@ -264,7 +265,72 @@ end
 include("../src/creation.jl")
 
 # Creation
+#makevortex!(psi::Field,vortex::Vortex)
+using Parameters
+
+abstract type CoreShape end
+
+scalaransatz(x) = sqrt(x^2/(1+x^2))
+
+struct Ansatz <: CoreShape
+    Λ::Float64
+    ξ::Float64
+    f::Function
+end
+
+function (c::Ansatz)(x)
+    @unpack Λ,ξ,f = c
+    return f(Λ*x/ξ)
+end
+
+ansatz = Ansatz(0.8,1.,scalaransatz)
+
+ansatz(.1)
+struct Exact <: CoreShape
+    ξ::Float64
+    ψi::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
+end
+
+(c::Exact)(args...) = exact(args...)
+(c::Ansatz)(args...) = ansatz(args...)
+
 # ansatz vortex wavefunction
+struct ScalarVortex{T<:CoreShape} <: Vortex
+    vort::PointVortex
+    core::T
+end
+
+
+function (s::ScalarVortex{T})(x) where T<:CoreShap
+    vortexansatz(x,y,x0,y0,q0,ξ)
+end
+
+function (s::ScalarVortex{Exact})(x)
+
+end
+
+function vortex!(psi::Field,vort::Vortex)
+    @unpack ψ,x,y = psi,
+
+    @. ψ *= vortexansatz(x,y',vort)
+    @pack! psi = ψ
+end
+
+core1 = ScalarCore2(.1,r)
+
+Ansatz(a, b) = Ansatz(a, b, ansatz)
+
+core = Ansatz(0.83, 1., ansatz)
+
+x = LinRange(0, 1, 10000)
+
+core.(x)
+@time Ansatz(0.83, 1.).(x)
+@time fansatz.(x)
+
+# ===============
+
+
 Λ = 0.8249
 r(x,y) = sqrt(x^2+y^2)
 coreansatz(r) = sqrt((Λ*r)^2/(1+(Λ*r)^2))
@@ -284,7 +350,6 @@ function gpeansatz!(psi::Torus,vort::PointVortex,ξ=1.)
     xv,yv,qv = RawData(vort)
     @. ψ *= vortexansatz(x,y',[vort],ξ)
     @pack! psi = ψ
-    return psi
 end
 
 function gpeansatz!(psi::Torus,vort::Array{PointVortex,1},ξ=1.)
@@ -296,7 +361,7 @@ end
 # exact core
 y,ψ,res = gpecore_exact(1)
 @load "./src/exactcore.jld2" ψi
-
+typeof(ψi)
 coreexact(r) = ψi(r)
 coreexact(x,y,ξ=1.) = coreexact(r(x,y)/ξ)
 vortexexact(x,y,x0,y0,q0,ξ=1.) = coreexact(x - x0, y - y0,ξ)*exp(im*q0*vphase(x-x0,y-y0))
@@ -307,11 +372,9 @@ function vortexexact(x,y,vort::PointVortex,ξ=1.)
 end
 
 function gpeexact!(psi::Torus,vort::PointVortex,ξ=1.)
-        @unpack ψ,x,y = psi
-        @. ψ *= vortexexact(x,y',[vort],ξ)
-        @pack! psi = ψ
-        return psi
-    return
+    @unpack ψ,x,y = psi
+    @. ψ *= vortexexact(x,y',[vort],ξ)
+    @pack! psi = ψ
 end
 
 function gpeexact!(psi::Torus,vort::Array{PointVortex,1},ξ=1.)
@@ -334,9 +397,6 @@ gpeexact!(psi,vtest)
 @unpack ψ = psi
 heatmap(x,y,angle.(ψ))
 heatmap(x,y,abs2.(ψ))
-
-
-
 
 # Testing
 gr(transpose=true,aspectratio=1)
