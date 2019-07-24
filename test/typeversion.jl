@@ -320,33 +320,49 @@ end
 
 # Testing
 
-N = 200
-L = 100.0
+N = 10
+L = 10.
 x = LinRange(-L/2,L/2,N)
 y = x
-psi0 = one.(x*y') |> complex
-psi = Torus(psi0,x,y)
 
 vtest = randPointVortex(1,psi)
+
+psi0 = one.(x*y') |> complex
+psi = Torus(psi0,x,y)
 gpeansatz!(psi,vtest)
 @unpack ψ = psi
 heatmap(x,y,angle.(ψ),transpose=true)
+scatter!([vtest[1].xv],[vtest[1].yv])
 
 
+phase = angle.(ψ)
+diffx = phasejumps(phase,1); diffy = phasejumps(phase,2)
+circshift!(phase,diffx,(0,1))
+diffx .-= phase; diffx .-= diffy
+circshift!(phase,diffy,(1,0))
+diffx .+= phase
 
+circshift!(phase,diffx,(-1,0))
+phase = circshift(phase,(0,-1))
+heatmap(x,y,phase,transpose=true)
+scatter!([vtest[1].xv],[vtest[1].yv])
 
 # test detection
-vgridraw = findvortices_grid(psi,shift=false)
+vgridraw = findvortices_grid(psi,shift=true)
 vgridraw = removeedgevortices(vgridraw,psi)
-
-
-
+#
+#
+#
 vgrid = findvortices_grid(psi)
 vgrid = removeedgevortices(vgrid,psi)
 
 
 
-# creation
+vinterp = findvortices_interp(psi)
+
+
+#= creation
+
 N = 200
 L = 100.0
 x = LinRange(-L/2,L/2,N)
@@ -461,3 +477,4 @@ end
     res = sum(abs.(residuals).^2)
     return y,ψ,res
 end
+=#
