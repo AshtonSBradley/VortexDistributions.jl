@@ -39,6 +39,7 @@ end
 uniform(n) = uniform(-.5,.5,n)
 randcharge(n) = rand([-1 1],n)
 randPointVortex(n) = PointVortex.(uniform(n), uniform(n), randcharge(n))
+randPointVortex() = randPointVortex(1)[1]
 
 function randPointVortex(n,psi::Field)
     @unpack ψ,x,y = psi
@@ -265,58 +266,105 @@ end
 include("../src/creation.jl")
 
 # Creation
-#makevortex!(psi::Field,vortex::Vortex)
-using Parameters
+#vortex!(psi::Field,vortex::Vortex)
+
+
+using Interpolations, Parameters, FileIO, JLD2
 
 abstract type CoreShape end
+abstract type Vortex end
+
+@load "./src/exactcore.jld2" ψi
 
 scalaransatz(x) = sqrt(x^2/(1+x^2))
+r(x,y) = sqrt(x^2+y^2)
 
 struct Ansatz <: CoreShape
-    Λ::Float64
-    ξ::Float64
     f::Function
+    ξ::Float64
+    Λ::Float64
 end
 
-function (c::Ansatz)(x)
-    @unpack Λ,ξ,f = c
+function (core::Ansatz)(x)
+    @unpack Λ,ξ,f = core
     return f(Λ*x/ξ)
 end
 
-ansatz = Ansatz(0.8,1.,scalaransatz)
+(core::Ansatz)(x,y) = core(r(x,y))
 
+ansatz = Ansatz(scalaransatz,1.,0.8249)
+Ansatz(scalaransatz,1.,0.8249)(.1)
+x=LinRange(0,1,100)
 ansatz(.1)
+ansatz.(x)
+ansatz.(x,x')
+Ansatz(scalaransatz,1.2,0.8249).(x,x')
+
 struct Exact <: CoreShape
+    f::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
     ξ::Float64
-    ψi::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
 end
 
-(c::Exact)(args...) = exact(args...)
-(c::Ansatz)(args...) = ansatz(args...)
+function (core::Exact)(x)
+    @unpack ξ,f = core
+    return f(x/ξ)
+end
+
+(core::Exact)(x,y) = core(r(x,y))
+
+exact = Exact(ψi,1.)
+x = LinRange(0,1,100)
+exact(.1)
+exact.(x)
+exact.(x,x')
+Exact(ψi,1.2).(x,x')
 
 # ansatz vortex wavefunction
 struct ScalarVortex{T<:CoreShape} <: Vortex
-    vort::PointVortex
     core::T
+    vort::PointVortex
 end
 
-
-function (s::ScalarVortex{T})(x) where T<:CoreShap
-    vortexansatz(x,y,x0,y0,q0,ξ)
+function (s::ScalarVortex{T})(x,y) where T <: CoreShape
+    @unpack xv,yv,qv = s.vort
+    return s.core(x - xv, y - yv)*exp(im*qv*atan(y - yv,x - xv))
 end
 
-function (s::ScalarVortex{Exact})(x)
+vort1 = randPointVortex()
+scala_exact = ScalarVortex(exact,vort1)
+scala_ansatz = ScalarVortex(ansatz,vort1)
+scala_ansatz.(x,x')
+scala_exact.(x,x')
 
-end
-
-function vortex!(psi::Field,vort::Vortex)
-    @unpack ψ,x,y = psi,
-
-    @. ψ *= vortexansatz(x,y',vort)
+function vortex!(psi::Field,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
+    @unpack ψ,x,y = psi
+    @. ψ *= vort.(x,y')
     @pack! psi = ψ
 end
 
-core1 = ScalarCore2(.1,r)
+using Plots
+gr(transpose=true,aspectratio=1)
+N = 200
+L = 100.0
+x = LinRange(-L/2,L/2,N)
+y = x
+
+psi0 = one.(x*y') |> complex
+psi = Torus(psi0,x,y)
+vtest = randPointVortex(1,psi)[1]
+vort1 = ScalarVortex(exact,vtest)
+Exact() = Exact(ψi,1.)
+Ansatz() = Ansatz(scalaransatz,1.,0.8249)
+
+vort2 = ScalarVortex(Exact(),vtest)
+ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
+vort3 = ScalarVortex(vtest)
+
+vortex!(psi,vort3)
+@unpack ψ = psi
+heatmap(x,y,angle.(ψ))
+heatmap(x,y,abs2.(ψ))
+
 
 Ansatz(a, b) = Ansatz(a, b, ansatz)
 
