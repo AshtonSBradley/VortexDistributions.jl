@@ -3,7 +3,7 @@ using LinearAlgebra, ToeplitzMatrices, FileIO, JLD2
 
 abstract type Field end
 abstract type Vortex end
-abstract type VortexCore end
+abstract type CoreShape end
 
 @with_kw mutable struct Torus <: Field
     ψ::Array{Complex{Float64},2}
@@ -36,10 +36,13 @@ function uniform(a,b,n)
     return uniform.(a*ones(n),b)
 end
 
+uniform() = uniform(-.5,.5)
 uniform(n) = uniform(-.5,.5,n)
+
+randcharge() = rand([-1 1],)
 randcharge(n) = rand([-1 1],n)
 randPointVortex(n) = PointVortex.(uniform(n), uniform(n), randcharge(n))
-randPointVortex() = randPointVortex(1)[1]
+randPointVortex() = PointVortex(uniform(),uniform(),randcharge())
 
 function randPointVortex(n,psi::Field)
     @unpack ψ,x,y = psi
@@ -48,6 +51,8 @@ function randPointVortex(n,psi::Field)
     yi,yf = y[1]+2dy,y[end]-2dy
     return PointVortex.(uniform(xi,xf,n),uniform(yi,yf,n),randcharge(n))
 end
+
+randPointVortex(psi::Field) = randPointVortex((),psi::Field)
 
 # Detection
 include("../src/detection.jl")
@@ -166,9 +171,9 @@ function removeedgevortices(vort::Array{PointVortex,1},psi::Field,edge=1)
 end
 
 """
-    vortz,psiz,xz,yz = corezoom(vortex,psi::T,winhalf=2,Nz=30) where T<: Field
+    vortz,psiz = corezoom(vortex,psi::T,winhalf=2,Nz=30) where T <: Field
 
-Uses local interpolation to resolve core location to ~ 5 figures.
+Uses local interpolation to resolve core location.
 """
 function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     @unpack ψ,x,y = psi
@@ -190,7 +195,6 @@ function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     return vortz,ψv
 end
 
-#TODO tidy this up!
 corezoom(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom(vortex[1],psi,2,30)
 
 # Masking
@@ -264,83 +268,119 @@ end
 
 # Creation
 include("../src/creation.jl")
+scalaransatz(x) = sqrt(x^2/(1+x^2))
 
-# Creation
-#vortex!(psi::Field,vortex::Vortex)
-
-
-using Interpolations, Parameters, FileIO, JLD2
-
-abstract type CoreShape end
-abstract type Vortex end
+# y,ψ,res = gpecore_exact(1)
+# ψi = interpolate(tuple(y[1:99]), scalaransatz.(y[1:99]), Gridded(Linear()))
+# ψa = interpolate(tuple(y[1:99]), ψ.(y[1:99]), Gridded(Linear()))
+# @save "./src/ansatzcore.jld2" ψa
+# @save "./src/ansatzcore.jld2" ψa
 
 @load "./src/exactcore.jld2" ψi
+@load "./src/ansatzcore.jld2" ψa
 
-scalaransatz(x) = sqrt(x^2/(1+x^2))
+
 r(x,y) = sqrt(x^2+y^2)
 
 struct Ansatz <: CoreShape
-    f::Function
+    f::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
     ξ::Float64
     Λ::Float64
 end
 
+Ansatz() = Ansatz(ψa,1.0,0.8249)
+
 function (core::Ansatz)(x)
-    @unpack Λ,ξ,f = core
+    @unpack f,ξ,Λ = core
     return f(Λ*x/ξ)
 end
-
 (core::Ansatz)(x,y) = core(r(x,y))
-
-ansatz = Ansatz(scalaransatz,1.,0.8249)
-Ansatz(scalaransatz,1.,0.8249)(.1)
-x=LinRange(0,1,100)
-ansatz(.1)
-ansatz.(x)
-ansatz.(x,x')
-Ansatz(scalaransatz,1.2,0.8249).(x,x')
 
 struct Exact <: CoreShape
     f::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
     ξ::Float64
 end
+Exact() = Exact(ψi,1.0)
 
 function (core::Exact)(x)
     @unpack ξ,f = core
     return f(x/ξ)
 end
-
 (core::Exact)(x,y) = core(r(x,y))
 
-exact = Exact(ψi,1.)
-x = LinRange(0,1,100)
-exact(.1)
-exact.(x)
-exact.(x,x')
-Exact(ψi,1.2).(x,x')
-
-# ansatz vortex wavefunction
 struct ScalarVortex{T<:CoreShape} <: Vortex
     core::T
     vort::PointVortex
 end
+ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
 
 function (s::ScalarVortex{T})(x,y) where T <: CoreShape
     @unpack xv,yv,qv = s.vort
     return s.core(x - xv, y - yv)*exp(im*qv*atan(y - yv,x - xv))
 end
 
-vort1 = randPointVortex()
-scala_exact = ScalarVortex(exact,vort1)
-scala_ansatz = ScalarVortex(ansatz,vort1)
-scala_ansatz.(x,x')
-scala_exact.(x,x')
+randPointVortex() = PointVortex(uniform(),uniform(),randcharge())
+randPointVortex(n) = PointVortex.(uniform(n), uniform(n), randcharge(n))
+function randPointVortex(psi::Field)
+    @unpack x,y = psi; a,b = first(x),last(x); c,d = first(y), last(y)
+    return PointVortex(uniform(a,b,),uniform(c,d,),randcharge())
+end
+function randPointVortex(n,psi::Field)
+    @unpack x,y = psi;
+    dx = x[2]-x[1]; dy = y[2] - y[1]
+    a,b = first(x)+2dx,last(x)-2dx; c,d = first(y)+2dy, last(y)-2dy
+    return PointVortex.(uniform(a,b,n),uniform(c,d,n),randcharge(n))
+end
 
-function vortex!(psi::Field,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
+randScalarVortex() = ScalarVortex(randPointVortex())
+randScalarVortex(n) = ScalarVortex.(randPointVortex(n))
+randScalarVortex(psi::Field) = ScalarVortex(Exact(),randPointVortex(psi))
+randScalarVortex(n,psi::Field) = ScalarVortex.([Exact()],randPointVortex(n,psi))
+
+randVortex() = randScalarVortex()
+randVortex(n) = randScalarVortex(n)
+randVortex(n,psi::Field) = randScalarVortex(n,psi)
+
+function vortex!(psi::F,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
     @unpack ψ,x,y = psi
     @. ψ *= vort.(x,y')
     @pack! psi = ψ
 end
+
+function vortex!(psi::F,vort::Array{S}) where {F <: Field, S <: Vortex}
+    for j in eachindex(vort)
+        vortex!(psi,vort[j])
+    end
+end
+
+#=
+# tests
+x = LinRange(0,1,500)
+ansatz = Ansatz(ψa,1.,0.8249)
+ansatz(.1)
+@time ansatz.(x)
+@time ansatz.(x,x')
+@time Ansatz(ψa,1.2,0.8249).(x,x')
+
+exact = Exact()
+
+#TODO why ansatz is now so slow??
+exact(.1)
+@time exact.(x)
+@time exact.(x,x')
+@time Exact(ψi,1.2).(x,x')
+@time ψi.(x)
+@time scalaransatz.(x)
+
+vort1 = randPointVortex()
+scalar_exact = ScalarVortex(exact,vort1)
+scalar_ansatz = ScalarVortex(ansatz,vort1)
+scalar_test = ScalarVortex(vort1)
+
+scalar_ansatz.(x,x')
+scalar_exact.(x,x')
+scalar_test.(x,x')
+@test ScalarVortex(vort1).(x,x') == scalar_test.(x,x')
 
 using Plots
 gr(transpose=true,aspectratio=1)
@@ -349,87 +389,45 @@ L = 100.0
 x = LinRange(-L/2,L/2,N)
 y = x
 
-psi0 = one.(x*y') |> complex
-psi = Torus(psi0,x,y)
-vtest = randPointVortex(1,psi)[1]
+psi0 = one.(x*y') |> complex; psi = Torus(psi0,x,y)
+vtest = randPointVortex(psi)
 vort1 = ScalarVortex(exact,vtest)
-Exact() = Exact(ψi,1.)
-Ansatz() = Ansatz(scalaransatz,1.,0.8249)
-
 vort2 = ScalarVortex(Exact(),vtest)
-ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
-vort3 = ScalarVortex(vtest)
 
+vort3 = ScalarVortex(vtest)
+psi0 = one.(x*y') |> complex; psi = Torus(psi0,x,y)
 vortex!(psi,vort3)
 @unpack ψ = psi
 heatmap(x,y,angle.(ψ))
 heatmap(x,y,abs2.(ψ))
 
+vfound = findvortices(psi)
 
-Ansatz(a, b) = Ansatz(a, b, ansatz)
+vort4 = ScalarVortex(Ansatz(),vtest)
+psi0 = one.(x*y') |> complex
+psi = Torus(psi0,x,y)
+vortex!(psi,vort4)
+@unpack ψ = psi
+heatmap(x,y,angle.(ψ))
+heatmap(x,y,abs2.(ψ))
 
-core = Ansatz(0.83, 1., ansatz)
+# timing
+x = LinRange(0, 6, 300)
 
-x = LinRange(0, 1, 10000)
-
-core.(x)
-@time Ansatz(0.83, 1.).(x)
-@time fansatz.(x)
-
-# ===============
+vort4.(x,x')
+@time vort4.(x,x')
+@time vort3.(x,x')
+@time vort2.(x,x')
 
 
-Λ = 0.8249
-r(x,y) = sqrt(x^2+y^2)
-coreansatz(r) = sqrt((Λ*r)^2/(1+(Λ*r)^2))
-coreansatz(x,y,ξ=1.) = coreansatz(r(x,y)/ξ)
-vphase(x,y) = atan(y,x)
-vortexansatz(x,y,x0,y0,q0,ξ=1.) = coreansatz(x - x0, y - y0,ξ)*exp(im*q0*vphase(x-x0,y-y0))
 
-function vortexansatz(x,y,vort::PointVortex,ξ=1.)
-    x0,y0,q0 = RawData(vort)
-    return vortexansatz(x,y,x0,y0,q0,ξ)
-end
+# ==== old tests
 
-testv = PointVortex(0.1,0.2,1)
 
-function gpeansatz!(psi::Torus,vort::PointVortex,ξ=1.)
-    @unpack ψ,x,y = psi
-    xv,yv,qv = RawData(vort)
-    @. ψ *= vortexansatz(x,y',[vort],ξ)
-    @pack! psi = ψ
-end
-
-function gpeansatz!(psi::Torus,vort::Array{PointVortex,1},ξ=1.)
-    for j in eachindex(vort)
-        gpeansatz!(psi,vort[j],ξ)
-    end
-end
 
 # exact core
-y,ψ,res = gpecore_exact(1)
-@load "./src/exactcore.jld2" ψi
-typeof(ψi)
-coreexact(r) = ψi(r)
-coreexact(x,y,ξ=1.) = coreexact(r(x,y)/ξ)
-vortexexact(x,y,x0,y0,q0,ξ=1.) = coreexact(x - x0, y - y0,ξ)*exp(im*q0*vphase(x-x0,y-y0))
-
-function vortexexact(x,y,vort::PointVortex,ξ=1.)
-    x0,y0,q0 = RawData(vort)
-    return vortexexact(x,y,x0,y0,q0,ξ)
-end
-
-function gpeexact!(psi::Torus,vort::PointVortex,ξ=1.)
-    @unpack ψ,x,y = psi
-    @. ψ *= vortexexact(x,y',[vort],ξ)
-    @pack! psi = ψ
-end
-
-function gpeexact!(psi::Torus,vort::Array{PointVortex,1},ξ=1.)
-    for j in eachindex(vort)
-        gpeexact!(psi,vort[j],ξ)
-    end
-end
+# y,ψ,res = gpecore_exact(1)
+# @load "./src/exactcore.jld2" ψi
 
 # Testing
 gr(transpose=true,aspectratio=1)
@@ -440,8 +438,9 @@ y = x
 
 psi0 = one.(x*y') |> complex
 psi = Torus(psi0,x,y)
-vtest = randPointVortex(1,psi)
-gpeexact!(psi,vtest)
+vtest = randVortex(psi)
+
+@time vortex!(psi,vtest)
 @unpack ψ = psi
 heatmap(x,y,angle.(ψ))
 heatmap(x,y,abs2.(ψ))
@@ -455,8 +454,8 @@ y = x
 
 psi0 = one.(x*y') |> complex
 psi = Torus(psi0,x,y)
-vtest = randPointVortex(1,psi)
-gpeexact!(psi,vtest)
+vtest = randVortex(psi)
+vortex!(psi,vtest)
 @unpack ψ = psi
 heatmap(x,y,angle.(ψ))
 heatmap(x,y,abs2.(ψ))
@@ -469,3 +468,4 @@ scatter!([RawData(vgridraw)[1]],[RawData(vgridraw)[2]])
 vgrid = findvortices_grid(psi)
 vgrid = removeedgevortices(vgrid,psi)
 scatter!([RawData(vgrid)[1]],[RawData(vgrid)[2]])
+=#
