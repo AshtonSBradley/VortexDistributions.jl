@@ -17,33 +17,10 @@ w3 = randPointVortex(1000)
 v3 = RawData(w3)
 @test v3 == RawData(w3)
 
-# fast. really, really fast!
+# fast... really, really fast!
 @time v3 = RawData(w3)
 @time w3 = PointVortex(v3)
 
-# include("testall_charges.jl")
-# include("testall_positions.jl")
-# include("makepsi.jl")
-
-# function makepsi(Nv,Lx=200,Ly=200,Nx=400,Ny=400)
-#
-# x = linspace(-Lx/2,Lx/2,Nx)
-# y = linspace(-Ly/2,Ly/2,Ny)
-#
-# #randomly distributed vortices and charges
-# #make sure vortices are away from edges
-# #make sure vortices don't have same x-coordinates
-#
-# testvort = randomvortices(x,y,Nv)
-#
-# #construct vortex wavefunction
-# ψ = ones(size(x.*y')) |> complex
-# makeallvortices!(ψ,testvort,x,y,.1)
-#
-# return x,y,ψ,testvort
-# end
-
-# function randField(n)
 using Plots
 
 function randVortexField(n)
@@ -81,6 +58,6 @@ function foundNear(n)
     return near
 end
 
-@test foundNear(50)
+@test foundNear(10)
 
-heatmap(psi.x,psi.y,abs2.(psi.ψ))
+psi,vort = randVortexField(1);heatmap(psi.x,psi.y,abs2.(psi.ψ))
