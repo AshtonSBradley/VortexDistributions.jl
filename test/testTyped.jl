@@ -43,12 +43,13 @@ function PointVortex(vort::Array{ScalarVortex{T},1}) where T
     return pv
 end
 
+
 # Single vortex tests are reliable and don't require sorting
 # (Phase cross talk will cause construction to wander)
 
 function foundNear(n)
     near = true
-    for j = 1:n
+    for j ∈ 1:n
         psi,vort = randVortexField(1)
         vortfound = findvortices(psi)
         vfdata = RawData(vortfound)
