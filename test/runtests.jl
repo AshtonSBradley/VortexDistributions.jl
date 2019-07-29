@@ -1,5 +1,5 @@
-# using VortexDistributions
-# using Test
+using VortexDistributions
+using Test
 
 # write your own tests here
 include("testall_charges.jl")
