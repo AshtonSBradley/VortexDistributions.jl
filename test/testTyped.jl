@@ -1,5 +1,5 @@
 # test typed version
-using Test
+using Test, Plots, JLD2
 
 include("typeversion.jl")
 
@@ -21,11 +21,11 @@ v3 = RawData(w3)
 @time v3 = RawData(w3)
 @time w3 = PointVortex(v3)
 
-using Plots
+
 
 function randVortexField(n)
-    Nx = 200; Ny = 200
-    Lx = 100; Ly = 100
+    Nx = 400; Ny = 400
+    Lx = 200; Ly = 200
     x = LinRange(-Lx / 2, Ly / 2, Nx)
     y = LinRange(-Ly / 2, Ly / 2, Ny)
 
@@ -59,6 +59,32 @@ function foundNear(n)
     return near
 end
 
+@test foundNear(1)
 @test foundNear(10)
+@test foundNear(30)
 
 psi,vort = randVortexField(1);heatmap(psi.x,psi.y,abs2.(psi.ψ))
+
+# test real data with masking examples
+
+@load "./test/one_frame.jld2"
+x0,y0 = 70,200
+
+# circular
+msk(x,y) = sqrt(x^2 + y^2) > 100
+@. ψ1[msk(x-x0,y'-y0) ] = false
+heatmap(x,y,abs2.(ψ1),transpose=true)
+
+# square
+Lx,Ly = 100,100
+
+xm = x[@. abs(x-x0)<Lx/2]
+ym = y[@. abs(y-y0)<Ly/2]
+psim = @. ψ1[abs(x-x0)<Lx/2,abs(y-y0)<Ly/2]
+
+heatmap(xm,ym,angle.(psim),transpose=true)
+psi2 = Torus(psim,xm,ym)
+vort = findvortices(psi2)
+
+scatter!([vort[1].xv],[vort[1].yv],alpha=0.4)
+scatter!([vort[2].xv],[vort[2].yv],alpha=0.4)

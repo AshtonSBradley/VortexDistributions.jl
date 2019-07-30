@@ -364,7 +364,6 @@ ansatz(.1)
 
 exact = Exact()
 
-#TODO why ansatz is now so slow??
 exact(.1)
 @time exact.(x)
 @time exact.(x,x')
