@@ -1,3 +1,55 @@
+scalaransatz(x) = sqrt(x^2/(1+x^2))
+r(x,y) = sqrt(x^2+y^2)
+
+@load "./src/exactcore.jld2" ψi
+@load "./src/ansatzcore.jld2" ψa
+
+Ansatz() = Ansatz(ψa,1.0,0.8249)
+
+function (core::Ansatz)(x)
+    @unpack f,ξ,Λ = core
+    return f(Λ*x/ξ)
+end
+(core::Ansatz)(x,y) = core(r(x,y))
+
+Exact() = Exact(ψi,1.0)
+
+function (core::Exact)(x)
+    @unpack ξ,f = core
+    return f(x/ξ)
+end
+(core::Exact)(x,y) = core(r(x,y))
+
+ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
+
+function (s::ScalarVortex{T})(x,y) where T <: CoreShape
+    @unpack xv,yv,qv = s.vort
+    return s.core(x - xv, y - yv)*exp(im*qv*atan(y - yv,x - xv))
+end
+
+randScalarVortex() = ScalarVortex(randPointVortex())
+randScalarVortex(n) = ScalarVortex.(randPointVortex(n))
+randScalarVortex(psi::Field) = ScalarVortex(Exact(),randPointVortex(psi))
+randScalarVortex(n,psi::Field) = ScalarVortex.([Exact()],randPointVortex(n,psi))
+
+randVortex() = randScalarVortex()
+randVortex(n) = randScalarVortex(n)
+randVortex(n,psi::Field) = randScalarVortex(n,psi)
+
+function vortex!(psi::F,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
+    @unpack ψ,x,y = psi
+    @. ψ *= vort.(x,y')
+    @pack! psi = ψ
+end
+
+function vortex!(psi::F,vort::Array{S}) where {F <: Field, S <: Vortex}
+    for j in eachindex(vort)
+        vortex!(psi,vort[j])
+    end
+end
+
+#Chebyshev methods
+
 function gpecore_exact(K,L=2,N=100,R = K)
     #currently r does  nothing!
     #N = 100

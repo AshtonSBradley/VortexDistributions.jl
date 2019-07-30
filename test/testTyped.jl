@@ -1,5 +1,5 @@
 # test typed version
-using Test, Plots, JLD2
+# using VortexDistributions
 
 include("typeversion.jl")
 
