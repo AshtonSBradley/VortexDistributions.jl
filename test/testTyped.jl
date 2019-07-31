@@ -1,5 +1,5 @@
 # test typed version
-using VortexDistributions, Plots
+using Plots, Revise, VortexDistributions 
 
 # include("typeversion.jl")
 Exact()

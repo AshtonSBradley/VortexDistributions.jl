@@ -34,7 +34,7 @@ include("pointvortex.jl")
 include("detection.jl")
 include("creation.jl")
 
-@load "./src/exactcore.jld2" ψi
-@load "./src/ansatzcore.jld2" ψa
+@load joinpath(@__DIR__,"exactcore.jld2") ψi
+@load joinpath(@__DIR__,"ansatzcore.jld2") ψa
 
 end # module
