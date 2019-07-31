@@ -71,7 +71,7 @@ and density at successive zoom levels with vortex location and detected location
  ```
 
 #### Acknowledgements
-Matthew Reeves and Thomas Billam are the primary co-authors of this package.
+Matthew Reeves, Thomas Billam, Michael Cawte
 
 # External links
 ___Signatures of Coherent Vortex Structures in a Disordered 2D Quantum Fluid___,\
