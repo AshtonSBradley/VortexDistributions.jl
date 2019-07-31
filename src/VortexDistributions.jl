@@ -15,7 +15,7 @@ Core.eval(Main, :(using Interpolations))
 
 const Λ = 0.8249
 export Field, Torus, Sphere
-export Vortex, CoreShape, Anstaz, Exact, ScalarVortex
+export Vortex, CoreShape, Ansatz, Exact, ScalarVortex
 export PointVortex, RawData, uniform, randcharge
 export randPointVortex, randScalarVortex, randVortex
 export vortex!, findvortices
