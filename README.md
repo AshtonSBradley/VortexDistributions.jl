@@ -2,12 +2,10 @@
 
 [![Build Status](https://travis-ci.org/AshtonSBradley/VortexDistributions.jl.svg?branch=master)](https://travis-ci.org/AshtonSBradley/VortexDistributions.jl)  [![Coverage Status](https://coveralls.io/repos/AshtonSBradley/VortexDistributions.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/AshtonSBradley/VortexDistributions.jl?branch=master)  [![codecov.io](http://codecov.io/github/AshtonSBradley/VortexDistributions.jl/coverage.svg?branch=master)](http://codecov.io/github/AshtonSBradley/VortexDistributions.jl?branch=master)
 
-Tools for working with distributions of two-dimensional quantum vortices in Bose-Einstein condendates.
-
+Tools for creating and detecting quantum vortices in Bose-Einstein condensates.
 - [x] Fast, accurate vortex detection.
-  - Uses a highly optimized version of the plaquette method (phase intergral around each 4-point plaquette), with recursive interpolation to acheive a good balance between speed and accuracy.
+  - Highly optimized version of the plaquette method (phase integral around each 4-point plaquette), with recursive interpolation to achieve a good balance between speed and accuracy.
   - At present only tests for charge +/-1 in 2D
-
 - [x] Vortex creation
   - Solves the 2D GPE problem for charge n on the infinite domain
   - Interpolates vortex solution to density and phase imprint on arbitrary 2D domains
@@ -17,45 +15,43 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 # Detection Example
 ```julia
 using VortexDistributions, Plots
-gr(transpose=true,xlabel="x",ylabel="y",legend=false)
+gr(xlabel="x",ylabel="y",transpose=true,legend=false)
 
-# Our example system has grid point spacing
-# of two points per healing length
-# (the following is in units of healing length)
-Lx=200;Nx=400;
-Ly=200;Ny=400
-x = linspace(-Lx/2,Lx/2,Nx);dx=diff(x)[1]
-y = linspace(-Ly/2,Ly/2,Ny);dy=diff(y)[1]
+# make a simple 2D test field
+Nx = 400; Ny = Nx
+Lx = 200; Ly = Lx
+x = LinRange(-Lx / 2, Ly / 2, Nx); y = x
+psi0 = one.(x*y') |> complex
 
-#make charge-1 vortex near the point (x,y)=(10,10)
-facx,facy = rand(2)
-testvort = [10+dx*facx 10+dy*facy 1.0]
+# doubly periodic boundary conditions
+psi = Torus(psi0,x,y)
 
-#construct vortex wavefunction, including both density and phase
-ψ = one.(x.*y') |> complex
-makevortex!(ψ,testvort,x,y);
+# make a point vortex
+pv = PointVortex(30.0,70.3,-1)
+
+# make a scalar GPE vortex with exact core
+spv = ScalarVortex(pv)
+vortex!(psi,spv)
+
+# make some more random vortices
+vort = randVortex(n,psi)
+vortex!(psi,vort)
 ```
 
-In this example the vortex is created at
+We can recover the raw pointvortex data from `PointVortex()` with
 ```julia
-julia> testvort
-Out[25]:
-1×3 Array{Float64,2}:
- 10.3234  10.314  1.0
+RawData(pv)
  ```
- We can find all the vortices using (removing edge vortices by default):
+ or from a `ScalarVortex()` with
  ```julia
- nt,np,nn,vortices = findvortices(ψ,x,y)
- ```
- For our single vortex example, the vortex is detected with `(x,y,charge)`
+ RawData(spv.vort)
+  ```
+ We can find all the vortices, removing edge vortices by default:
  ```julia
- julia> vortices
-Out[26]:
-1×3 Array{Float64,2}:
- 10.3274  10.3178  1.0
+vfound = findvortices(psi)
  ```
 
-Plotting the results, we have the phase at successive zoom levels with vortex location, `+`, and detected location, `o` (see examples):
+For a single vortex example, we show have the phase at successive zoom levels with vortex location, `+`, and detected location, `o` (see examples):
 
 ![](/examples/phase.png)
 
@@ -63,11 +59,11 @@ and density at successive zoom levels with vortex location and detected location
 
 ![](/examples/density.png)
 
- The benchmark gives (2015 MacBook Air 1.6GHz i5)
+ The benchmark gives (2018 MacBook Pro 2.33GHz Intel i5)
  ```julia
  using BenchmarkTools
- julia> @btime nt,np,nn,vortices = findvortices(ψ,x,y)
-  6.165 ms (550 allocations: 3.96 MiB)
+ julia> @btime vort = findvortices(psi)
+   4.037 ms (585 allocations: 3.84 MiB)
  ```
 
 #### Acknowledgements

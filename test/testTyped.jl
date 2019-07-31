@@ -43,6 +43,7 @@ heatmap(x,y,abs2.(ψ1),transpose=true)
 psi3 = Torus(ψ1,x,y)
 vort3 = findvortices(psi3)
 ψ1
+
 # square
 Lx,Ly = 100,100
 
