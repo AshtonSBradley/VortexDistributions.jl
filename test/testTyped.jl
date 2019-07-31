@@ -60,9 +60,9 @@ end
 
 @test foundNear(1)
 @test foundNear(10)
-@test foundNear(30)
+@test foundNear(5000)
 
-psi,vort = randVortexField(1);heatmap(psi.x,psi.y,abs2.(psi.ψ))
+psi,vort = randVortexField(30); heatmap(psi.x,psi.y,abs2.(psi.ψ))
 
 # test real data with masking examples
 
@@ -73,7 +73,9 @@ x0,y0 = 70,200
 msk(x,y) = sqrt(x^2 + y^2) > 100
 @. ψ1[msk(x-x0,y'-y0) ] = false
 heatmap(x,y,abs2.(ψ1),transpose=true)
-
+psi3 = Torus(ψ1,x,y)
+vort3 = findvortices(psi3)
+ψ1
 # square
 Lx,Ly = 100,100
 
