@@ -15,5 +15,4 @@ v3 = RawData(w3)
 
 # single vortex creation and detection
 @test foundNear(1)
-@test foundNear(10)
-@test foundNear(500)
+@test foundNear(30)

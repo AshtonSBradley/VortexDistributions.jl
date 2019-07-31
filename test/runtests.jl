@@ -1,4 +1,4 @@
 using VortexDistributions
 using Test
 
-@testset "Vortex location and circulation tests " begin include("tests.jl") end
+@testset "Creation and detection " begin include("tests.jl") end
