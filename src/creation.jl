@@ -45,6 +45,18 @@ function vortex!(psi::F,vort::Array{S}) where {F <: Field, S <: Vortex}
     end
 end
 
+function randVortexField(n)
+    Nx = 400; Ny = 400
+    Lx = 200; Ly = 200
+    x = LinRange(-Lx / 2, Ly / 2, Nx)
+    y = LinRange(-Ly / 2, Ly / 2, Ny)
+
+    psi0 = one.(x*y') |> complex; psi = Torus(psi0,x,y)
+    vort = randVortex(n,psi)
+    vortex!(psi,vort)
+    return psi,PointVortex(vort)
+end
+
 #Chebyshev methods
 
 function gpecore_exact(K,L=2,N=100,R = K)

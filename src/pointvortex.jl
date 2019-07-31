@@ -27,3 +27,10 @@ function randPointVortex(n,psi::Field)
     a,b = first(x)+2dx,last(x)-2dx; c,d = first(y)+2dy, last(y)-2dy
     return PointVortex.(uniform(a,b,n),uniform(c,d,n),randcharge(n))
 end
+function PointVortex(vort::Array{ScalarVortex{T},1}) where T
+    pv = PointVortex[]
+    for j in eachindex(vort)
+        push!(pv,vort[j].vort)
+    end
+    return pv
+end

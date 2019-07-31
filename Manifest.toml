@@ -92,11 +92,9 @@ version = "0.10.3"
 
 [[JLD2]]
 deps = ["CodecZlib", "DataStructures", "FileIO", "LinearAlgebra", "Mmap", "Printf", "Random", "Test"]
-git-tree-sha1 = "86f6afd11224d4883475bb8b1f036cbf0ff03d27"
-repo-rev = "master"
-repo-url = "https://github.com/JuliaIO/JLD2.jl.git"
+git-tree-sha1 = "3ba90ff93e1d5b9b2103588051c2d349fae54dac"
 uuid = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
-version = "0.1.2+"
+version = "0.1.2"
 
 [[JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]

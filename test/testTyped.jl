@@ -21,46 +21,15 @@ v3 = RawData(w3)
 @time v3 = RawData(w3)
 @time w3 = PointVortex(v3)
 
-function randVortexField(n)
-    Nx = 400; Ny = 400
-    Lx = 200; Ly = 200
-    x = LinRange(-Lx / 2, Ly / 2, Nx)
-    y = LinRange(-Ly / 2, Ly / 2, Ny)
-
-    psi0 = one.(x*y') |> complex; psi = Torus(psi0,x,y)
-    vort = randVortex(n,psi)
-    vortex!(psi,vort)
-    return psi,PointVortex(vort)
-end
-
-function PointVortex(vort::Array{ScalarVortex{T},1}) where T
-    pv = PointVortex[]
-    for j in eachindex(vort)
-        push!(pv,vort[j].vort)
-    end
-    return pv
-end
-
 
 # Single vortex tests are reliable and don't require sorting
 # (Phase cross talk will cause construction to wander)
 
-function foundNear(n)
-    near = true
-    for j ∈ 1:n
-        psi,vort = randVortexField(1)
-        vortfound = findvortices(psi)
-        vfdata = RawData(vortfound)
-        vdata = RawData(vort)
-        near *= isapprox(vdata,vfdata,rtol = 0.2)
-    end
-    return near
-end
-
 @test foundNear(1)
 @test foundNear(10)
-@test foundNear(5000)
+@test foundNear(500)
 
+# more tests below?
 psi,vort = randVortexField(30); heatmap(psi.x,psi.y,abs2.(psi.ψ))
 
 # Real data with masking examples

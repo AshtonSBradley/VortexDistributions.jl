@@ -1,3 +1,14 @@
+function foundNear(n)
+    near = true
+    for j ∈ 1:n
+        psi,vort = randVortexField(1)
+        vortfound = findvortices(psi)
+        vfdata = RawData(vortfound)
+        vdata = RawData(vort)
+        near *= isapprox(vdata,vfdata,rtol = 0.2)
+    end
+    return near
+end
 function findwhere(A)
     I = findall(!iszero,A)
     v = A[I]

@@ -19,6 +19,7 @@ export Vortex, CoreShape, Anstaz, Exact, ScalarVortex
 export PointVortex, RawData, uniform, randcharge
 export randPointVortex, randScalarVortex, randVortex
 export vortex!, findvortices
+export foundNear, randVortexField
 
 # export ψi, ψa
 # export findwhere, findvortices_jumps, findvortices_grid, findvortices_interp
