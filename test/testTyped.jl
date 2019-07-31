@@ -1,7 +1,8 @@
 # test typed version
-# using VortexDistributions
+using VortexDistributions, Plots
 
-include("typeversion.jl")
+# include("typeversion.jl")
+Exact()
 
 # unitary?
 v0 = [.2 .4 1]
@@ -20,8 +21,6 @@ v3 = RawData(w3)
 # fast... really, really fast!
 @time v3 = RawData(w3)
 @time w3 = PointVortex(v3)
-
-
 
 function randVortexField(n)
     Nx = 400; Ny = 400
@@ -65,8 +64,7 @@ end
 
 psi,vort = randVortexField(1);heatmap(psi.x,psi.y,abs2.(psi.ψ))
 
-# test real data with masking examples
-
+# Real data with masking examples
 @load "./test/one_frame.jld2"
 x0,y0 = 70,200
 

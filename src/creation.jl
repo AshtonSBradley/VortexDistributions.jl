@@ -1,10 +1,7 @@
 scalaransatz(x) = sqrt(x^2/(1+x^2))
 r(x,y) = sqrt(x^2+y^2)
 
-@load "./src/exactcore.jld2" ψi
-@load "./src/ansatzcore.jld2" ψa
-
-Ansatz() = Ansatz(ψa,1.0,0.8249)
+Ansatz() = Ansatz(ψa,1.0,Λ)
 
 function (core::Ansatz)(x)
     @unpack f,ξ,Λ = core
@@ -69,7 +66,6 @@ D2z = 4*D2z./L.^2
 y =  R*(1 .+z)./(1 .-z)
 
 #initial guess based on ansatz
-Λ = 0.8248
 ψ = @. y/sqrt(y^2 + Λ^-2)
 ψ[1] = 0
 ψ[end] = 1
