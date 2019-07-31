@@ -11,7 +11,6 @@ Tools for working with distributions of two-dimensional quantum vortices in Bose
 - [x] Vortex creation
   - Solves the 2D GPE problem for charge n on the infinite domain
   - Interpolates vortex solution to density and phase imprint on arbitrary 2D domains
-- [ ] Compressible/incompressible decomposition
 - [ ] Recursive cluster algorithm
 - [ ] Vortex correlation functions
 
