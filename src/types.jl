@@ -30,6 +30,7 @@ struct Exact <: CoreShape
     f::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
     ξ::Float64
 end
+
 struct ScalarVortex{T<:CoreShape} <: Vortex
     core::T
     vort::PointVortex
