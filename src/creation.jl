@@ -9,8 +9,8 @@ function (core::Ansatz)(x)
 end
 (core::Ansatz)(x,y) = core(r(x,y))
 
-Exact() = Exact(ψi,1.0)
-
+Exact(x::Float64) = Exact(VortexDistributions.ψi,x::Float64)
+Exact() = Exact(1.0)
 function (core::Exact)(x)
     @unpack ξ,f = core
     return f(x/ξ)
