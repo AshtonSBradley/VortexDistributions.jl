@@ -25,10 +25,12 @@ end
     ξ::Float64
     Λ::Float64
 end
+
 @with_kw mutable struct Exact <: CoreShape
     f::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
     ξ::Float64
 end
+
 @with_kw mutable struct ScalarVortex{T<:CoreShape} <: Vortex
     core::T
     vort::PointVortex
