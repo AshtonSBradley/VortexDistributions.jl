@@ -29,7 +29,12 @@ end
     f::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
     ξ::Float64
 end
+<<<<<<< HEAD
 @with_kw mutable struct ScalarVortex{T<:CoreShape} <: Vortex
+=======
+
+struct ScalarVortex{T<:CoreShape} <: Vortex
+>>>>>>> 9def4579bbb744a78d623e64a76653cdf2d0ecce
     core::T
     vort::PointVortex
 end
