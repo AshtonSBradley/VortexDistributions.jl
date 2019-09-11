@@ -12,6 +12,7 @@ Core.eval(Main, :(using Interpolations))
 @reexport using SparseArrays
 @reexport using FFTW
 @reexport using FileIO
+@reexport using ProgressMeter
 
 const Λ = 0.8249
 export Field, Torus, Sphere
@@ -20,6 +21,8 @@ export PointVortex, RawData, uniform, randcharge
 export randPointVortex, randScalarVortex, randVortex
 export vortex!, findvortices
 export foundNear, randVortexField
+export Basis, Oscillator, hermite, hermite_polar
+export index, spectrum, qnumbers, filter, slowpolar, init_polar, polar, filterH
 
 # export ψi, ψa
 # export findwhere, findvortices_jumps, findvortices_grid, findvortices_interp
@@ -33,6 +36,7 @@ include("types.jl")
 include("pointvortex.jl")
 include("detection.jl")
 include("creation.jl")
+include("analysis.jl")
 
 @load joinpath(@__DIR__,"exactcore.jld2") ψi
 @load joinpath(@__DIR__,"ansatzcore.jld2") ψa
