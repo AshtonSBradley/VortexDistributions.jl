@@ -39,8 +39,9 @@ function (s::ScalarVortex{T})(x,y) where T <: CoreShape
     return s.core(x - xv, y - yv)*exp(im*qv*atan(y - yv,x - xv))
 end
 
-ScalarVortex(ξ::Float64,pv) = ScalarVortex.([Exact(ξ)],pv)
-ScalarVortex(ξ::Array{Float64,1},pv) = @. ScalarVortex(Exact(ξ),pv)
+ScalarVortex(ξ::Float64,pv::Array{PointVortex,1}) = ScalarVortex.([Exact(ξ)],pv::Array{PointVortex,1})
+ScalarVortex(ξ::Array{Float64,1},pv::Array{PointVortex,1}) = @. ScalarVortex(Exact(ξ),pv::Array{PointVortex,1})
+ScalarVortex(ξ::Float64,pv::PointVortex) = ScalarVortex(ξ,[pv])
 
 randScalarVortex() = ScalarVortex(randPointVortex())
 randScalarVortex(n) = ScalarVortex.(randPointVortex(n))
