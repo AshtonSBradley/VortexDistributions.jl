@@ -1,6 +1,21 @@
+"""
+    scalaransatz(x)
+
+Evaluates the simple vortex core ansatz at radial point x.
+"""
 scalaransatz(x) = sqrt(x^2/(1+x^2))
+
+"""
+    r(x,y)
+
+Polar radius for cartesian inputs.
+"""
 r(x,y) = sqrt(x^2+y^2)
 
+"""
+    Ansatz()
+Construct a fast interpolation for the vortex core ansatz.
+"""
 Ansatz() = Ansatz(ψa,1.0,Λ)
 
 function (core::Ansatz)(x)
@@ -23,6 +38,9 @@ function (s::ScalarVortex{T})(x,y) where T <: CoreShape
     @unpack xv,yv,qv = s.vort
     return s.core(x - xv, y - yv)*exp(im*qv*atan(y - yv,x - xv))
 end
+
+ScalarVortex(ξ::Float64,pv) = ScalarVortex.([Exact(ξ)],pv)
+ScalarVortex(ξ::Array{Float64,1},pv) = @. ScalarVortex(Exact(ξ),pv)
 
 randScalarVortex() = ScalarVortex(randPointVortex())
 randScalarVortex(n) = ScalarVortex.(randPointVortex(n))
