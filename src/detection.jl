@@ -3,8 +3,8 @@ function foundNear(n)
     for j ∈ 1:n
         psi,vort = randVortexField(1)
         vortfound = findvortices(psi)
-        vfdata = RawData(vortfound)
-        vdata = RawData(vort)
+        vfdata = rawData(vortfound)
+        vdata = rawData(vort)
         near *= isapprox(vdata,vfdata,rtol = 0.2)
     end
     return near
@@ -48,7 +48,7 @@ end
 
 function findvortices_grid(psi::Torus;shift=true)
     vort = findvortices_jumps(psi,shift=shift)
-    rawvort = RawData(vort)
+    rawvort = rawData(vort)
     vort = sortslices(rawvort,dims=1)
     return PointVortex(vort)
 end
@@ -57,7 +57,7 @@ function findvortices_grid(psi::Sphere;shift=true)
     @unpack ψ = psi
     windvals = phasejumps(angle.(ψ),2)
     vort = findvortices_jumps(psi,shift=shift)
-    rawvort = RawData(vort)
+    rawvort = rawData(vort)
 
     # North pole winding. - sign means polar vortex co-rotating with w > 0
     w1 = sum(windvals[1,:])
@@ -113,7 +113,7 @@ function removeedgevortices(vort::Array{PointVortex,1},psi::Field,edge=1)
     @unpack x,y = psi; dx=x[2]-x[1]; dy=y[2]-y[1]
     keep = []
     for j = 1:length(vort)
-        xi,yi,qi = RawData(vort[j])
+        xi,yi,qi = rawData(vort[j])
         xedge = isapprox(xi,x[1],atol=edge*dx) || isapprox(xi,x[end],atol=edge*dx)
         yedge = isapprox(yi,y[1],atol=edge*dy) || isapprox(yi,y[end],atol=edge*dy)
         not_edge = !(xedge || yedge)
@@ -129,7 +129,7 @@ Uses local interpolation to resolve core location.
 """
 function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     @unpack ψ,x,y = psi
-    xv,yv,qv = RawData(vortex)
+    xv,yv,qv = rawData(vortex)
     dx=x[2]-x[1]; dy=y[2]-y[1]
     ixv = isapprox.(x,xv,atol=dx) |> findlast
     iyv = isapprox.(y,yv,atol=dy) |> findlast

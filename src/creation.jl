@@ -42,6 +42,8 @@ end
 ScalarVortex(ξ::Float64,pv::Array{PointVortex,1}) = ScalarVortex.([Exact(ξ)],pv::Array{PointVortex,1})
 ScalarVortex(ξ::Array{Float64,1},pv::Array{PointVortex,1}) = @. ScalarVortex(Exact(ξ),pv::Array{PointVortex,1})
 ScalarVortex(ξ::Float64,pv::PointVortex) = ScalarVortex(ξ,[pv])
+ScalarVortex(pv::PointVortex) = ScalarVortex(1.0,pv::PointVortex)
+ScalarVortex(pv::Array{PointVortex,1}) = ScalarVortex(1.0,pv)
 
 randScalarVortex() = ScalarVortex(randPointVortex())
 randScalarVortex(n) = ScalarVortex.(randPointVortex(n))

@@ -1,6 +1,6 @@
 PointVortex(v::Array{Float64,2}) = PointVortex.(v[:,1],v[:,2],v[:,3])
-RawData(v::PointVortex) = [v.xv v.yv v.qv]
-RawData(v::Array{PointVortex,1}) = reduce(vcat,RawData.(v))
+rawData(v::PointVortex) = [v.xv v.yv v.qv]
+rawData(v::Array{PointVortex,1}) = reduce(vcat,rawData.(v))
 
 function uniform(a,b)
     @assert a<b
