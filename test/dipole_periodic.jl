@@ -90,3 +90,6 @@ psivort = Torus(exp.(im*testphase3),x,y)
 vortices = findvortices(psivort)
 
 vraw = rawData(vortices)
+
+@test testphase3[:,1] ≈ testphase3[:,end]
+@test testphase3[1,:] ≈ testphase3[end,:]
