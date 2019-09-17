@@ -3,6 +3,7 @@
 # should be eigenstate of Hamiltonian evolution
 
 using Test, Plots, Revise, VortexDistributions
+gr()
 
 # Methods
 H(x) = x > 0. ? 1.0 : 0.0
@@ -87,8 +88,9 @@ phi = kspace(psip,sim) |> fftshift
 DX,DK = dfftall(X,K)
 kx,ky = K .|> fftshift
 
-heatmap(kx,ky,log.(abs2.(phi)))
-
+data = @. log(abs2(phi)+eps())
+heatmap(kx,ky,data)
+plot(data[512,:])
 
 # define polar coordinates
 Nkx = length(kx)
