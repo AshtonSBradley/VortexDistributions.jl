@@ -54,9 +54,7 @@ testphase2 = angle.(exp.(im*θd.(x,y',[dip])))
 @test testphase2[:,1] ≈ testphase2[:,end]
 heatmap(x,y,testphase2,transpose=true)
 
-
-
-# Now for arbitrary domains and dipole sizes:
+# arbitrary domains and dipole sizes:
 function thetad(x,y,xp,yp,xn,yn)
     s = 0.0
     for j = -5:5
