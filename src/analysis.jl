@@ -97,24 +97,26 @@ function init_polar(x,N,ω)
     return hx,hy
 end
 
-function polar(psi,x,ω,hx,hy)
-    N = size(hx)[3]
+function polar(psi,x,ω,Hx,Hy)
+    N = size(Hx)[3]
     p = Progress(N,1,"Polar transform...",20)
     H = Oscillator(N,ω)(x)
     T = inv(H'*H)
     F̂ = T*H'*psi*H*T
 
     Nx = length(x)
-    θ = LinRange(0,2*pi,2*Nx)
-    r = LinRange(0,last(x),Nx/2 |> Int)'
+    Nθ = 2*Nx
+    Nr = Nx/2 |> Int
+    θ = LinRange(0,2*pi,Nθ+1)[1:Nθ]
+    r = LinRange(0,last(x),Nr)'
 
-    psiFP = zero(θ*r)
+    psiFP = zeros(eltype(psi),Nθ,Nr)
     for m = 1:N
         next!(p)
         for n = 1:(N + 1 - m)
-        Hx = @view hx[:,:,m]
-        Hy = @view hy[:,:,n]
-        @. psiFP += Hx * F̂[m,n] * Hy
+        hx = @view Hx[:,:,m]
+        hy = @view Hy[:,:,n]
+        @. psiFP += hx * F̂[m,n] * hy
     end
     end
     return psiFP

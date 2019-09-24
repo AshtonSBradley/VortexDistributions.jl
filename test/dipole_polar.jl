@@ -3,7 +3,7 @@
 # should be eigenstate of Hamiltonian evolution
 
 using Test, Plots, Revise, VortexDistributions
-gr()
+
 
 # Methods
 H(x) = x > 0. ? 1.0 : 0.0
@@ -90,65 +90,19 @@ kx,ky = K .|> fftshift
 
 data = @. log(abs2(phi)+eps())
 heatmap(kx,ky,data)
-plot(data[512,:])
 
 # define polar coordinates
 Nkx = length(kx)
 Nk = Nkx/2 |> Int
 Nθk = 2*Nkx
 k = LinRange(0,last(kx),Nk)'
-θk = LinRange(0,2*pi,Nθk)
+θk = LinRange(0,2*pi,Nθk+1)[1:Nθk]
 
-function cart2pol(psi,x)
-    Nx = length(x)
-    Nr = Nx/2 |> Int
-    Nθ = 2*Nx
-    r = LinRange(0,last(x),Nr)'
-    θ = LinRange(0,2*pi,Nθ)
-
-    psiF = fft(psi)
-
-    # precompute modes
-    hx = exp.(im*2*pi*()()/Nx)
-    hy = exp.(im*)
-
-    # transform
-    psipol = zeros(eltype(psi),Nθ,Nr)
-    for m = 1:Nx
-        for n = 1:Nx
-            Hx = @view hx[:,:,m]
-            Hy = @view hy[:,:,n]
-            @. psipol += Hx * psiF[m,n] * Hy
-        end
-    end
-    return psipol,θ,r
-end
-
-function polar(psi,x,ω,hx,hy)
-    N = size(hx)[3]
-    p = Progress(N,1,"Polar transform...",20)
-    H = Oscillator(N,ω)(x)
-    T = inv(H'*H)
-    F̂ = T*H'*psi*H*T
-
-    Nx = length(x)
-    θ = LinRange(0,2*pi,2*Nx)
-    r = LinRange(0,last(x),Nx/2 |> Int)'
-
-    psiFP = zeros(eltype(psi),2*Nx,Nx/2 |> Int)
-
-    for m = 1:N
-        next!(p)
-        for n = 1:(N + 1 - m)
-        Hx = @view hx[:,:,m]
-        Hy = @view hy[:,:,n]
-        @. psiFP += Hx * F̂[m,n] * Hy
-    end
-    end
-    return psiFP
-end
-
-phiP = polar(phiF,kx,ω,hx,hy)
+N = 100
+ω = .3
+plot(kx,hermite.(kx,N,ω))
+hx,hy = init_polar(x,N,ω)
+phiP = polar(psi.ψ,kx,ω,hx,hy)
 
 densFP = abs2.(phiP)
 heatmap(θk,k',densFP,transpose=true)
