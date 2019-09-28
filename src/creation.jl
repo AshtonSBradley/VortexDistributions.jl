@@ -107,7 +107,7 @@ end
 function Thetad(x,y,xp,yp,xn,yn)
     Lx = x[end]-x[1]
     Ly = y[end]-y[1]
-    return @. thetad.(x*2*pi/Lx,y'*2*pi/Ly,xp*2*pi/Lx,yp*2*pi/Ly,xn*2*pi/Lx,yn*2*pi/Ly)
+    return @. thetad(x*2*pi/Lx,y'*2*pi/Ly,xp*2*pi/Lx,yp*2*pi/Ly,xn*2*pi/Lx,yn*2*pi/Ly)
 end
 
 #Chebyshev methods

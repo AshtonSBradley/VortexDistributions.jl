@@ -4,71 +4,28 @@
 
 using Test, Plots, Revise, VortexDistributions
 
-# Methods
-H(x) = x > 0. ? 1.0 : 0.0
-T(x,xi) = x - xi
-tans(x,xk) = tan((T(x,xk) - π)*0.5)
-tanhs(x,xk,j) = tanh((T(x,xk) + 2*π*j)*0.5)
-
-function K(x,y,xp,yp,xn,yn,j)
-    return atan(tanhs(y,yn,j)*tans(x,xn)) -
-    atan(tanhs(y,yp,j)*tans(x,xp))
-end
-
-# Dimensionless form
-function θd(x,y,dip)
-    vp,vn = dip
-    xp,yp,_ = rawData(vp)
-    xn,yn,_ = rawData(vn)
-    s = 0.0
-    for j = -5:5
-        s += K(x,y,xp,yp,xn,yn,j)
-    end
-    return s + π*(H(T(x,xp)) - H(T(x,xn))) - y*(xp - xn)/(2*π)
-end
-
 # test dipole
-xp = 1.5
+xp = 0.2
 yp = .2
 vp = PointVortex(xp,yp,1)
 
-xn = 1.7
+xn = 1.1
 yn = -.2
 vn = PointVortex(xn,yn,-1)
 
 dip = [vp;vn]
-θd(.1,.2,dip)
+
+Thetad(.12,.11,xp,yp,xn,yn)
 
 x = LinRange(-π,π,300)
 y = x
 
+#TODO add missing method for Thetad(x,y,dipole::Array{PointVortex})
 # test double periodicity
-testphase = θd.(x,y',[dip])
-@test testphase[end,:] ≈ testphase[1,:]
-@test testphase[:,1] ≈ testphase[:,end]
-heatmap(x,y,testphase,transpose=true)
-
-# simplify the branch cut (only need phase up to + n*2*π)
-testphase2 = angle.(exp.(im*θd.(x,y',[dip])))
-@test testphase2[end,:] ≈ testphase2[1,:]
-@test testphase2[:,1] ≈ testphase2[:,end]
-heatmap(x,y,testphase2,transpose=true)
-
-# arbitrary domains and dipole sizes:
-function thetad(x,y,xp,yp,xn,yn)
-    s = 0.0
-    for j = -5:5
-        s += K(x,y,xp,yp,xn,yn,j)
-    end
-    s += π*(H(T(x,xp)) - H(T(x,xn))) - y*(xp - xn)/(2*π)
-    return s - x*H(abs(yp - yn) - π) + y*H(abs(xp - xn) - π)
-end
-
-function Thetad(x,y,xp,yp,xn,yn)
-    Lx = x[end]-x[1]
-    Ly = y[end]-y[1]
-    return @. angle(exp(im*thetad.(x*2*pi/Lx,y'*2*pi/Ly,xp*2*pi/Lx,yp*2*pi/Ly,xn*2*pi/Lx,yn*2*pi/Ly)))
-end
+testpsi = exp.(im*Thetad(x,y,xp,yp,xn,yn))
+@test testpsi[end,:] ≈ testpsi[1,:]
+@test testpsi[:,1] ≈ testpsi[:,end]
+heatmap(x,y,angle.(testpsi),transpose=true)
 
 # test domain
 x = LinRange(-3π,3π,300)
@@ -89,5 +46,6 @@ vortices = findvortices(psivort)
 
 vraw = rawData(vortices)
 
-@test testphase3[:,1] ≈ testphase3[:,end]
-@test testphase3[1,:] ≈ testphase3[end,:]
+testpsi = exp.(im*testphase3)
+@test testpsi[:,1] ≈ testpsi[:,end]
+@test testpsi[1,:] ≈ testpsi[end,:]
