@@ -1,6 +1,11 @@
-PointVortex(v::Array{Float64,2}) = PointVortex.(v[:,1],v[:,2],v[:,3])
+function PointVortex(v::Array{Float64,2})
+    ~isempty(v) ? (return PointVortex.(v[:,1],v[:,2],v[:,3])) : (return Array{PointVortex}(undef,0))
+end
+
 rawData(v::PointVortex) = [v.xv v.yv v.qv]
-rawData(v::Array{PointVortex,1}) = reduce(vcat,rawData.(v))
+function rawData(v::Array{PointVortex,1})
+    ~isempty(v) > 0 ? (return reduce(vcat,rawData.(v))) : (return Array{Float64}(undef, 0, 0))
+end
 
 function uniform(a,b)
     @assert a<b
