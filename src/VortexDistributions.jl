@@ -19,7 +19,7 @@ export Field, Torus, Sphere
 export Vortex, CoreShape, Ansatz, Exact, ScalarVortex
 export PointVortex, rawData, uniform, randcharge
 export randPointVortex, randScalarVortex, randVortex
-export vortex!, findvortices, Thetad
+export vortex!, findvortices, Thetad, periodic_dipole!
 export foundNear, randVortexField
 export Basis, Oscillator, hermite, hermite_polar
 export index, spectrum, qnumbers, filter, slowpolar, init_polar, polar, filterH
