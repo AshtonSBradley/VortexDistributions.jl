@@ -11,13 +11,6 @@ f(x)=\\sqrt{\\frac{x^2}{1+x^2}}
 scalaransatz(x) = sqrt(x^2/(1+x^2))
 
 """
-    r(x,y)=sqrt(x^2+y^2)
-
-Return polar radius for cartesian inputs.
-"""
-r(x,y) = hypot(x,y)
-
-"""
     core = Ansatz(ψ,ξ,Λ)
 
 Construct a fast interpolation for the vortex core ansatz.
@@ -44,7 +37,7 @@ function (core::Ansatz)(x)
     @unpack f,ξ,Λ = core
     return f(Λ*x/ξ)
 end
-(core::Ansatz)(x,y) = core(r(x,y))
+(core::Ansatz)(x,y) = core(hypot(x,y))
 
 """
     core = Exact(ψ,ξ)
@@ -68,7 +61,7 @@ function (core::Exact)(x)
     @unpack ξ,f = core
     return f(x/ξ)
 end
-(core::Exact)(x,y) = core(r(x,y))
+(core::Exact)(x,y) = core(hypot(x,y))
 
 """
     vort = ScalarVortex(ξ::Float64=1.0;pv::PointVortex)
