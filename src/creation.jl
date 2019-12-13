@@ -11,15 +11,30 @@ f(x)=\frac{x^2}{1+x^2}
 scalaransatz(x) = sqrt(x^2/(1+x^2))
 
 """
-    r(x,y)
+    r(x,y)=sqrt(x^2+y^2)
 
-Polar radius for cartesian inputs.
+Return polar radius for cartesian inputs.
 """
-r(x,y) = sqrt(x^2+y^2)
+r(x,y) = hypot(x,y)
 
 """
-    Ansatz()
+    core = Ansatz(ψ,ξ,Λ)
+
 Construct a fast interpolation for the vortex core ansatz.
+
+Returns a callable type that can be evaluated at position `x`.
+
+# Arguments
+-`ψ::Interpolation=ψa`: ansatz wavefunction.
+-`ξ::Float64=1.0`: healing length.
+-`Λ::Float64=0.8249`: slope of wavefunction at vortex core.
+
+# Examples
+```jldoctest
+julia> f = Ansatz()
+julia> x = LinRange(0,10,100)
+julia> y = f.(x)
+```
 """
 Ansatz() = Ansatz(ψa,1.0,Λ)
 
@@ -29,6 +44,20 @@ function (core::Ansatz)(x)
 end
 (core::Ansatz)(x,y) = core(r(x,y))
 
+"""
+    core = Exact(ψ,ξ)
+
+Construct fast interpolation for exact vortex core.
+
+Returns a callable type that can be evaluated at position `x`.
+
+# Examples
+```jldoctest
+julia> f = Exact()
+julia> x = LinRange(0,10,100)
+julia> y = f.(x)
+```
+"""
 Exact(ξ::Float64) = Exact(VortexDistributions.ψi,ξ::Float64)
 Exact() = Exact(1.0)
 function (core::Exact)(x)
@@ -37,19 +66,45 @@ function (core::Exact)(x)
 end
 (core::Exact)(x,y) = core(r(x,y))
 
-ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
+"""
+    vort = ScalarVortex(ξ=1.0;pv::PointVortex)
 
+Construct a scalar vortex with healing length `ξ` and point vortex coordinates `pv`.
+
+# Arguments
+-`ξ::Float64=1.0`: healing length.
+-`pv::PointVortex`: scalar or vector of point vortices.
+
+# Examples
+```jldoctest
+julia> pv = PointVortex(-2.,3.,1)
+julia> v1 = ScalarVortex(pv)
+```
+returns a scalarvortex `v1` suitable for vortex construction in a wavefunction.
+
+See also: [`vortex!`](@ref), [`randScalarVortex`](@ref), [`randVortex`](@ref)
+"""
+ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
 function (s::ScalarVortex{T})(x,y) where T <: CoreShape
     @unpack xv,yv,qv = s.vort
     return s.core(x - xv, y - yv)*exp(im*qv*atan(y - yv,x - xv))
 end
-
 ScalarVortex(ξ::Float64,pv::Array{PointVortex,1}) = ScalarVortex.([Exact(ξ)],pv::Array{PointVortex,1})
 ScalarVortex(ξ::Array{Float64,1},pv::Array{PointVortex,1}) = @. ScalarVortex(Exact(ξ),pv::Array{PointVortex,1})
 ScalarVortex(ξ::Float64,pv::PointVortex) = ScalarVortex(ξ,[pv])
 ScalarVortex(pv::PointVortex) = ScalarVortex(1.0,pv::PointVortex)
 ScalarVortex(pv::Array{PointVortex,1}) = ScalarVortex(1.0,pv)
 
+"""
+    rv = randScalarVortex()
+    rv = randScalarVortex(n::Int)
+    rv = randScalarVortex(ψ::Field)
+    rv = randScalarVortex(n::Int,ψ::Field)
+
+Sample `n` random scalar vortices, using the domain of spatial field `ψ`.
+
+See also: [`Field`](@), [`randVortex`](@), [`ScalarVortex`](@), [`randPointVortex`](@)
+"""
 randScalarVortex() = ScalarVortex(randPointVortex())
 randScalarVortex(n) = ScalarVortex.(randPointVortex(n))
 randScalarVortex(psi::Field) = ScalarVortex(Exact(),randPointVortex(psi))
