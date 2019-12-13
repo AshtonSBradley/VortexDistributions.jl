@@ -5,7 +5,7 @@ Evaluate the simple vortex core ansatz at radial point `x`.
 
 The ansatz is the rational function approximation to the vortex core
 ```math
-f(x)=\\frac{x^2}{1+x^2}
+f(x)=\\sqrt{\\frac{x^2}{1+x^2}}
 ```
 """
 scalaransatz(x) = sqrt(x^2/(1+x^2))
@@ -25,9 +25,9 @@ Construct a fast interpolation for the vortex core ansatz.
 Returns a callable type that can be evaluated at position `x`.
 
 # Arguments
--`ψ::Interpolation=ψa`: ansatz wavefunction.
--`ξ::Float64=1.0`: healing length.
--`Λ::Float64=0.8249`: slope of wavefunction at vortex core.
+- `ψ::Interpolation=ψa`: ansatz wavefunction.
+- `ξ::Float64=1.0`: healing length.
+- `Λ::Float64=0.8249`: slope of wavefunction at vortex core.
 
 # Examples
 ```jldoctest
@@ -71,13 +71,17 @@ end
 (core::Exact)(x,y) = core(r(x,y))
 
 """
-    vort = ScalarVortex(ξ=1.0;pv::PointVortex)
+    vort = ScalarVortex(ξ::Float64=1.0;pv::PointVortex)
+    vort = ScalarVortex(pv::Array{PointVortex,1})
+    vort = ScalarVortex(pv::PointVortex)
+    vort = ScalarVortex(ξ::Float64,pv::Array{PointVortex,1})
+    vort = ScalarVortex(ξ::Array{Float64,1},pv::Array{PointVortex,1})
 
 Construct a scalar vortex with healing length `ξ` and point vortex coordinates `pv`.
 
 # Arguments
--`ξ::Float64=1.0`: healing length.
--`pv::PointVortex`: scalar or vector of point vortices.
+- `ξ::Float64=1.0`: healing length.
+- `pv::PointVortex`: scalar or vector of point vortices.
 
 # Examples
 ```jldoctest
@@ -86,7 +90,7 @@ julia> v1 = ScalarVortex(pv)
 ```
 returns a scalarvortex `v1` suitable for vortex construction in a wavefunction.
 
-See also: [`vortex!`](@ref), [`randScalarVortex`](@ref), [`randVortex`](@ref)
+See also: [`vortex!`](@ref), [`randScalarVortex`](@ref), [`randVortex`](@ref), [`PointVortex`](@ref), [`randPointVortex`](@ref)
 """
 ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
 function (s::ScalarVortex{T})(x,y) where T <: CoreShape
@@ -105,7 +109,7 @@ ScalarVortex(pv::Array{PointVortex,1}) = ScalarVortex(1.0,pv)
     rv = randScalarVortex(ψ::Field)
     rv = randScalarVortex(n::Int,ψ::Field)
 
-Sample `n` random scalar vortices, using the domain of spatial field `ψ`.
+Sample `n` random scalar vortices, using the sptial domain of the field `ψ`.
 
 See also: [`Field`](@ref), [`randVortex`](@ref), [`ScalarVortex`](@ref), [`randPointVortex`](@ref)
 """
@@ -118,6 +122,13 @@ randVortex() = randScalarVortex()
 randVortex(n) = randScalarVortex(n)
 randVortex(n,psi::Field) = randScalarVortex(n,psi)
 
+"""
+    vortex!(ψ<:Field, vort<:Vortex)
+
+Density and phase imprint a vortex onto the field `ψ`, writing in place.
+
+See also: [`Field`](@ref), [`ScalarVortex`](@ref), [`PointVortex`](@ref), [`randPointVortex`](@ref), [`randScalarVortex`](@ref)
+"""
 function vortex!(psi::F,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
     @unpack ψ,x,y = psi
     @. ψ *= vort.(x,y')
