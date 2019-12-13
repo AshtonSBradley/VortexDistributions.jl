@@ -134,11 +134,9 @@ function vortex!(psi::F,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
     @. ψ *= vort.(x,y')
     @pack! psi = ψ
 end
-
 function vortex!(psi::F,vort::S) where {F <: Field, S <: Vortex}
     vortex!(psi,ScalarVortex(vort))
 end
-
 function vortex!(psi::F,vort::Array{S}) where {F <: Field, S <: Vortex}
     for j in eachindex(vort)
         vortex!(psi,vort[j])

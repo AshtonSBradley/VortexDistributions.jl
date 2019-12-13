@@ -1,6 +1,6 @@
 function foundNear(n)
     near = true
-    for j ∈ 1:n
+    for j in 1:n
         psi,vort = randVortexField(1)
         vortfound = findvortices(psi)
         vfdata = rawData(vortfound)
@@ -88,13 +88,16 @@ function findvortices_interp(psi::Field)
 end
 
 """
-    vortices = findvortices(psi::T,interp=true) where T<:Field
+    vortices = findvortices(ψ<:Field,interp=true)
 
-Locates vortices as 2π phase windings around plaquettes on a cartesian spatial grid. Uses an optimized plaquette method followed by recursive interpolation.
+Locate vortices as `2π` phase windings around plaquettes on a cartesian spatial grid.
 
-Requires a 2D wavefunction ψ(x,y) on a cartesian grid specified by vectors x, y.
+Requires a 2D wavefunction `ψ(x,y)` on a cartesian grid specified by vectors `x`, `y`.
 
-`vortices` - array of vortex coordinates `xv,yv` and charges `qv`. Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order according to the `xv` coordinates
+`vortices` - array of vortex coordinates `xv,yv` and charges `qv`.
+
+Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order
+according to the `xv` coordinates.
 """
 function findvortices(psi::Field,interp=true)
     if interp
@@ -106,9 +109,10 @@ end
 
 
 """
-`vortices = removeedgevortices(vort::Array{PointVortex,1},x,y,edge=1)`
+    vortices = removeedgevortices(vort::Array{PointVortex,1},x,y,edge=1)
 
-Strips edgevortices due to periodic phase differencing."""
+Strip artifact edgevortices arising from periodic phase differencing.
+"""
 function removeedgevortices(vort::Array{PointVortex,1},psi::Field,edge=1)
     @unpack x,y = psi; dx=x[2]-x[1]; dy=y[2]-y[1]
     keep = []
@@ -123,7 +127,7 @@ function removeedgevortices(vort::Array{PointVortex,1},psi::Field,edge=1)
 end
 
 """
-    vortz,psiz = corezoom(vortex,psi::T,winhalf=2,Nz=30) where T <: Field
+    vortz,psiz = corezoom(vortex,ψ<:Field,winhalf=2,Nz=30)
 
 Uses local interpolation to resolve core location.
 """
@@ -151,9 +155,11 @@ corezoom(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom(vor
 
 
 """
-    jumps = phasejumps(phase,dim)
+    jumps = phasejumps(ϕ,dim)
 
-Count phase jumps greater than π in `phase` along dimension `dim`
+Count phase jumps greater than `π` in phase `ϕ` along dimension `dim`.
+
+See also: [`unwrap`](@ref), [`unwrap`](@ref), [`unwrap!`](@ref)
 """
 function phasejumps(phase,dim=1)
     @assert (dim==1 || dim==2)
@@ -215,11 +221,11 @@ function phasejumps!(pdiff,phase,dim=1)
 end
 
 """
-`unwrapped = unwrap(phase,dim=1)`
+    unwrapped = unwrap(ϕ,dim=1)
 
-Unwraps 2d array `phase` along dimension `dim`, acting periodically to give back array of same size as `phase`.
+Unwraps 2d array `ϕ` along dimension `dim`, acting periodically to give back array of same size as `ϕ`.
 
-`unwrap!(unwrapped,phase,dim)` writes in-place to `unwrapped`.
+See also: [`unwrap!`](@ref)
 """
 function unwrap(phase::Array{Float64,2},dim=1)
     @assert (dim==1 || dim==2)
@@ -253,6 +259,15 @@ function unwrap(phase::Array{Float64,2},dim=1)
     return uphase
 end
 
+"""
+    unwrap!(unwrapped,ϕ,dim)
+
+Unwraps 2d phase array `ϕ` along dimension `dim`,
+acting periodically and writing the unwrapped array `ϕ`
+in place.
+
+See also: [`unwrap`](@ref)
+"""
 function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
     @assert (dim==1 || dim==2)
     Nx,Ny = size(phase)
