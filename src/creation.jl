@@ -35,6 +35,8 @@ julia> f = Ansatz()
 julia> x = LinRange(0,10,100)
 julia> y = f.(x)
 ```
+
+See also: [`Exact`](@ref)
 """
 Ansatz() = Ansatz(ψa,1.0,Λ)
 
@@ -57,6 +59,8 @@ julia> f = Exact()
 julia> x = LinRange(0,10,100)
 julia> y = f.(x)
 ```
+
+See also: [`Ansatz`](@ref)
 """
 Exact(ξ::Float64) = Exact(VortexDistributions.ψi,ξ::Float64)
 Exact() = Exact(1.0)
@@ -103,7 +107,7 @@ ScalarVortex(pv::Array{PointVortex,1}) = ScalarVortex(1.0,pv)
 
 Sample `n` random scalar vortices, using the domain of spatial field `ψ`.
 
-See also: [`Field`](@), [`randVortex`](@), [`ScalarVortex`](@), [`randPointVortex`](@)
+See also: [`Field`](@ref), [`randVortex`](@ref), [`ScalarVortex`](@ref), [`randPointVortex`](@ref)
 """
 randScalarVortex() = ScalarVortex(randPointVortex())
 randScalarVortex(n) = ScalarVortex.(randPointVortex(n))
