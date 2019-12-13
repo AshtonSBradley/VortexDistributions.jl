@@ -1,7 +1,12 @@
 """
-    scalaransatz(x)
+    f(x)=scalaransatz(x)
 
-Evaluates the simple vortex core ansatz at radial point x.
+Evaluate the simple vortex core ansatz at radial point `x`.
+
+The ansatz is the rational function approximation to the vortex core
+```math
+f(x)=\frac{x^2}{1+x^2}
+```
 """
 scalaransatz(x) = sqrt(x^2/(1+x^2))
 
