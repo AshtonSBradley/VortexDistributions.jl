@@ -83,8 +83,8 @@ function findvortices_interp(psi::Field)
         vort[j] = vortz
         catch nothing
         end
-        return vort
     end
+    return vort
 end
 
 """
