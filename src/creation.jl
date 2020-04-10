@@ -1,11 +1,11 @@
-"""
+@doc raw"""
     f(x)=scalaransatz(x)
 
 Evaluate the simple vortex core ansatz at radial point `x`.
 
 The ansatz is the rational function approximation to the vortex core
 ```math
-f(x)=\\sqrt{\\frac{x^2}{1+x^2}}
+f(x)=\sqrt{\frac{x^2}{1+x^2}}
 ```
 """
 scalaransatz(x) = sqrt(x^2/(1+x^2))
@@ -104,13 +104,18 @@ ScalarVortex(pv::Array{PointVortex,1}) = ScalarVortex(1.0,pv)
 
 Sample `n` random scalar vortices, using the sptial domain of the field `ψ`.
 
-See also: [`Field`](@ref), [`randVortex`](@ref), [`ScalarVortex`](@ref), [`randPointVortex`](@ref)
+See also: [`randVortex`](@ref), [`ScalarVortex`](@ref), [`randPointVortex`](@ref)
 """
 randScalarVortex() = ScalarVortex(randPointVortex())
 randScalarVortex(n) = ScalarVortex.(randPointVortex(n))
 randScalarVortex(psi::Field) = ScalarVortex(Exact(),randPointVortex(psi))
 randScalarVortex(n,psi::Field) = ScalarVortex.([Exact()],randPointVortex(n,psi))
 
+"""
+    randVortex(n,psi::Field)
+
+Sample random vortex.
+"""
 randVortex() = randScalarVortex()
 randVortex(n) = randScalarVortex(n)
 randVortex(n,psi::Field) = randScalarVortex(n,psi)
@@ -120,7 +125,7 @@ randVortex(n,psi::Field) = randScalarVortex(n,psi)
 
 Density and phase imprint a vortex onto the field `ψ`, writing in place.
 
-See also: [`Field`](@ref), [`ScalarVortex`](@ref), [`PointVortex`](@ref), [`randPointVortex`](@ref), [`randScalarVortex`](@ref)
+See also: [`ScalarVortex`](@ref), [`PointVortex`](@ref), [`randPointVortex`](@ref), [`randScalarVortex`](@ref)
 """
 function vortex!(psi::F,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
     @unpack ψ,x,y = psi
