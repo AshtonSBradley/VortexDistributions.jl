@@ -31,7 +31,7 @@ julia> y = f.(x)
 
 See also: [`Exact`](@ref)
 """
-Ansatz() = Ansatz(ψa,1.0,Λ)
+Ansatz() = Ansatz(ψa,1.0,Λ) #offending line precomp
 
 function (core::Ansatz)(x)
     @unpack f,ξ,Λ = core
@@ -56,7 +56,7 @@ julia> y = f.(x)
 See also: [`Ansatz`](@ref)
 """
 Exact(ξ::Float64) = Exact(VortexDistributions.ψi,ξ::Float64)
-Exact() = Exact(1.0)
+Exact() = Exact(1.0) # offending line precomp
 function (core::Exact)(x)
     @unpack ξ,f = core
     return f(x/ξ)
@@ -93,7 +93,6 @@ end
 ScalarVortex(ξ::Float64,pv::Array{PointVortex,1}) = ScalarVortex.([Exact(ξ)],pv::Array{PointVortex,1})
 ScalarVortex(ξ::Array{Float64,1},pv::Array{PointVortex,1}) = @. ScalarVortex(Exact(ξ),pv::Array{PointVortex,1})
 ScalarVortex(ξ::Float64,pv::PointVortex) = ScalarVortex(ξ,[pv])
-ScalarVortex(pv::PointVortex) = ScalarVortex(1.0,pv::PointVortex)
 ScalarVortex(pv::Array{PointVortex,1}) = ScalarVortex(1.0,pv)
 
 """

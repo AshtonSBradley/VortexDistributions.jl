@@ -1,4 +1,5 @@
 ## test linear solve method (Foster PhD)
+using Pkg;Pkg.activate(".")
 using Plots, Revise, VortexDistributions
 
 ## make a vortex
@@ -16,7 +17,6 @@ psiv = psi.ψ
 heatmap(x,y,angle.(psiv))
 
 ## define linear solve (Foster)
-
 function vortex_detect2d(psi)
 # Detect vortices in a field psi, on plaquettes of a 2D grid.
 #

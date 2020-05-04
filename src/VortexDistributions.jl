@@ -1,18 +1,17 @@
 module VortexDistributions
 
 using Reexport
-@reexport using Test
-@reexport using JLD2
-@reexport using Parameters
-@reexport using Interpolations
-Core.eval(Main, :(using Interpolations))
-@reexport using SpecialFunctions
-@reexport using LinearAlgebra
-@reexport using ToeplitzMatrices
-@reexport using SparseArrays
-@reexport using FFTW
-@reexport using FileIO
-@reexport using ProgressMeter
+using Test
+using JLD2
+using Parameters
+using Interpolations
+using SpecialFunctions
+using LinearAlgebra
+using ToeplitzMatrices
+using SparseArrays
+using FFTW
+using FileIO
+using ProgressMeter
 
 const Λ = 0.8249
 export Field, Torus, Sphere
@@ -30,7 +29,7 @@ export index, spectrum, qnumbers, filter, slowpolar, init_polar, polar, filterH
 # export phasejumps, phasejumps!, unwrap, unwrap!
 # export gpecore_exact, chebdif, getChebDMatrix, getChebD2Matrix
 
-Interpolations.interpolate(A::Array{Complex{Float64},2}) = interpolate(real(A))+im*interpolate(imag(A))
+# Interpolations.interpolate(A::Array{Complex{Float64},2}) = interpolate(real(A))+im*interpolate(imag(A))
 
 include("types.jl")
 include("pointvortex.jl")
@@ -41,4 +40,4 @@ include("analysis.jl")
 @load joinpath(@__DIR__,"exactcore.jld2") ψi
 @load joinpath(@__DIR__,"ansatzcore.jld2") ψa
 
-end # module
+end
