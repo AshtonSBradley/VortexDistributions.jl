@@ -9,6 +9,7 @@ function foundNear(n)
     end
     return near
 end
+
 function findwhere(A)
     I = findall(!iszero,A)
     v = A[I]

@@ -1,10 +1,11 @@
-# doubly periodic dipole
+## doubly periodic dipole
 # https://dx.doi.org/10.1103/PhysRevLett.112.145301
 # should be eigenstate of Hamiltonian evolution
 
+using Pkg;Pkg.activate(".")
 using Test, Plots, Revise, VortexDistributions
 
-# test dipole
+## test dipole
 xp = 20
 yp = 3
 vp = PointVortex(xp,yp,1)
@@ -21,7 +22,8 @@ x = LinRange(-π,π,300)
 y = x
 
 #TODO add missing method for Thetad(x,y,dipole::Array{PointVortex})
-# test double periodicity
+
+## test double periodicity
 testpsi = exp.(im*Thetad(x,y,xp,yp,xn,yn))
 @test testpsi[end,:] ≈ testpsi[1,:]
 @test testpsi[:,1] ≈ testpsi[:,end]

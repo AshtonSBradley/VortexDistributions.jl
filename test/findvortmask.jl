@@ -1,7 +1,7 @@
 function findvortmask(ψ,x,y,R)
 ψ = circmask(ψ,x,y,1.1*R)
 nt,np,nn,vortices = findvortices(x,y,ψ)
-#remove vortices found outside mask boundary
+# remove vortices found outside mask boundary
 for (i,xv) in enumerate(vortices[:,1]), yv in vortices[i,2]
     (norm([xv,yv]) > R) && (vortices[i,:] = [0. 0. 0.])
 end
