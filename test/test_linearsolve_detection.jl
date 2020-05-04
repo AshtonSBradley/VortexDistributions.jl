@@ -1,6 +1,7 @@
-#--- test linear solve method (Foster PhD)
+## test linear solve method (Foster PhD)
 using Plots, Revise, VortexDistributions
 
+## make a vortex
 pv1 = PointVortex(0.1,0.3,1)
 v1 = ScalarVortex(pv1)
 
@@ -10,12 +11,11 @@ y = x
 psi = Torus(one.(x.*y') |> complex,x,y)
 
 vortex!(psi,v1)
-
 psiv = psi.ψ
 
 heatmap(x,y,angle.(psiv))
 
-#--- define linear solve (Foster)
+## define linear solve (Foster)
 
 function vortex_detect2d(psi)
 # Detect vortices in a field psi, on plaquettes of a 2D grid.
