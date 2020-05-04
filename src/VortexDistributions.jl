@@ -1,6 +1,6 @@
 module VortexDistributions
 
-using Reexport
+# using Reexport
 using Test
 using JLD2
 using Parameters
