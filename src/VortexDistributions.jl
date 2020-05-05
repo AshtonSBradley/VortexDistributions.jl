@@ -19,7 +19,7 @@ export PointVortex, rawData, uniform, randcharge
 export randPointVortex, randScalarVortex, randVortex
 export vortex!, findvortices, Thetad, periodic_dipole!
 export foundNear, randVortexField
-export phasejumps, phasejumps!, unwrap, unwrap!
+export phasejumps, phasejumps!, unwrap, unwrap!, Δ
 export Basis, Oscillator, hermite, hermite_polar
 export index, spectrum, qnumbers, filter, slowpolar, init_polar, polar, filterH
 
