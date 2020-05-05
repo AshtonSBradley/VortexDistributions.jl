@@ -178,7 +178,7 @@ end
 function periodic_dipole!(psi::F,dip::Array{ScalarVortex{T},1}) where {T <: CoreShape, F<:Field}
     @assert length(dip) == 2
     @assert dip[1].vort.qv + dip[2].vort.qv == 0
-    @assert hypot(dip[1].vort.xv-dip[2].vort.xv,dip[1].vort.yv-dip[2].vort.yv) >= 2*pi
+    # @assert hypot(dip[1].vort.xv-dip[2].vort.xv,dip[1].vort.yv-dip[2].vort.yv) >= 2*pi
     @unpack ψ,x,y = psi
     (dip[1].vort.qv > 0) ? (jp = 1;jn = 2) : (jp = 2;jn = 1)
     vp = rawData(dip[jp].vort)[1:2]
