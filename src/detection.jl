@@ -1,31 +1,15 @@
-function foundNear(n)
-    near = true
-    for j in 1:n
-        psi,vort = randVortexField(1)
-        vortfound = findvortices(psi)
-        vfdata = rawData(vortfound)
-        vdata = rawData(vort)
-        near *= isapprox(vdata,vfdata,rtol = 0.2)
-    end
-    return near
-end
 
-function findwhere(A)
-    I = findall(!iszero,A)
-    v = A[I]
-    ix = [I[i][1] for i in eachindex(I)]
-    iy = [I[i][2] for i in eachindex(I)]
-    return ix,iy,v
-end
 
 function findvortices_jumps(psi::Field;shift=true)
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
+    dx,dy = x[2]-x[1],y[2]-y[1]
+    Lx,Ly = x[end]-x[1]+dx,y[end]-y[1]+dy
 
     # Compute all nearest neighbour jumps
     diffx = phasejumps(phase,1); diffy = phasejumps(phase,2)
 
-    # Compute all plaquette loop integrals with in-place memory recycling
+    # Plaquette loop integrals with memory recycling
     circshift!(phase,diffx,(0,1))
     diffx .-= phase; diffx .-= diffy
     circshift!(phase,diffy,(1,0))
@@ -38,8 +22,15 @@ function findvortices_jumps(psi::Field;shift=true)
     xn = x[ixn]; yn = y[iyn]; nn = length(vn)
 
     if shift
-        dx = x[2]-x[1]; dy = y[2] - y[1]
         xp .-= dx/2; yp .-= dy/2; xn .-= dx/2; yn .-= dy/2
+        @. xp[xp < x[1]] += Lx
+        @. xp[xp > x[end]] -= Lx
+        @. yp[yp < y[1]] += Ly
+        @. yp[yp > y[end]] -= Ly
+        @. xn[xn < x[1]] += Lx
+        @. xn[xn > x[end]] -= Lx
+        @. yn[yn < y[1]] += Ly
+        @. yn[yn > y[end]] -= Ly
     end
 
     vortices = [xn yn -vn; xp yp vp]
@@ -55,16 +46,17 @@ function findvortices_grid(psi::Torus;shift=true)
 end
 
 function findvortices_grid(psi::Sphere;shift=true)
-    @unpack ψ = psi
-    windvals = phasejumps(angle.(ψ),2)
     vort = findvortices_jumps(psi,shift=shift)
     rawvort = rawData(vort)
 
+    @unpack ψ = psi
     # North pole winding. - sign means polar vortex co-rotating with w > 0
-    w1 = sum(windvals[1,:])
+    windvals = phasejumps(angle.(ψ[1,:]))
+    w1 = sum(windvals)
     (sign(w1) != 0) && (rawvort = [rawvort; 0.0 0.0 -w1])
     # South pole winding. + sign means co-rotating with w > 0
-    w2 = sum(windvals[end,:])
+    windvals = phasejumps(angle.(ψ[end,:]))
+    w2 = sum(windvals)
     (sign(w2) != 0) && (rawvort = [rawvort; pi 0.0 w2])
 
     vort = sortslices(vort,dims=1)
@@ -73,9 +65,13 @@ end
 
 function findvortices_interp(psi::Field)
     vort = findvortices_grid(psi,shift=true)
-    vort = removeedgevortices(vort,psi)
-    #TODO: allow for interp with periodic data (here edges are stripped)
+    # vort = removeedgevortices(vort,psi) # TODO periodic detection
+    dx = psi.x[2]-psi.x[1]
+    dy = psi.y[2]-psi.y[1]
+    Lx = psi.x[end]-psi.x[1]+dx
+    Ly = psi.y[end]-psi.y[1]+dy
 
+# TODO: replace corezoom with another sub-grid method
     for (j,vortex) in enumerate(vort)
         try
         vortz,psiz = corezoom(vortex,psi)
@@ -84,12 +80,18 @@ function findvortices_interp(psi::Field)
         vort[j] = vortz
         catch nothing
         end
+        # put coordinates in periodic form
+        vort[j].xv < psi.x[1] && (vort[j].xv += Lx)
+        vort[j].xv > psi.x[end] && (vort[j].xv -= Lx)
+        vort[j].yv < psi.y[1] && (vort[j].yv += Ly)
+        vort[j].yv > psi.y[end] && (vort[j].yv -= Ly)
     end
+
     return vort
 end
 
 """
-    vortices = findvortices(ψ<:Field,interp=true)
+    vortices = findvortices(ψ<:Field;interp=true)
 
 Locate vortices as `2π` phase windings around plaquettes on a cartesian spatial grid.
 
@@ -100,31 +102,12 @@ Requires a 2D wavefunction `ψ(x,y)` on a cartesian grid specified by vectors `x
 Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order
 according to the `xv` coordinates.
 """
-function findvortices(psi::Field,interp=true)
+function findvortices(psi::Field;interp=true)
     if interp
         return findvortices_interp(psi)
     else
         return findvortices_grid(psi)
     end
-end
-
-
-"""
-    vortices = removeedgevortices(vort::Array{PointVortex,1},x,y,edge=1)
-
-Strip artifact edgevortices arising from periodic phase differencing.
-"""
-function removeedgevortices(vort::Array{PointVortex,1},psi::Field,edge=1)
-    @unpack x,y = psi; dx=x[2]-x[1]; dy=y[2]-y[1]
-    keep = []
-    for j = 1:length(vort)
-        xi,yi,qi = rawData(vort[j])
-        xedge = isapprox(xi,x[1],atol=edge*dx) || isapprox(xi,x[end],atol=edge*dx)
-        yedge = isapprox(yi,y[1],atol=edge*dy) || isapprox(yi,y[end],atol=edge*dy)
-        not_edge = !(xedge || yedge)
-        not_edge && push!(keep,j)
-    end
-    return vort[keep]
 end
 
 """
@@ -134,13 +117,16 @@ Uses local interpolation to resolve core location.
 """
 function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     @unpack ψ,x,y = psi
+    s1,s2 = size(psi)
     xv,yv,qv = rawData(vortex)
     dx=x[2]-x[1]; dy=y[2]-y[1]
     ixv = isapprox.(x,xv,atol=dx) |> findlast
     iyv = isapprox.(y,yv,atol=dy) |> findlast
     ixwin = (ixv-winhalf):(ixv+winhalf-1)
     iywin = (iyv-winhalf):(iyv+winhalf-1)
-    xw = x[ixwin]; yw = y[iywin]; psiw = ψ[ixwin,iywin]
+    xw = (x[ixv]-winhalf*dx):(x[ixv]+(winhalf-1)*dx)
+    yw = (y[iyv]-winhalf*dy):(y[iyv]+(winhalf-1)*dy)
+    psiw = ψ[mod1(ixwin,end),mod1(iywin,end)]
     xz = LinRange(xw[1],xw[end],Nz)
     yz = LinRange(yw[1],yw[end],Nz)
     knots = (xw,yw)
@@ -148,175 +134,8 @@ function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     psiz = itp(xz,yz)
     ψv = T(psiz,xz |> Vector,yz |> Vector)
     vortz = findvortices_grid(ψv,shift=false)
-    vortz = removeedgevortices(vortz,ψv)[1]
+    # vortz = removeedgevortices(vortz,ψv)[1]
     return vortz,ψv
 end
 
 corezoom(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom(vortex[1],psi,2,30)
-
-
-"""
-    jumps = phasejumps(ϕ,dim)
-
-Count phase jumps greater than `π` in phase `ϕ` along dimension `dim`.
-
-See also: [`unwrap`](@ref), [`unwrap`](@ref), [`unwrap!`](@ref)
-"""
-function phasejumps(phase,dim=1)
-    @assert (dim==1 || dim==2)
-    Nx,Ny = size(phase)
-    pdiff = zero(phase)
-
-    if dim == 1
-    @inbounds for j in 1:Ny
-        @inbounds for i in 2:Nx
-            Δ = phase[i,j] - phase[i-1,j]
-            abs(Δ) > π && (pdiff[i,j] += sign(Δ))
-        end
-            Δ = phase[1,j] - phase[Nx,j]
-            abs(Δ) > π && (pdiff[1,j] += sign(Δ))
-    end
-
-    elseif dim == 2
-    @inbounds for j in 2:Ny
-        @inbounds for i in 1:Nx
-            Δ = phase[i,j] - phase[i,j-1]
-            abs(Δ) > π && (pdiff[i,j] += sign(Δ))
-        end
-    end
-        @inbounds for i in 1:Nx
-            Δ = phase[i,1] - phase[i,Ny]
-            abs(Δ) > π && (pdiff[i,1] += sign(Δ))
-        end
-    end
-  return pdiff
-end
-
-function phasejumps!(pdiff,phase,dim=1)
-    @assert (dim==1 || dim==2)
-    Nx,Ny = size(phase)
-
-    if dim == 1
-    @inbounds for j in 1:Ny
-        @inbounds for i in 2:Nx
-            Δ = phase[i,j] - phase[i-1,j]
-            abs(Δ) > π && (pdiff[i,j] += sign(Δ))
-        end
-            Δ = phase[1,j] - phase[Nx,j]
-            abs(Δ) > π && (pdiff[1,j] += sign(Δ))
-    end
-
-    elseif dim == 2
-    @inbounds for j in 2:Ny
-        @inbounds for i in 1:Nx
-            Δ = phase[i,j] - phase[i,j-1]
-            abs(Δ) > π && (pdiff[i,j] += sign(Δ))
-        end
-
-    end
-        @inbounds for i in 1:Nx
-            Δ = phase[i,1] - phase[i,Ny]
-            abs(Δ) > π && (pdiff[i,1] += sign(Δ))
-        end
-    end
-end
-
-"""
-    unwrapped = unwrap(ϕ,dim=1)
-
-Unwraps 2d array `ϕ` along dimension `dim`, acting periodically to give back array of same size as `ϕ`.
-
-See also: [`unwrap!`](@ref)
-"""
-function unwrap(phase::Array{Float64,2},dim=1)
-    @assert (dim==1 || dim==2)
-    Nx,Ny = size(phase)
-    uphase = copy(phase)
-
-    if dim == 1
-    @inbounds for j in 1:Ny
-        @inbounds for i in 2:Nx
-        (uphase[i,j] - uphase[i-1,j] >= π) && (uphase[i,j] -= 2π)
-        (uphase[i,j] - uphase[i-1,j] <= -π) && (uphase[i,j] += 2π)
-        end
-        (uphase[1,j] - uphase[Nx,j] >= π) && (uphase[1,j] -= 2π)
-        (uphase[1,j] - uphase[Nx,j] <= -π) && (uphase[1,j] += 2π)
-    end
-
-    elseif dim == 2
-    @inbounds for j in 2:Ny
-        @inbounds for i in 1:Nx
-        (uphase[i,j] - uphase[i,j-1] >= π) && (uphase[i,j] -= 2π)
-        (uphase[i,j] - uphase[i,j-1] <= -π) && (uphase[i,j] += 2π)
-        end
-
-    end
-        @inbounds for i in 1:Nx
-        (uphase[i,1] - uphase[i,Ny] >= π) && (uphase[i,1] -= 2π)
-        (uphase[i,1] - uphase[i,Ny] <= -π) && (uphase[i,1] += 2π)
-        end
-    end
-
-    return uphase
-end
-
-"""
-    unwrap!(unwrapped,ϕ,dim)
-
-Unwraps 2d phase array `ϕ` along dimension `dim`,
-acting periodically and writing the unwrapped array `ϕ`
-in place.
-
-See also: [`unwrap`](@ref)
-"""
-function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
-    @assert (dim==1 || dim==2)
-    Nx,Ny = size(phase)
-    uphase .= phase
-
-    if dim == 1
-    @inbounds for j in 1:Ny
-        @inbounds for i in 2:Nx
-        (uphase[i,j] - uphase[i-1,j] >= π) && (uphase[i,j] -= 2π)
-        (uphase[i,j] - uphase[i-1,j] <= -π) && (uphase[i,j] += 2π)
-        end
-        (uphase[1,j] - uphase[Nx,j] >= π) && (uphase[1,j] -= 2π)
-        (uphase[1,j] - uphase[Nx,j] <= -π) && (uphase[1,j] += 2π)
-    end
-
-    elseif dim == 2
-    @inbounds for j in 2:Ny
-        @inbounds for i in 1:Nx
-        (uphase[i,j] - uphase[i,j-1] >= π) && (uphase[i,j] -= 2π)
-        (uphase[i,j] - uphase[i,j-1] <= -π) && (uphase[i,j] += 2π)
-        end
-
-    end
-        @inbounds for i in 1:Nx
-        (uphase[i,1] - uphase[i,Ny] >= π) && (uphase[i,1] -= 2π)
-        (uphase[i,1] - uphase[i,Ny] <= -π) && (uphase[i,1] += 2π)
-        end
-    end
-end
-
-function unwrap(phase::Array{Float64,1})
-    uphase = copy(phase)
-    Nx = length(phase)
-        @inbounds for i in 2:Nx
-        (uphase[i] - uphase[i-1] >= π) && (uphase[i] -= 2π)
-        (uphase[i] - uphase[i-1] <= -π) && (uphase[i] += 2π)
-        end
-        (uphase[1] - uphase[Nx] >= π) && (uphase[1] -= 2π)
-        (uphase[1] - uphase[Nx] <= -π) && (uphase[1] += 2π)
-        return uphase
-end
-
-function unwrap!(uphase::Array{Float64,1},phase::Array{Float64,1})
-    Nx = length(phase)
-        @inbounds for i in 2:Nx
-        (uphase[i] - uphase[i-1] >= π) && (uphase[i] -= 2π)
-        (uphase[i] - uphase[i-1] <= -π) && (uphase[i] += 2π)
-        end
-        (uphase[1] - uphase[Nx] >= π) && (uphase[1] -= 2π)
-        (uphase[1] - uphase[Nx] <= -π) && (uphase[1] += 2π)
-end

@@ -1,4 +1,15 @@
 
+function found_near(n)
+    near = true
+    for j in 1:n
+        psi,vort = randVortexField(1)
+        vortfound = findvortices(psi)
+        vfdata = rawData(vortfound)
+        vdata = rawData(vort)
+        near *= isapprox(vdata,vfdata,rtol = 0.2)
+    end
+    return near
+end
 
 # unitary?
 v0 = [.2 .4 1]
@@ -14,5 +25,5 @@ v3 = rawData(w3)
 @test v3 == rawData(w3)
 
 # single vortex creation and detection
-@test foundNear(1)
-@test foundNear(30)
+@test found_near(1)
+@test found_near(30)

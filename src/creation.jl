@@ -147,7 +147,7 @@ function randVortexField(n)
     return psi,PointVortex(vort)
 end
 
-#--- periodic dipole phase
+## periodic dipole phase
 # Billam et al, PRL 112, 145301 (2014), Supplemental
 H(x) = x > 0. ? 1.0 : 0.0
 shift(x,xi) = x - xi
@@ -178,7 +178,6 @@ end
 function periodic_dipole!(psi::F,dip::Array{ScalarVortex{T},1}) where {T <: CoreShape, F<:Field}
     @assert length(dip) == 2
     @assert dip[1].vort.qv + dip[2].vort.qv == 0
-    @assert hypot(dip[1].vort.xv-dip[2].vort.xv,dip[1].vort.yv-dip[2].vort.yv) >= 2*pi
     @unpack ψ,x,y = psi
     (dip[1].vort.qv > 0) ? (jp = 1;jn = 2) : (jp = 2;jn = 1)
     vp = rawData(dip[jp].vort)[1:2]
