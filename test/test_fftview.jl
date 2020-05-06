@@ -43,7 +43,7 @@ struct CircView{T,N,A<:AbstractArray} <: AbstractCircView{T,N}
         new{T,N,A}(parent)
     end
 end
-1
+
 CircView(parent::AbstractArray{T,N}) where {T,N} = CircView{T,N,typeof(parent)}(parent)
 CircView{T,N}(dims::Dims{N}) where {T,N} = CircView(Array{T,N}(undef, dims))
 CircView{T}(dims::Dims{N}) where {T,N} = CircView(Array{T,N}(undef, dims))
@@ -94,5 +94,15 @@ x = LinRange(-5,5,1000)
 
 @btime x[200:800]
 
-xc = CircularArray(x)
-xnew = xc[-3:-1]
+xc = CircView(x)
+@btime xc[-800:-200]
+
+
+## test FFTViews separately
+using FFTViews
+x = LinRange(-5,5,1000)
+
+@btime x[200:800]
+
+xc = FFTView(x)
+@btime xc[-800:-200]
