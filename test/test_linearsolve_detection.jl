@@ -1,4 +1,8 @@
 ## test linear solve method (Foster PhD)
+# conclusion (periodic detection branch):
+# linear interp is a very poor approximation
+# recursive interp works very well in comparison
+
 using Pkg;Pkg.activate(".")
 using Plots, Revise, VortexDistributions
 
