@@ -1,6 +1,7 @@
 abstract type Field end
 abstract type Vortex end
 abstract type CoreShape end
+abstract type VortexGroup end 
 
 """
     Torus <: Field
@@ -58,4 +59,13 @@ end
 mutable struct ScalarVortex{T<:CoreShape} <: Vortex
     core::T
     vort::PointVortex
+end
+
+mutable struct Cluster <: VortexGroup
+    v::Array{PointVortex,1}
+end
+
+mutable struct Dipole <: VortexGroup
+    vp::PointVortex
+    vn::PointVortex
 end
