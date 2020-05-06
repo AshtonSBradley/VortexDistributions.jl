@@ -105,4 +105,4 @@ x = LinRange(-5,5,1000)
 @btime x[200:800]
 
 xc = FFTView(x)
-@btime xc[-800:-200]
+@btime @view xc[200:800]
