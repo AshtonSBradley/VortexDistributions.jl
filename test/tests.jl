@@ -1,7 +1,7 @@
 ## activate
-using Pkg;
-Pkg.activate("./")
-using Test, Revise, VortexDistributions
+# using Pkg;
+# Pkg.activate("./")
+# using Test, Revise, VortexDistributions
 
 ## unitary?
 v0 = [.2 .4 1]
@@ -32,9 +32,9 @@ dip = Dipole(vp,vn)
 vv = [vp; vn]
 @test xpos(vv) == [.1;-.2]
 @test ypos(vv) == [.3;.7]
-pos(vp)
-pos(vv)
-charge(vv)
+# pos(vp)
+# pos(vv)
+# charge(vv)
 
 ## create a cluster
 # cl = Cluster()
