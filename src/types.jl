@@ -1,7 +1,7 @@
 abstract type Field end
 abstract type Vortex end
 abstract type CoreShape end
-abstract type VortexGroup end 
+abstract type VortexGroup end
 
 """
     Torus <: Field
@@ -68,4 +68,5 @@ end
 mutable struct Dipole <: VortexGroup
     vp::PointVortex
     vn::PointVortex
+    Dipole(v1,v2) = (charge(v1) > 0 && charge(v2) < 0) ? new(v1,v2) : new(v2,v1)
 end

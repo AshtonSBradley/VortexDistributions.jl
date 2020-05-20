@@ -1,6 +1,6 @@
 Δ(x) = x[2]-x[1]
 
-function findwhere(A)
+function find_where(A)
     I = findall(!iszero,A)
     v = A[I]
     ix = [I[i][1] for i in eachindex(I)]
@@ -8,13 +8,13 @@ function findwhere(A)
     return ix,iy,v
 end
 
-function foundNear(n)
+function found_near(n)
     near = true
     for j in 1:n
-        psi,vort = randVortexField(1)
-        vortfound = findvortices(psi)
-        vfdata = rawData(vortfound)
-        vdata = rawData(vort)
+        psi,vort = rand_vortexfield(1)
+        vortfound = find_vortices(psi)
+        vfdata = vortex_array(vortfound)
+        vdata = vortex_array(vort)
         dx = Δ(psi.x)
         near *= isapprox(vdata,vfdata,rtol = dx/4)
     end
@@ -22,15 +22,15 @@ function foundNear(n)
 end
 
 """
-    vortices = removeedgevortices(vort::Array{PointVortex,1},x,y,edge=1)
+    vortices = remove_edge_vortices(vort::Array{PointVortex,1},x,y,edge=1)
 
 Strip artifact edgevortices arising from periodic phase differencing.
 """
-function removeedgevortices(vort::Array{PointVortex,1},psi::Field,edge=1)
+function remove_edge_vortices(vort::Array{PointVortex,1},psi::Field,edge=1)
     @unpack x,y = psi; dx,dy=Δ(x),Δ(y)
     keep = []
     for j = 1:length(vort)
-        xi,yi,qi = rawData(vort[j])
+        xi,yi,qi = vortex_array(vort[j])
         xedge = isapprox(xi,x[1],atol=edge*dx) || isapprox(xi,x[end],atol=edge*dx)
         yedge = isapprox(yi,y[1],atol=edge*dy) || isapprox(yi,y[end],atol=edge*dy)
         not_edge = !(xedge || yedge)
@@ -43,12 +43,12 @@ end
 ## phase jumps, unwrap
 
 """
-    jumps = phasejumps(ϕ,dim)
+    jumps = phase_jumps(ϕ,dim)
 
 Count phase jumps greater than `π` in phase `ϕ` along dimension `dim`.
 See also: [`unwrap`](@ref), [`unwrap`](@ref), [`unwrap!`](@ref)
 """
-function phasejumps(phase,dim=1)
+function phase_jumps(phase,dim=1)
     @assert (dim==1 || dim==2)
     s1,s2 = size(phase)
     pdiff = zero(phase)
@@ -77,7 +77,7 @@ function phasejumps(phase,dim=1)
   return pdiff
 end
 
-function phasejumps!(pdiff,phase,dim=1)
+function phase_jumps!(pdiff,phase,dim=1)
     @assert (dim==1 || dim==2)
     s1,s2 = size(phase)
 

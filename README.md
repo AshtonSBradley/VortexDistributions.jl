@@ -34,21 +34,21 @@ spv = ScalarVortex(pv)
 vortex!(psi,spv)
 
 # make some more random vortices
-vort = randVortex(n,psi)
+vort = rand_vortex(10,psi)
 vortex!(psi,vort)
 ```
 
-We can recover the raw pointvortex data from `PointVortex()` with
+We can recover the raw point vortex data from `PointVortex()` with
 ```julia
-RawData(pv)
+vortex_array(pv)
  ```
  or from a `ScalarVortex()` with
  ```julia
- RawData(spv.vort)
+vortex_array(spv.vort)
   ```
  We can find all the vortices, removing edge vortices by default:
  ```julia
-vfound = findvortices(psi)
+vfound = find_vortices(psi)
  ```
 
 For a single vortex example, we show have the phase at successive zoom levels with vortex location, `+`, and detected location, `o` (see examples):
@@ -62,7 +62,7 @@ and density at successive zoom levels with vortex location and detected location
  The benchmark gives (2018 MacBook Pro 2.33GHz Intel i5)
  ```julia
  using BenchmarkTools
- julia> @btime vort = findvortices(psi)
+ julia> @btime vort = find_vortices(psi)
    4.037 ms (585 allocations: 3.84 MiB)
  ```
 

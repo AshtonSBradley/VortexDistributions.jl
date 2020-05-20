@@ -1,5 +1,5 @@
 """
-    f(x)=scalaransatz(x)
+    f(x)=scalar_ansatz(x)
 
 Evaluate the simple vortex core ansatz at radial point `x`.
 
@@ -8,7 +8,7 @@ The ansatz is the rational function approximation to the vortex core
 f(x)=\\sqrt{\\frac{x^2}{1+x^2}}
 ```
 """
-scalaransatz(x) = sqrt(x^2/(1+x^2))
+scalar_ansatz(x) = sqrt(x^2/(1+x^2))
 
 """
     core = Ansatz(ψ,ξ,Λ)
@@ -83,7 +83,7 @@ julia> v1 = ScalarVortex(pv)
 ```
 returns a scalarvortex `v1` suitable for vortex construction in a wavefunction.
 
-See also: [`vortex!`](@ref), [`randScalarVortex`](@ref), [`randVortex`](@ref), [`PointVortex`](@ref), [`randPointVortex`](@ref)
+See also: [`vortex!`](@ref), [`rand_scalarvortex`](@ref), [`rand_vortex`](@ref), [`PointVortex`](@ref), [`rand_pointvortex`](@ref)
 """
 ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
 function (s::ScalarVortex{T})(x,y) where T <: CoreShape
@@ -96,30 +96,30 @@ ScalarVortex(ξ::Float64,pv::PointVortex) = ScalarVortex(ξ,[pv])
 ScalarVortex(pv::Array{PointVortex,1}) = ScalarVortex(1.0,pv)
 
 """
-    rv = randScalarVortex()
-    rv = randScalarVortex(n::Int)
-    rv = randScalarVortex(ψ::Field)
-    rv = randScalarVortex(n::Int,ψ::Field)
+    rv = rand_scalarvortex()
+    rv = rand_scalarvortex(n::Int)
+    rv = rand_scalarvortex(ψ::Field)
+    rv = rand_scalarvortex(n::Int,ψ::Field)
 
 Sample `n` random scalar vortices, using the sptial domain of the field `ψ`.
 
-See also: [`Field`](@ref), [`randVortex`](@ref), [`ScalarVortex`](@ref), [`randPointVortex`](@ref)
+See also: [`Field`](@ref), [`rand_vortex`](@ref), [`ScalarVortex`](@ref), [`randPointVortex`](@ref)
 """
-randScalarVortex() = ScalarVortex(randPointVortex())
-randScalarVortex(n) = ScalarVortex.(randPointVortex(n))
-randScalarVortex(psi::Field) = ScalarVortex(Exact(),randPointVortex(psi))
-randScalarVortex(n,psi::Field) = ScalarVortex.([Exact()],randPointVortex(n,psi))
+rand_scalarvortex() = ScalarVortex(rand_pointvortex())
+rand_scalarvortex(n) = ScalarVortex.(rand_pointvortex(n))
+rand_scalarvortex(psi::Field) = ScalarVortex(Exact(),rand_pointvortex(psi))
+rand_scalarvortex(n,psi::Field) = ScalarVortex.([Exact()],rand_pointvortex(n,psi))
 
-randVortex() = randScalarVortex()
-randVortex(n) = randScalarVortex(n)
-randVortex(n,psi::Field) = randScalarVortex(n,psi)
+rand_vortex() = rand_scalarvortex()
+rand_vortex(n) = rand_scalarvortex(n)
+rand_vortex(n,psi::Field) = rand_scalarvortex(n,psi)
 
 """
     vortex!(ψ<:Field, vort<:Vortex)
 
 Density and phase imprint a vortex onto the field `ψ`, writing in place.
 
-See also: [`Field`](@ref), [`ScalarVortex`](@ref), [`PointVortex`](@ref), [`randPointVortex`](@ref), [`randScalarVortex`](@ref)
+See also: [`Field`](@ref), [`ScalarVortex`](@ref), [`PointVortex`](@ref), [`rand_pointvortex`](@ref), [`rand_scalarvortex`](@ref)
 """
 function vortex!(psi::F,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
     @unpack ψ,x,y = psi
@@ -135,14 +135,14 @@ function vortex!(psi::F,vort::Array{S}) where {F <: Field, S <: Vortex}
     end
 end
 
-function randVortexField(n)
+function rand_vortexfield(n)
     Nx = 400; Ny = 400
     Lx = 200; Ly = 200
     x = LinRange(-Lx / 2, Ly / 2, Nx)
     y = LinRange(-Ly / 2, Ly / 2, Ny)
 
     psi0 = one.(x*y') |> complex; psi = Torus(psi0,x,y)
-    vort = randVortex(n,psi)
+    vort = rand_vortex(n,psi)
     vortex!(psi,vort)
     return psi,PointVortex(vort)
 end
@@ -169,7 +169,7 @@ function thetad(x,y,xp,yp,xn,yn)
     return s - x*H(abs(yp - yn) - π) + y*H(abs(xp - xn) - π)
 end
 
-function Thetad(x,y,xp,yp,xn,yn)
+function dipole_phase(x,y,xp,yp,xn,yn)
     Lx = x[end]-x[1]
     Ly = y[end]-y[1]
     return @. thetad(x*2*pi/Lx,y'*2*pi/Ly,xp*2*pi/Lx,yp*2*pi/Ly,xn*2*pi/Lx,yn*2*pi/Ly)
@@ -181,10 +181,10 @@ function periodic_dipole!(psi::F,dip::Array{ScalarVortex{T},1}) where {T <: Core
     # @assert hypot(dip[1].vort.xv-dip[2].vort.xv,dip[1].vort.yv-dip[2].vort.yv) >= 2*pi
     @unpack ψ,x,y = psi
     (dip[1].vort.qv > 0) ? (jp = 1;jn = 2) : (jp = 2;jn = 1)
-    vp = rawData(dip[jp].vort)[1:2]
-    vn = rawData(dip[jn].vort)[1:2]
+    vp = vortex_array(dip[jp].vort)[1:2]
+    vn = vortex_array(dip[jn].vort)[1:2]
     @. ψ *= abs(dip[jn](x,y')*dip[jp](x,y'))
-    ψ .*= exp.(im*Thetad(x,y,vp...,vn...))
+    ψ .*= exp.(im*dipole_phase(x,y,vp...,vn...))
     @pack! psi = ψ
 end
 
@@ -206,10 +206,10 @@ Dz = -2*Dz./L
 D2z = 4*D2z./L.^2
 
 # y is the physical coordinate, range [0 infinity] (i.e y = r)
-y =  R*(1 .+z)./(1 .-z)
+y =  @. R*(1+z)/(1-z)
 
 #initial guess based on ansatz
-ψ = @. y/sqrt(y^2 + Λ^-2)
+ψ = @. y/hypot(1/Λ,y)
 ψ[1] = 0
 ψ[end] = 1
 ψ0 = vec(ψ)
@@ -244,7 +244,7 @@ while sum(abs.(residuals).^2) > 1e-12
     ψ[1] = 0
     ψ[end] =1
 end
-    res = sum(abs.(residuals).^2)
+    res = norm(residuals)^2
     return y,ψ,res
 end
 
