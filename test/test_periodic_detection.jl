@@ -1,12 +1,12 @@
 using Pkg;Pkg.activate(".")
 using Test, Plots, Revise, VortexDistributions
 
-@test foundNear(10)
+@test found_near(10)
 
-## field with 2 points per healing length
-Nx = 400; Ny = Nx
-Lx = 200; Ly = Lx
-x = LinRange(-Lx/2,Lx/2, Nx+1)[1:end-1]; y = x
+## field with 2 points per healing length, test asymmetric
+Nx = 400; Ny = 600
+Lx = 200; Ly = 2*Lx
+x = LinRange(-Lx/2,Lx/2, Nx+1)[1:end-1]; y = LinRange(-Ly/2,Ly/2, Ny+1)[1:end-1];
 psi0 = one.(x*y') |> complex
 
 ## make dipole
@@ -28,9 +28,10 @@ periodic_dipole!(psi,dip)
 # heatmap(x,y,angle.(psi.ψ))
 
 ## detect
-vort = findvortices(psi)
+vort = find_vortices(psi)
 
 ## benchmark
 using BenchmarkTools
 
-@btime vort = findvortices(psi)
+## timing
+@btime vort = find_vortices(psi)

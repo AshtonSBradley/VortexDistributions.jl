@@ -1,10 +1,11 @@
 ## TODO
+- [ ] Make Torus periodic?
 - [ ] Periodic vortex detection
+- [ ] Implement RCA.
 - [ ] More detection precision and speed tests
-- [x] Test against linear solve (Foster). [False]
-- [x] Test against gaussian density. [False]
+- [x] Test against linear solve (Foster). (result: slower)
+- [x] Test against gaussian density. (result: slower)
 - [ ] Test against a very fine reference grid.
 - [ ] Remove/change interpolations dependency of cores to fix incremental pre-compilation issue.
 - [x] minimise `@reexport` usage
-- [ ] Implement RCA.
 - [ ] Trim allocations on `find_vortices`

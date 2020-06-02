@@ -14,8 +14,8 @@ using ProgressMeter
 
 const Λ = 0.8249
 export Field, Torus, Sphere
-export Vortex, CoreShape, Ansatz, Exact, ScalarVortex, scalar_ansatz
-export PointVortex, vortex_array, uniform, rand_charge
+export Vortex, CoreShape, Ansatz, Exact, ScalarVortex, PointVortex
+export scalar_ansatz, vortex_array, uniform, rand_charge
 export rand_pointvortex, rand_scalarvortex, rand_vortex
 export vortex!, find_vortices, dipole_phase, periodic_dipole!
 export found_near, rand_vortexfield
