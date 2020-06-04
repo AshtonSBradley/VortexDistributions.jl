@@ -44,16 +44,16 @@ end
 
 function find_vortices_interp(psi::Field)
     vort = find_vortices_grid(psi,shift=true)
-    vort = remove_edge_vortices(vort,psi) # essential for current found_near!
+    vort = remove_edge_vortices(vort,psi) #TODO essential for current found_near!
     #TODO: allow for interp with periodic data (here edges are stripped)
     #NOTE: found_near uses rand_vortexfield which requires removing endge vortices
     #to make periodic we have to remove all statements that remove edge vortices,
-    #except inside ingerpolation which will generate spurious edge vortices.
+    #except inside interpolation which will generate spurious edge vortices.
 
     for (j,vortex) in enumerate(vort)
         try
         vortz,psiz = corezoom(vortex,psi)
-        # vortz,psiz = corezoom_periodic(vortex,psi)
+        # vortz,psiz = corezoom_periodic(vortex,psi) #TODO
         vortz,psiz = corezoom(vortz,psiz)
         vortz,psiz = corezoom(vortz,psiz)
         vort[j] = vortz
@@ -83,10 +83,10 @@ function find_vortices_jumps(psi::Field;shift=true)
     xn = x[ixn]; yn = y[iyn]; nn = length(vn)
 
     if shift
-        dx,dy=Δ(x),Δ(y)
+        dx,dy = Δ(x),Δ(y)
         xp .-= dx/2; yp .-= dy/2; xn .-= dx/2; yn .-= dy/2
-        Lx = x[end]-x[1]+dx
-        Ly = y[end]-y[1]+dy
+        Lx = x[end]-x[1]
+        Ly = y[end]-y[1]
         @. xp[xp>Lx/2] -= Lx
         @. xp[xp<-Lx/2] += Lx
         @. xn[xn>Lx/2] -= Lx
@@ -111,7 +111,7 @@ Uses local interpolation to resolve core location.
 function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     @unpack ψ,x,y = psi
     xv,yv,qv = vortex_array(vortex)
-    dx,dy=Δ(x),Δ(y)
+    dx,dy = Δ(x),Δ(y)
     ixv = isapprox.(x,xv,atol=dx) |> findfirst
     iyv = isapprox.(y,yv,atol=dy) |> findfirst
     ixwin = (ixv-winhalf):(ixv+winhalf-1)
@@ -128,28 +128,31 @@ function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     return vortz,ψv
 end
 
-corezoom(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom(vortex[1],psi,2,30)
+corezoom(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom(vortex[1],psi,winhalf,Nz)
 
 function corezoom_periodic(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     @unpack ψ,x,y = psi
     xv,yv,qv = vortex_array(vortex)
     dx,dy = Δ(x),Δ(y)
+    nx,ny = size(ψ)
     ixv = isapprox.(x,xv,atol=dx) |> findfirst
     iyv = isapprox.(y,yv,atol=dy) |> findfirst
-    ixwin = (ixv-winhalf):(ixv+winhalf-1)
-    iywin = (iyv-winhalf):(iyv+winhalf-1)
-    xw = (x[ixv]-winhalf*dx):(x[ixv]+winhalf*dx-dx)
-    yw = (y[iyv]-winhalf*dy):(y[iyv]+winhalf*dy-dy)
-    psiw = ψ[mod1.(ixwin,end),mod1.(iywin,end)]
-    knots = (xw,yw)
-    itp = interpolate(knots, psiw, Gridded(Linear()))
-    xz = LinRange(xw[1],xw[end],Nz)
-    yz = LinRange(yw[1],yw[end],Nz)
-    psiz = itp(xz,yz)
-    ψv = T(psiz,xz |> Vector,yz |> Vector)
-    vortz = find_vortices_grid(ψv,shift=false)
+    ix1,ix2,iy1,iy2 = ixv-winhalf,ixv+winhalf-1,iyv-winhalf,iyv+winhalf-1
+    ixwin,iywin = ix1:ix2,iy1:iy2
+    x1,x2 = x[ixv]-dx*winhalf,x[ixv]+dx*(winhalf-1)
+    y1,y2 = y[iyv]-dy*winhalf,y[iyv]+dy*(winhalf-1)
+    # periodic patch
+    ixwinp = mod1.(ixwin,nx) # periodic indices
+    iywinp = mod1.(iywin,ny)
+    xw = x1:dx:x2   # window of x values
+    yw = y1:dy:y2   # window of y values
+    psiw = ψ[ixwinp,iywinp] # window of wavefunction
+    itp = interpolate((xw,yw), psiw, Gridded(Linear()))
+    xz,yz = LinRange(x1,x2,Nz),LinRange(y1,y2,Nz)
+    ψv = T(itp(xz,yz),xz |> Vector,yz |> Vector)
+    vortz = find_vortices_grid(ψv,shift=true)
     vortz = remove_edge_vortices(vortz,ψv)[1]
     return vortz,ψv
 end
 
-corezoom_periodic(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom_periodic(vortex[1],psi,2,30)
+corezoom_periodic(vortex::Array{PointVortex,1},psi::Field,winhalf=2,Nz=30) = corezoom_periodic(vortex[1],psi,winhalf,Nz)
