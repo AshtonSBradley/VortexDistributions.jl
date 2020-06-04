@@ -22,10 +22,12 @@ yn = 10.
 vn = PointVortex(xn,yn,-1)
 
 dip = ScalarVortex([vp;vn])
+# dip = Dipole(vp,vn)
+# vortex_array(dip.vp)[1:2]
 
 periodic_dipole!(psi,dip)
 
-# heatmap(x,y,angle.(psi.ψ))
+heatmap(x,y,angle.(psi.ψ))
 
 ## detect
 vort = find_vortices(psi)

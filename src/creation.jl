@@ -87,7 +87,7 @@ See also: [`vortex!`](@ref), [`rand_scalarvortex`](@ref), [`rand_vortex`](@ref),
 """
 ScalarVortex(vort::PointVortex) = ScalarVortex(Exact(),vort)
 function (s::ScalarVortex{T})(x,y) where T <: CoreShape
-    @unpack xv,yv,qv = s.vort
+    xv,yv,qv = s.vort
     return s.core(x - xv, y - yv)*exp(im*qv*atan(y - yv,x - xv))
 end
 ScalarVortex(ξ::Float64,pv::Array{PointVortex,1}) = ScalarVortex.([Exact(ξ)],pv::Array{PointVortex,1})
@@ -123,7 +123,7 @@ See also: [`Field`](@ref), [`ScalarVortex`](@ref), [`PointVortex`](@ref), [`rand
 """
 function vortex!(psi::F,vort::ScalarVortex{T}) where {T <: CoreShape, F<:Field}
     @unpack ψ,x,y = psi
-    @. ψ *= vort.(x,y')
+    @. ψ *= vort(x,y')
     @pack! psi = ψ
 end
 function vortex!(psi::F,vort::S) where {F <: Field, S <: Vortex}
@@ -177,16 +177,25 @@ end
 
 function periodic_dipole!(psi::F,dip::Array{ScalarVortex{T},1}) where {T <: CoreShape, F<:Field}
     @assert length(dip) == 2
-    @assert dip[1].vort.qv + dip[2].vort.qv == 0
-    # @assert hypot(dip[1].vort.xv-dip[2].vort.xv,dip[1].vort.yv-dip[2].vort.yv) >= 2*pi
+    @assert dip[1].vort.q + dip[2].vort.q == 0
     @unpack ψ,x,y = psi
-    (dip[1].vort.qv > 0) ? (jp = 1;jn = 2) : (jp = 2;jn = 1)
+    (dip[1].vort.q > 0) ? (jp = 1;jn = 2) : (jp = 2;jn = 1)
     vp = vortex_array(dip[jp].vort)[1:2]
     vn = vortex_array(dip[jn].vort)[1:2]
-    @. ψ *= abs(dip[jn](x,y')*dip[jp](x,y'))
+    ψ .*= abs.(dip[jn].core.(x,y')*dip[jp].core.(x,y'))
     ψ .*= exp.(im*dipole_phase(x,y,vp...,vn...))
     @pack! psi = ψ
 end
+
+function periodic_dipole!(psi::F,dip::Dipole) where F <: Field
+    @unpack ψ,x,y = psi
+    rp = vortex_array(dip.vp)[1:2]
+    rn = vortex_array(dip.vn)[1:2]
+    ψ .*= abs.(dip[jn].core.(x,y')*dip[jp].core.(x,y'))
+    ψ .*= exp.(im*dipole_phase(x,y,rp...,rn...))
+    @pack! psi = ψ
+end
+
 
 #Chebyshev methods
 

@@ -40,9 +40,9 @@ mutable struct Sphere <: Field
 end
 
 mutable struct PointVortex <: Vortex
-    xv::Float64
-    yv::Float64
-    qv::Int64
+    x::Float64
+    y::Float64
+    q::Int64
 end
 
 struct Ansatz <: CoreShape

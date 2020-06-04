@@ -5,10 +5,10 @@ Locate vortices as `2π` phase windings around plaquettes on a cartesian spatial
 
 Requires a 2D wavefunction `ψ(x,y)` on a cartesian grid specified by vectors `x`, `y`.
 
-`vortices` - array of vortex coordinates `xv,yv` and charges `qv`.
+`vortices` - array of vortex coordinates `x,y` and charges `q`.
 
-Each row is of the form `[xv, yv, cv]`, and the array is sorted into lexical order
-according to the `xv` coordinates.
+Each row is of the form `[x, y, cv]`, and the array is sorted into lexical order
+according to the vortex `x` coordinates.
 """
 function find_vortices(psi::Field,interp=true)
     if interp

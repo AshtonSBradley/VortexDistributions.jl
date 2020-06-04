@@ -15,15 +15,11 @@ using ProgressMeter
 const Λ = 0.8249
 export Field, Torus, Sphere
 export Vortex, CoreShape, Ansatz, Exact, ScalarVortex, PointVortex
-export scalar_ansatz, vortex_array, uniform, rand_charge
-export rand_pointvortex, rand_scalarvortex, rand_vortex
+export scalar_ansatz, vortex_array, uniform 
 export vortex!, find_vortices, dipole_phase, periodic_dipole!
-export found_near, rand_vortexfield
-export phase_jumps, phase_jumps!, unwrap, unwrap!, Δ
+export rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield
+export found_near, phase_jumps, phase_jumps!, unwrap, unwrap!, Δ
 export Dipole, Cluster, charge, xpos, ypos, pos
-
-# export Basis, Oscillator, hermite, hermite_polar
-# export index, spectrum, qnumbers, filter, slowpolar, init_polar, polar, filterH
 
 # export ψi, ψa
 # export findwhere, findvortices_jumps, findvortices_grid, findvortices_interp
@@ -34,7 +30,6 @@ include("types.jl")
 include("pointvortex.jl")
 include("detection.jl")
 include("creation.jl")
-include("analysis.jl")
 include("utils.jl")
 
 @load joinpath(@__DIR__,"exactcore.jld2") ψi

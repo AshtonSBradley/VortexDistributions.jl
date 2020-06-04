@@ -23,7 +23,8 @@ Return `varray<:Array{Float64,2}` of vortex data.
 
 See also: [`PointVortex`](@ref)
 """
-vortex_array(v::PointVortex) = [v.xv v.yv v.qv]
+vortex_array(v::PointVortex) = [v.x v.y v.q]
+
 function vortex_array(v::Array{PointVortex,1})
     ~isempty(v) > 0 ? (return reduce(vcat,vortex_array.(v))) : (return Array{Float64}(undef, 0, 0))
 end
@@ -32,9 +33,11 @@ function uniform(a,b)
     @assert a<b
     return a + (b-a)*rand()
 end
+
 function uniform(a,b,n)
     return uniform.(a*ones(n),b)
 end
+
 uniform() = uniform(-.5,.5)
 uniform(n) = uniform(-.5,.5,n)
 
@@ -53,10 +56,12 @@ See also: [`PointVortex`](@ref), [`randVortex`](@ref)
 """
 rand_pointvortex() = PointVortex(uniform(),uniform(),rand_charge())
 rand_pointvortex(n) = PointVortex.(uniform(n), uniform(n), rand_charge(n))
+
 function rand_pointvortex(psi::Field)
     @unpack x,y = psi; a,b = first(x),last(x); c,d = first(y), last(y)
     return PointVortex(uniform(a,b,),uniform(c,d,),rand_charge())
 end
+
 function rand_pointvortex(n,psi::Field)
     @unpack x,y = psi;
     dx = x[2]-x[1]; dy = y[2] - y[1]
@@ -64,10 +69,10 @@ function rand_pointvortex(n,psi::Field)
     return PointVortex.(uniform(a,b,n),uniform(c,d,n),rand_charge(n))
 end
 
-charge(v::PointVortex) = v.qv
-xpos(v::PointVortex) = v.xv
-ypos(v::PointVortex) = v.yv
-vpos(v::PointVortex) = [v.xv v.yv]
+charge(v::PointVortex) = v.q
+xpos(v::PointVortex) = v.x
+ypos(v::PointVortex) = v.y
+vpos(v::PointVortex) = [v.x v.y]
 
 xpos(v::Array{PointVortex,1}) = xpos.(v)
 ypos(v::Array{PointVortex,1}) = ypos.(v)
