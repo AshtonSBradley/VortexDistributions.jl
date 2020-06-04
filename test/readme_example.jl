@@ -24,4 +24,4 @@ vort = rand_vortex(10,psi)
 vortex!(psi,vort)
 
 using BenchmarkTools
-@btime find_vortices(psi)
+@btime findvortices(psi)

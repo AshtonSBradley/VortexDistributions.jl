@@ -12,7 +12,7 @@ function found_near(n)
     near = true
     for j in 1:n
         psi,vort = rand_vortexfield(1)
-        vortfound = find_vortices(psi)
+        vortfound = findvortices(psi)
         vfdata = vortex_array(vortfound)
         vdata = vortex_array(vort)
         dx = Δ(psi.x)

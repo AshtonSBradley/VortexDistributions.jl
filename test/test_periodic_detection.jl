@@ -30,13 +30,13 @@ periodic_dipole!(psi,dip)
 heatmap(x,y,angle.(psi.ψ))
 
 ## detect
-vort = find_vortices(psi)
+vort = findvortices(psi)
 
 ## benchmark
 using BenchmarkTools
 
 ## timing
-@btime vort = find_vortices(psi)
+@btime vort = findvortices(psi)
 
 
 ## make a vortex at edge of grid
@@ -58,4 +58,4 @@ periodic_dipole!(psi,dip)
 heatmap(angle.(psi.ψ))
 
 ## detect
-vort = find_vortices(psi)
+vort = findvortices(psi)

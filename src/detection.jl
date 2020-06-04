@@ -1,5 +1,5 @@
 """
-    vortices = find_vortices(ψ<:Field,interp=true)
+    vortices = find_vortices(ψ<:Field)
 
 Locate vortices as `2π` phase windings around plaquettes on a cartesian spatial grid.
 
@@ -10,12 +10,25 @@ Requires a 2D wavefunction `ψ(x,y)` on a cartesian grid specified by vectors `x
 Each row is of the form `[x, y, cv]`, and the array is sorted into lexical order
 according to the vortex `x` coordinates.
 """
-function find_vortices(psi::Field,interp=true)
-    if interp
-        return find_vortices_interp(psi)
-    else
-        return find_vortices_grid(psi)
+function findvortices(psi::Field)
+    vort = find_vortices_grid(psi,shift=true)
+    vort = remove_edge_vortices(vort,psi) #TODO essential for current found_near!
+    #TODO: allow for interp with periodic data (here edges are stripped)
+    #NOTE: found_near uses rand_vortexfield which requires removing endge vortices
+    #to make periodic we have to remove all statements that remove edge vortices,
+    #except inside interpolation which will generate spurious edge vortices.
+
+    for (j,vortex) in enumerate(vort)
+        try
+        vortz,psiz = corezoom(vortex,psi)
+        # vortz,psiz = corezoom_periodic(vortex,psi) #TODO
+        vortz,psiz = corezoom(vortz,psiz)
+        vortz,psiz = corezoom(vortz,psiz)
+        vort[j] = vortz
+        catch nothing
+        end
     end
+    return vort
 end
 
 function find_vortices_grid(psi::Torus;shift=true)
@@ -42,26 +55,7 @@ function find_vortices_grid(psi::Sphere;shift=true)
     return PointVortex(vort)
 end
 
-function find_vortices_interp(psi::Field)
-    vort = find_vortices_grid(psi,shift=true)
-    vort = remove_edge_vortices(vort,psi) #TODO essential for current found_near!
-    #TODO: allow for interp with periodic data (here edges are stripped)
-    #NOTE: found_near uses rand_vortexfield which requires removing endge vortices
-    #to make periodic we have to remove all statements that remove edge vortices,
-    #except inside interpolation which will generate spurious edge vortices.
 
-    for (j,vortex) in enumerate(vort)
-        try
-        vortz,psiz = corezoom(vortex,psi)
-        # vortz,psiz = corezoom_periodic(vortex,psi) #TODO
-        vortz,psiz = corezoom(vortz,psiz)
-        vortz,psiz = corezoom(vortz,psiz)
-        vort[j] = vortz
-        catch nothing
-        end
-    end
-    return vort
-end
 
 function find_vortices_jumps(psi::Field;shift=true)
     @unpack x,y,ψ = psi
