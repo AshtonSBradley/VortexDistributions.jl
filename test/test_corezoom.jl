@@ -25,6 +25,7 @@ periodic_dipole!(psi,dip)
 heatmap(x,y,angle.(psi.ψ))
 
 ## zoom
+using Interpolations, Parameters
 """
     psiz,xz,yz = zoom(psi,x,y,xc,yc,win=2)
 """
@@ -41,10 +42,9 @@ end
 function zoom_interp(psi,x,y,xc,yc;win=2,nz=30)
     psiz, xz, yz = zoom_grid(psi,x,y,xc,yc,win=win)
     psi_itp = interpolate((xz,yz), psiz, Gridded(Linear()))
-    xint = LinRange(xz[1],xz[end],nz)
-    yint = LinRange(yz[1],yz[end],nz)
+    xint,yint = LinRange(xz[1],xz[end],nz),LinRange(yz[1],yz[end],nz)
     psi_int = psi_itp(xint,yint)
-    return psi_int,xint,yint
+    return psi_int, xint, yint
 end
 
 ## test zoom_grid
@@ -53,15 +53,28 @@ heatmap(xw,yw,angle.(psiw))
 
 ## test zoom_interp
 psi_int,xint,yint = zoom_interp(psi.ψ,x,y,vortex_array(vp)[1:2]...)
-heatmap(xint,yint,angle.(psi_int))
-
 v1 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
-
-## TODO next: test findvortices_jumps 
-v2 = vort = findvortices_jumps(Torus(psi_int,xint,yint),shift=true)
-
-psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vortex_array(vp)[1:2]...)
+vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
 heatmap(xint,yint,angle.(psi_int))
+
+# make sure zoom stability is exact
+# remove_vortices_edge
+
+## TODO test findvortices_jumps has periodic correction that will need to be rethought.
+# v2 = findvortices_jumps(Torus(psi_int,xint,yint),shift=true)
+
+## zoom second iteration and check stability
+psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.x,vint.y)
+v2 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
+vint = remove_vortices_edge(v2,Torus(psi_int,xint,yint))[1]
+heatmap(xint,yint,angle.(psi_int))
+
+## zoom third iteration
+psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.x,vint.y)
+heatmap(xint,yint,angle.(psi_int))
+
+v3 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
+vint = remove_vortices_edge(v3,Torus(psi_int,xint,yint))[1]
 
 ## definition
 using Parameters, Interpolations

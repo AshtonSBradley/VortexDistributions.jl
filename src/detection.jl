@@ -77,16 +77,16 @@ function findvortices_jumps(psi::Field;shift=true)
     if shift
         dx,dy = Δ(x),Δ(y)
         xp .-= dx/2; yp .-= dy/2; xn .-= dx/2; yn .-= dy/2
-        Lx = x[end]-x[1]
-        Ly = y[end]-y[1]
-        @. xp[xp>Lx/2] -= Lx
-        @. xp[xp<-Lx/2] += Lx
-        @. xn[xn>Lx/2] -= Lx
-        @. xn[xn<-Lx/2] += Lx
-        @. yp[yp>Ly/2] -= Ly
-        @. yp[yp<-Ly/2] += Ly
-        @. yn[yn>Ly/2] -= Ly
-        @. yn[yn<-Ly/2] += Ly
+        # Lx = x[end]-x[1]
+        # Ly = y[end]-y[1]
+        # @. xp[xp>Lx/2] -= Lx
+        # @. xp[xp<-Lx/2] += Lx
+        # @. xn[xn>Lx/2] -= Lx
+        # @. xn[xn<-Lx/2] += Lx
+        # @. yp[yp>Ly/2] -= Ly
+        # @. yp[yp<-Ly/2] += Ly
+        # @. yn[yn>Ly/2] -= Ly
+        # @. yn[yn<-Ly/2] += Ly
     end
 
     vortices = [xn yn -vn; xp yp vp]
