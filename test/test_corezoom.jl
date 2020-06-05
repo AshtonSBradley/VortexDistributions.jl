@@ -57,7 +57,7 @@ heatmap(xint,yint,angle.(psi_int))
 
 v1 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
 
-## test findvortices_jumps 
+## TODO next: test findvortices_jumps 
 v2 = vort = findvortices_jumps(Torus(psi_int,xint,yint),shift=true)
 
 psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vortex_array(vp)[1:2]...)
