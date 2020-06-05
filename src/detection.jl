@@ -1,5 +1,5 @@
 """
-    vortices = find_vortices(ψ<:Field)
+    vortices = findvortices(ψ<:Field)
 
 Locate vortices as `2π` phase windings around plaquettes on a cartesian spatial grid.
 
@@ -11,8 +11,8 @@ Each row is of the form `[x, y, cv]`, and the array is sorted into lexical order
 according to the vortex `x` coordinates.
 """
 function findvortices(psi::Field)
-    vort = find_vortices_grid(psi,shift=true)
-    vort = remove_edge_vortices(vort,psi) #TODO essential for current tests: found_near!
+    vort = findvortices_grid(psi,shift=true)
+    vort = remove_vortices_edge(vort,psi) #TODO essential for current tests: found_near!
     #TODO: allow for interp with periodic data (here edges are stripped)
     #NOTE: found_near uses rand_vortexfield which requires removing endge vortices
     #to make periodic we have to remove all statements that remove edge vortices,
@@ -31,17 +31,17 @@ function findvortices(psi::Field)
     return vort
 end
 
-function find_vortices_grid(psi::Torus;shift=true)
-    vort = find_vortices_jumps(psi,shift=shift)
+function findvortices_grid(psi::Torus;shift=true)
+    vort = findvortices_jumps(psi,shift=shift)
     varray = vortex_array(vort)
     vort = sortslices(varray,dims=1)
     return PointVortex(vort)
 end
 
-function find_vortices_grid(psi::Sphere;shift=true)
+function findvortices_grid(psi::Sphere;shift=true)
     @unpack ψ = psi
     windvals = phase_jumps(angle.(ψ),2)
-    vort = find_vortices_jumps(psi,shift=shift)
+    vort = findvortices_jumps(psi,shift=shift)
     rawvort = vortex_array(vort)
 
     # North pole winding. - sign means polar vortex co-rotating with w > 0
@@ -55,7 +55,7 @@ function find_vortices_grid(psi::Sphere;shift=true)
     return PointVortex(vort)
 end
 
-function find_vortices_jumps(psi::Field;shift=true)
+function findvortices_jumps(psi::Field;shift=true)
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
 
@@ -115,8 +115,8 @@ function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     yz = LinRange(yw[1],yw[end],Nz)
     psiz = itp(xz,yz)
     ψv = T(psiz,xz |> Vector,yz |> Vector)
-    vortz = find_vortices_grid(ψv,shift=true)
-    vortz = remove_edge_vortices(vortz,ψv)[1]
+    vortz = findvortices_grid(ψv,shift=true)
+    vortz = remove_vortices_edge(vortz,ψv)[1]
     return vortz,ψv
 end
 
@@ -142,8 +142,8 @@ function corezoom_periodic(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:
     itp = interpolate((xw,yw), psiw, Gridded(Linear()))
     xz,yz = LinRange(x1,x2,Nz),LinRange(y1,y2,Nz)
     ψv = T(itp(xz,yz),xz |> Vector,yz |> Vector)
-    vortz = find_vortices_grid(ψv,shift=true)
-    vortz = remove_edge_vortices(vortz,ψv)[1]
+    vortz = findvortices_grid(ψv,shift=true)
+    vortz = remove_vortices_edge(vortz,ψv)[1]
     return vortz,ψv
 end
 

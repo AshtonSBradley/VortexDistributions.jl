@@ -21,8 +21,8 @@ export rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vorte
 export found_near, phase_jumps, phase_jumps!, unwrap, unwrap!, Δ
 export Dipole, Cluster, charge, xpos, ypos, pos
 
-export find_where, find_vortices_jumps, find_vortices_grid
-export remove_edge_vortices, corezoom
+export find_where, findvortices_jumps, findvortices_grid
+export remove_vortices_edge, corezoom
 # export gpecore_exact, chebdif, getChebDMatrix, getChebD2Matrix
 # export ψi, ψa
 

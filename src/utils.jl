@@ -22,11 +22,11 @@ function found_near(n)
 end
 
 """
-    vortices = remove_edge_vortices(vort::Array{PointVortex,1},x,y,edge=1)
+    vortices = remove_vortices_edge(vort::Array{PointVortex,1},x,y,edge=1)
 
 Strip artifact edgevortices arising from periodic phase differencing.
 """
-function remove_edge_vortices(vort::Array{PointVortex,1},psi::Field,edge=1)
+function remove_vortices_edge(vort::Array{PointVortex,1},psi::Field,edge=1)
     @unpack x,y = psi; dx,dy=Δ(x),Δ(y)
     keep = []
     for j = 1:length(vort)

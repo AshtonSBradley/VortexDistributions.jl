@@ -2,7 +2,7 @@
 `vortices = remove_edgevortices(vortices,x,y,edge=1)`
 
 Strips edgevortices due to periodic phase differencing."""
-function remove_edgevortices(vortices,x,y,edge=1)
+function remove_vortices_edge(vortices,x,y,edge=1)
     dx=x[2]-x[1];dy=y[2]-y[1];
     Nfound,_ = size(vortices)
     keep = []
