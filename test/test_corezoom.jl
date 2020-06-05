@@ -57,12 +57,13 @@ v1 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
 vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
 heatmap(xint,yint,angle.(psi_int))
 
+# TODO mystery of why shift has no effect but to make x grid resolved...
 # make sure zoom stability is exact
 # remove_vortices_edge
 
 ## TODO test findvortices_jumps has periodic correction that will need to be rethought.
 # v2 = findvortices_jumps(Torus(psi_int,xint,yint),shift=true)
-# TODO mystery of why shift has no effect but to make x grid resolved...
+
 ## zoom second iteration and check stability
 psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.x,vint.y)
 v2 = findvortices_grid(Torus(psi_int,xint,yint),shift=false)
