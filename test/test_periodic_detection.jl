@@ -29,8 +29,9 @@ periodic_dipole!(psi,dip)
 
 heatmap(x,y,angle.(psi.ψ))
 
-## detect
+## detect: grid limited?
 vort = findvortices(psi)
+@show vort[1]
 
 ## benchmark
 using BenchmarkTools

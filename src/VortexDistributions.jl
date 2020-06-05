@@ -21,10 +21,10 @@ export rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vorte
 export found_near, phase_jumps, phase_jumps!, unwrap, unwrap!, Δ
 export Dipole, Cluster, charge, xpos, ypos, pos
 
-# export ψi, ψa
-# export findwhere, findvortices_jumps, findvortices_grid, findvortices_interp
-# export removeedgevortices, corezoom
+export find_where, find_vortices_jumps, find_vortices_grid
+export remove_edge_vortices, corezoom
 # export gpecore_exact, chebdif, getChebDMatrix, getChebD2Matrix
+# export ψi, ψa
 
 include("types.jl")
 include("pointvortex.jl")

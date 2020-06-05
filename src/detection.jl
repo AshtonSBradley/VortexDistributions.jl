@@ -12,7 +12,7 @@ according to the vortex `x` coordinates.
 """
 function findvortices(psi::Field)
     vort = find_vortices_grid(psi,shift=true)
-    vort = remove_edge_vortices(vort,psi) #TODO essential for current found_near!
+    vort = remove_edge_vortices(vort,psi) #TODO essential for current tests: found_near!
     #TODO: allow for interp with periodic data (here edges are stripped)
     #NOTE: found_near uses rand_vortexfield which requires removing endge vortices
     #to make periodic we have to remove all statements that remove edge vortices,
@@ -33,8 +33,8 @@ end
 
 function find_vortices_grid(psi::Torus;shift=true)
     vort = find_vortices_jumps(psi,shift=shift)
-    rawvort = vortex_array(vort)
-    vort = sortslices(rawvort,dims=1)
+    varray = vortex_array(vort)
+    vort = sortslices(varray,dims=1)
     return PointVortex(vort)
 end
 
@@ -55,14 +55,12 @@ function find_vortices_grid(psi::Sphere;shift=true)
     return PointVortex(vort)
 end
 
-
-
 function find_vortices_jumps(psi::Field;shift=true)
     @unpack x,y,ψ = psi
     phase = angle.(ψ)
 
     # Nearest neighbour phase jumps
-    diffx = phase_jumps(phase,1); diffy = phase_jumps(phase,2)
+    diffx,diffy = phase_jumps(phase,1),phase_jumps(phase,2)
 
     # Plaquette loop integrals with in-place memory recycling
     circshift!(phase,diffx,(0,1))
@@ -104,20 +102,20 @@ Uses local interpolation to resolve core location.
 """
 function corezoom(vortex::PointVortex,psi::T,winhalf=2,Nz=30) where T<:Field
     @unpack ψ,x,y = psi
-    xv,yv,qv = vortex_array(vortex)
+    xv,yv,qv = vortex.x,vortex.y.vortex.q
     dx,dy = Δ(x),Δ(y)
     ixv = isapprox.(x,xv,atol=dx) |> findfirst
     iyv = isapprox.(y,yv,atol=dy) |> findfirst
     ixwin = (ixv-winhalf):(ixv+winhalf-1)
     iywin = (iyv-winhalf):(iyv+winhalf-1)
     xw = x[ixwin]; yw = y[iywin]; psiw = ψ[ixwin,iywin]
-    xz = LinRange(xw[1],xw[end],Nz)
-    yz = LinRange(yw[1],yw[end],Nz)
     knots = (xw,yw)
     itp = interpolate(knots, psiw, Gridded(Linear()))
+    xz = LinRange(xw[1],xw[end],Nz)
+    yz = LinRange(yw[1],yw[end],Nz)
     psiz = itp(xz,yz)
     ψv = T(psiz,xz |> Vector,yz |> Vector)
-    vortz = find_vortices_grid(ψv,shift=false)
+    vortz = find_vortices_grid(ψv,shift=true)
     vortz = remove_edge_vortices(vortz,ψv)[1]
     return vortz,ψv
 end
