@@ -66,7 +66,7 @@ heatmap(xint,yint,angle.(psi_int))
 
 ## zoom second iteration and check stability
 psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.x,vint.y)
-v2 = findvortices_grid(Torus(psi_int,xint,yint),shift=false)
+v2 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
 vint = remove_vortices_edge(v2,Torus(psi_int,xint,yint))[1]
 heatmap(xint,yint,angle.(psi_int))
 
@@ -74,7 +74,7 @@ heatmap(xint,yint,angle.(psi_int))
 psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.x,vint.y)
 heatmap(xint,yint,angle.(psi_int))
 
-v3 = findvortices_grid(Torus(psi_int,xint,yint),shift=false)
+v3 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
 vint = remove_vortices_edge(v3,Torus(psi_int,xint,yint))[1]
 
 ## definition
