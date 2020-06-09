@@ -77,6 +77,17 @@ heatmap(xint,yint,angle.(psi_int))
 v3 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
 vint = remove_vortices_edge(v3,Torus(psi_int,xint,yint))[1]
 
+# zoom fourth iteration
+psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.x,vint.y)
+v4 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
+vint = remove_vortices_edge(v3,Torus(psi_int,xint,yint))[1]
+heatmap(xint,yint,angle.(psi_int))
+
+# zoom fifth iteration
+psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.x,vint.y)
+v5 = findvortices_grid(Torus(psi_int,xint,yint),shift=true)
+vint = remove_vortices_edge(v4,Torus(psi_int,xint,yint))[1]
+heatmap(xint,yint,angle.(psi_int))
 ## definition
 using Parameters, Interpolations
 """
