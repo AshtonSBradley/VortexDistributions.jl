@@ -23,7 +23,7 @@ Return `varray<:Array{Float64,2}` of vortex data.
 
 See also: [`PointVortex`](@ref)
 """
-vortex_array(v::PointVortex) = [v.x v.y v.q]
+vortex_array(v::PointVortex) = [v.xv v.yv v.qv]
 
 function vortex_array(v::Array{PointVortex,1})
     ~isempty(v) > 0 ? (return reduce(vcat,vortex_array.(v))) : (return Array{Float64}(undef, 0, 0))
@@ -69,10 +69,10 @@ function rand_pointvortex(n,psi::Field)
     return PointVortex.(uniform(a,b,n),uniform(c,d,n),rand_charge(n))
 end
 
-charge(v::PointVortex) = v.q
-xpos(v::PointVortex) = v.x
-ypos(v::PointVortex) = v.y
-vpos(v::PointVortex) = [v.x v.y]
+charge(v::PointVortex) = v.qv
+xpos(v::PointVortex) = v.xv
+ypos(v::PointVortex) = v.yv
+vpos(v::PointVortex) = [v.xv v.yv]
 
 xpos(v::Array{PointVortex,1}) = xpos.(v)
 ypos(v::Array{PointVortex,1}) = ypos.(v)
