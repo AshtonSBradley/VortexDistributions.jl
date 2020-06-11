@@ -48,7 +48,7 @@ vortex_array(spv.vort)
   ```
  We can find all the vortices, removing edge vortices by default:
  ```julia
-vfound = find_vortices(psi)
+vfound = findvortices(psi)
  ```
 
 For a single vortex example, we show have the phase at successive zoom levels with vortex location, `+`, and detected location, `o` (see examples):
