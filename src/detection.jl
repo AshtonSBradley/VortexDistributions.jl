@@ -13,11 +13,11 @@ according to the vortex `x` coordinates.
 function findvortices(psi::Field)
     @unpack ψ,x,y = psi
     vort = findvortices_grid(psi)
-    vort = remove_vortices_edge(vort,psi)
+    vort = remove_vortices_edge(vort,psi) #periodic: don't remove
 
     for (j,vortex) in enumerate(vort)
         v = try
-        psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv)
+        psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv) #periodic: peridic indices here
         v1 = findvortices_grid(Torus(psi_int,xint,yint))
         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
         psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.xv,vint.yv)
@@ -26,15 +26,13 @@ function findvortices(psi::Field)
         catch nothing
         end
         vort[j] = v     # TODO a fallback for not found?
+        # periodic: map coordinates to fundamental box
     end
     return vort
 end
 
 #TODO essential for current tests: found_near!
-#TODO: allow for interp with periodic data (here edges are stripped)
 #NOTE: found_near uses rand_vortexfield which requires removing endge vortices
-#to make periodic we have to remove all statements that remove edge vortices,
-#except inside interpolation which will generate spurious edge vortices.
 
 function findvortices_grid(psi::Torus;shift=true)
     vort = findvortices_jumps(psi,shift=shift)
