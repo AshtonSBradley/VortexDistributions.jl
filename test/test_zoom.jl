@@ -16,8 +16,8 @@ xp = 1.7
 yp = 2.1
 vp = PointVortex(xp,yp,1)
 
-xn = 3.25
-yn = 10.
+xn = 3.24
+yn = 10.21
 vn = PointVortex(xn,yn,-1)
 
 dip = ScalarVortex([vp;vn])
@@ -26,18 +26,20 @@ periodic_dipole!(psi,dip)
 heatmap(x,y,angle.(psi.ψ))
 
 vfound = findvortices(psi)
+@show vfound
 
-## single vortex
+## best test: find a known vortex
 # Periodic boundary conditions
 psi = Torus(copy(psi0),x,y)
 
-xp = 1.13
-yp = 2.78
+xp = 1.133
+yp = 2.787
 vp = PointVortex(xp,yp,1)
 
 sp = ScalarVortex(vp)
 
 vortex!(psi,sp)
+vfound = findvortices(psi);@show vortex_array(vfound)
 
 heatmap(x,y,angle.(psi.ψ))
 ## test zoom_grid
@@ -45,8 +47,6 @@ heatmap(x,y,angle.(psi.ψ))
 psiw,xw,yw = zoom_grid(psi.ψ,x,y,vortex_array(vp)[1:2]...)
 heatmap(xw,yw,angle.(psiw))
 
-## test zoom_interp
-# TODO mystery of why shift has no effect but to make x grid resolved...
-## test findvortices
 
-@btime vfound = findvortices(psi)
+## readme example
+@btime findvortices(psi)
