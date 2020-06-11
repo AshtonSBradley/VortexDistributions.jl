@@ -22,7 +22,7 @@ export found_near, phase_jumps, phase_jumps!, unwrap, unwrap!, Δ
 export Dipole, Cluster, charge, xpos, ypos, pos
 
 export find_where, findvortices_jumps, findvortices_grid
-export remove_vortices_edge 
+export remove_vortices_edge, zoom_interp, zoom_grid
 # export gpecore_exact, chebdif, getChebDMatrix, getChebD2Matrix
 # export ψi, ψa
 
