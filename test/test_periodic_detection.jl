@@ -32,25 +32,24 @@ vort = findvortices(psi)
 @show vort[1]
 
 
-## make a field with one boundary vortex
+## make a field with a dipole
 # Periodic boundary conditions
 psi = Torus(copy(psi0),x,y)
 
 xp = 100
 yp = 0
+xn = xp
+yn = -50
 vp = PointVortex(xp,yp,1)
+vn = PointVortex(xp,yn,-1)
+dip = ScalarVortex([vp;vn])
 
-xn = pi
-yn = 10.
-vn = PointVortex(xn,yn,-1)
-
-v1 = ScalarVortex(vp)
-
-vortex!(psi,v1)
+periodic_dipole!(psi,dip)
 
 heatmap(x,y,angle.(psi.ψ))
 
 ## periodic
+using Parameters, Interpolations
 import VortexDistributions:findvortices, zoom_interp, zoom_grid
 function findvortices(psi::Field)
     @unpack ψ,x,y = psi
@@ -59,7 +58,7 @@ function findvortices(psi::Field)
 
     for (j,vortex) in enumerate(vort)
         v = try
-        psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv) #periodic: peridic indices here
+        psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv,periodic=true) #periodic: peridic indices here
         v1 = findvortices_grid(Torus(psi_int,xint,yint))
         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
         psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.xv,vint.yv)
@@ -88,10 +87,10 @@ function zoom_grid(psi,x,y,xv,yv;win=1,periodic=false)
     if !periodic
         psiz,xz,yz = psi[ixw,iyw],x[ixw],y[iyw]
     else
-        ixp,iyp = mod1.(ixw,nx),mod1.(iyw,ny)
-        psiz = psi[ixp,iyp] #TODO test this!
-        xz = (x[ix]-win*dx):dx:(x[ix]+win*dx)
-        yz = (y[iy]-win*dy):dy:(y[iy]+win*dy)
+        ixp,iyp = mod1.(ixw,nx),mod1.(iyw,ny) # periodic indices
+        psiz = psi[ixp,iyp]
+        xz = (x[ix]-win*dx):dx:(x[ix]+(win+1)*dx) # make a local x vector
+        yz = (y[iy]-win*dy):dy:(y[iy]+(win+1)*dy) # make a local y vector
     end
     return psiz,xz,yz
 end
@@ -109,3 +108,22 @@ function zoom_interp(psi,x,y,xv,yv;win=1,nz=30,periodic=false)
     psi_int = psi_itp(xint,yint)
     return psi_int,xint,yint
 end
+
+@btime vort = findvortices(psi)
+
+## detect
+vort = findvortices_grid(psi)
+
+psi_int,xint,yint = zoom_interp(psi.ψ,psi.x,psi.y,vort[1].xv,vort[1].yv,periodic=true)
+
+heatmap(xint,yint,angle.(psi_int))
+
+v1 = findvortices_grid(Torus(psi_int,xint,yint))
+vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
+
+## round two
+psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.xv,vint.yv)
+v2 = findvortices_grid(Torus(psi_int,xint,yint))
+vint = remove_vortices_edge(v2,Torus(psi_int,xint,yint))[1]
+@show vint
+heatmap(xint,yint,angle.(psi_int))
