@@ -29,15 +29,16 @@ function findvortices(psi::Field;periodic=false)
         end
         vort[j] = v     # NOTE fallback to grid if zoom fails
     end
-    #TODO test this: ensure periodic coordinates 
+    #TODO test this: ensure periodic coordinates
     if periodic
         Lx,Ly = last(x)-first(x),last(y)-first(y)
         vdat = vortex_array(vort)
-        xx,yy = vdat[:,1],vdat[:,2]
+        xx,yy,qq = vdat[:,1],vdat[:,2],vdat[:,3]
         @. xx[xx>Lx/2] -= Lx
         @. xx[xx<-Lx/2] += Lx
         @. yy[yy>Ly/2] -= Ly
         @. yy[yy<-Lx/2] += Ly
+        vort = PointVortex.(xx,yy,qq)
     end
     return vort
 end
