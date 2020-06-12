@@ -9,34 +9,11 @@ Lx = 200; Ly = Lx
 x = LinRange(-Lx/2,Lx/2, Nx+1)[1:end-1]; y = LinRange(-Ly/2,Ly/2, Ny+1)[1:end-1];
 psi0 = one.(x*y') |> complex
 
-## make dipole
-# Periodic boundary conditions
-psi = Torus(copy(psi0),x,y)
-
-xp = 1.7
-yp = 2.1
-vp = PointVortex(xp,yp,1)
-
-xn = pi
-yn = 10.
-vn = PointVortex(xn,yn,-1)
-
-v1 = ScalarVortex(vp)
-
-vortex!(psi,v1)
-
-heatmap(x,y,angle.(psi.ψ))
-
-## detect: grid limited?
-vort = findvortices(psi)
-@show vort[1]
-
-
 ## make a field with a dipole
 # Periodic boundary conditions
 psi = Torus(copy(psi0),x,y)
 
-xp = 100
+xp = 99.5
 yp = 0
 xn = xp
 yn = -50
@@ -66,8 +43,7 @@ function findvortices(psi::Field)
         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
         catch nothing
         end
-        vort[j] = v     # TODO a fallback for not found?
-        # periodic: map coordinates to fundamental box
+        vort[j] = v     # NOTE fallback to grid if zoom fails
     end
     return vort
 end
@@ -89,8 +65,8 @@ function zoom_grid(psi,x,y,xv,yv;win=1,periodic=false)
     else
         ixp,iyp = mod1.(ixw,nx),mod1.(iyw,ny) # periodic indices
         psiz = psi[ixp,iyp]
-        xz = (x[ix]-win*dx):dx:(x[ix]+(win+1)*dx) # make a local x vector
-        yz = (y[iy]-win*dy):dy:(y[iy]+(win+1)*dy) # make a local y vector
+        xz = (x[ix]-win*dx):dx:(x[ix]+(win+1)*dx) # local x vector
+        yz = (y[iy]-win*dy):dy:(y[iy]+(win+1)*dy) # local y vector
     end
     return psiz,xz,yz
 end
@@ -109,7 +85,9 @@ function zoom_interp(psi,x,y,xv,yv;win=1,nz=30,periodic=false)
     return psi_int,xint,yint
 end
 
-@btime vort = findvortices(psi)
+# @btime vort = findvortices(psi)
+
+vort = findvortices(psi)
 
 ## detect
 vort = findvortices_grid(psi)
