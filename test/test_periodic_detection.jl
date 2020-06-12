@@ -13,7 +13,7 @@ psi0 = one.(x*y') |> complex
 # Periodic boundary conditions
 psi = Torus(copy(psi0),x,y)
 
-xp = 99.5
+xp = 100
 yp = 0
 xn = xp
 yn = -50
@@ -28,14 +28,16 @@ heatmap(x,y,angle.(psi.ψ))
 ## periodic
 using Parameters, Interpolations
 import VortexDistributions:findvortices, zoom_interp, zoom_grid
-function findvortices(psi::Field)
+function findvortices(psi::Field;periodic=false)
     @unpack ψ,x,y = psi
     vort = findvortices_grid(psi)
-    # vort = remove_vortices_edge(vort,psi) #periodic: don't remove
+    if !periodic
+        vort = remove_vortices_edge(vort,psi) #not periodic: remove
+    end
 
     for (j,vortex) in enumerate(vort)
         v = try
-        psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv,periodic=true) #periodic: peridic indices here
+        psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv,periodic=periodic) #periodic: peridic indices here
         v1 = findvortices_grid(Torus(psi_int,xint,yint))
         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
         psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.xv,vint.yv)
@@ -87,8 +89,28 @@ end
 
 # @btime vort = findvortices(psi)
 
+## test !periodic detection
 vort = findvortices(psi)
+@test length(vort) == 0
 
+@btime findvortices(psi)
+## test periodic detection
+vort = findvortices(psi,periodic=true)
+@test length(vort) == 2
+
+@btime findvortices(psi,periodic=true)
+
+## single vortex test
+psi = Torus(copy(psi0),x,y)
+
+xp = 1.133
+yp = 2.787
+vp = PointVortex(xp,yp,1)
+
+sp = ScalarVortex(vp)
+
+vortex!(psi,sp)
+vfound = findvortices(psi);@show vortex_array(vfound)
 ## detect
 vort = findvortices_grid(psi)
 

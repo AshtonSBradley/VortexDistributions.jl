@@ -10,14 +10,16 @@ Requires a 2D wavefunction `ψ(x,y)` on a cartesian grid specified by vectors `x
 Each row is of the form `[x, y, cv]`, and the array is sorted into lexical order
 according to the vortex `x` coordinates.
 """
-function findvortices(psi::Field)
+function findvortices(psi::Field;periodic=false)
     @unpack ψ,x,y = psi
     vort = findvortices_grid(psi)
-    vort = remove_vortices_edge(vort,psi) #periodic: don't remove
+    if !periodic
+        vort = remove_vortices_edge(vort,psi) #not periodic: remove
+    end
 
     for (j,vortex) in enumerate(vort)
         v = try
-        psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv) #periodic: peridic indices here
+        psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv,periodic=periodic) #periodic: peridic indices here
         v1 = findvortices_grid(Torus(psi_int,xint,yint))
         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
         psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.xv,vint.yv)
@@ -25,11 +27,41 @@ function findvortices(psi::Field)
         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
         catch nothing
         end
-        vort[j] = v     # TODO a fallback for not found?
-        # periodic: map coordinates to fundamental box
+        vort[j] = v     # NOTE fallback to grid if zoom fails
+    end
+    #TODO test this: ensure periodic coordinates 
+    if periodic
+        Lx,Ly = last(x)-first(x),last(y)-first(y)
+        vdat = vortex_array(vort)
+        xx,yy = vdat[:,1],vdat[:,2]
+        @. xx[xx>Lx/2] -= Lx
+        @. xx[xx<-Lx/2] += Lx
+        @. yy[yy>Ly/2] -= Ly
+        @. yy[yy<-Lx/2] += Ly
     end
     return vort
 end
+
+# function findvortices(psi::Field)
+#     @unpack ψ,x,y = psi
+#     vort = findvortices_grid(psi)
+#     vort = remove_vortices_edge(vort,psi) #periodic: don't remove
+#
+#     for (j,vortex) in enumerate(vort)
+#         v = try
+#         psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv) #periodic: peridic indices here
+#         v1 = findvortices_grid(Torus(psi_int,xint,yint))
+#         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
+#         psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.xv,vint.yv)
+#         v1 = findvortices_grid(Torus(psi_int,xint,yint))
+#         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
+#         catch nothing
+#         end
+#         vort[j] = v     # TODO a fallback for not found?
+#         # periodic: map coordinates to fundamental box
+#     end
+#     return vort
+# end
 
 #TODO essential for current tests: found_near!
 #NOTE: found_near uses rand_vortexfield which requires removing endge vortices
@@ -80,17 +112,6 @@ function findvortices_jumps(psi::Field;shift=true)
     if shift
         dx,dy = Δ(x),Δ(y)
         xp .-= dx/2; yp .-= dy/2; xn .-= dx/2; yn .-= dy/2
-        #TODO handle periodicity
-        # Lx = x[end]-x[1]
-        # Ly = y[end]-y[1]
-        # @. xp[xp>Lx/2] -= Lx
-        # @. xp[xp<-Lx/2] += Lx
-        # @. xn[xn>Lx/2] -= Lx
-        # @. xn[xn<-Lx/2] += Lx
-        # @. yp[yp>Ly/2] -= Ly
-        # @. yp[yp<-Ly/2] += Ly
-        # @. yn[yn>Ly/2] -= Ly
-        # @. yn[yn<-Ly/2] += Ly
     end
 
     vortices = [xn yn -vn; xp yp vp]
@@ -103,13 +124,21 @@ end
 
 Zoom in near (xv,yv) with a window `win=1`, which gives a 4x4 local grid.
 """
-function zoom_grid(psi,x,y,xv,yv;win=1)
+function zoom_grid(psi,x,y,xv,yv;win=1,periodic=false)
     dx,dy = Δ(x),Δ(y)
+    nx,ny = size(psi)
     ix = isapprox.(x,xv,atol=dx) |> findfirst
     iy = isapprox.(y,yv,atol=dy) |> findfirst
     ixw = (ix-win):(ix+win+1)
     iyw = (iy-win):(iy+win+1)
-    psiz,xz,yz = psi[ixw,iyw],x[ixw],y[iyw]
+    if !periodic
+        psiz,xz,yz = psi[ixw,iyw],x[ixw],y[iyw]
+    else
+        ixp,iyp = mod1.(ixw,nx),mod1.(iyw,ny) # periodic indices
+        psiz = psi[ixp,iyp]
+        xz = (x[ix]-win*dx):dx:(x[ix]+(win+1)*dx) # local x vector
+        yz = (y[iy]-win*dy):dy:(y[iy]+(win+1)*dy) # local y vector
+    end
     return psiz,xz,yz
 end
 
@@ -119,10 +148,39 @@ end
 Zoom in near (xv,yv) with a window `win=1`, which gives a 4x4 local grid.
 The wavefunction psi is interpolated onto a 30x30 domain inside the local box.
 """
-function zoom_interp(psi,x,y,xv,yv;win=1,nz=30)
-    psiz, xz, yz = zoom_grid(psi,x,y,xv,yv,win=win)
+function zoom_interp(psi,x,y,xv,yv;win=1,nz=30,periodic=false)
+    psiz, xz, yz = zoom_grid(psi,x,y,xv,yv,win=win,periodic=periodic)
     psi_itp = interpolate((xz,yz), psiz, Gridded(Linear()))
     xint,yint = LinRange(xz[1],xz[end],nz),LinRange(yz[1],yz[end],nz)
     psi_int = psi_itp(xint,yint)
     return psi_int,xint,yint
 end
+
+# """
+#     psiz,xz,yz = zoom(psi,x,y,xv,yv,win=1)
+#
+# Zoom in near (xv,yv) with a window `win=1`, which gives a 4x4 local grid.
+# """
+# function zoom_grid(psi,x,y,xv,yv;win=1)
+#     dx,dy = Δ(x),Δ(y)
+#     ix = isapprox.(x,xv,atol=dx) |> findfirst
+#     iy = isapprox.(y,yv,atol=dy) |> findfirst
+#     ixw = (ix-win):(ix+win+1)
+#     iyw = (iy-win):(iy+win+1)
+#     psiz,xz,yz = psi[ixw,iyw],x[ixw],y[iyw]
+#     return psiz,xz,yz
+# end
+#
+# """
+#     psiz,xz,yz = zoom_interp(psi,x,y,xv,yv,win=1,nz=30)
+#
+# Zoom in near (xv,yv) with a window `win=1`, which gives a 4x4 local grid.
+# The wavefunction psi is interpolated onto a 30x30 domain inside the local box.
+# """
+# function zoom_interp(psi,x,y,xv,yv;win=1,nz=30)
+#     psiz, xz, yz = zoom_grid(psi,x,y,xv,yv,win=win)
+#     psi_itp = interpolate((xz,yz), psiz, Gridded(Linear()))
+#     xint,yint = LinRange(xz[1],xz[end],nz),LinRange(yz[1],yz[end],nz)
+#     psi_int = psi_itp(xint,yint)
+#     return psi_int,xint,yint
+# end
