@@ -14,7 +14,7 @@ function findvortices(psi::Field;periodic=false)
     @unpack ψ,x,y = psi
     vort = findvortices_grid(psi)
     if !periodic
-        vort = remove_vortices_edge(vort,psi) #not periodic: remove
+        vort = remove_vortices_edge(vort,psi)
     end
 
     for (j,vortex) in enumerate(vort)
@@ -29,7 +29,6 @@ function findvortices(psi::Field;periodic=false)
         end
         vort[j] = v     # NOTE fallback to grid if zoom fails
     end
-    #TODO test this: ensure periodic coordinates
     if periodic
         Lx,Ly = last(x)-first(x),last(y)-first(y)
         vdat = vortex_array(vort)
@@ -43,29 +42,7 @@ function findvortices(psi::Field;periodic=false)
     return vort
 end
 
-# function findvortices(psi::Field)
-#     @unpack ψ,x,y = psi
-#     vort = findvortices_grid(psi)
-#     vort = remove_vortices_edge(vort,psi) #periodic: don't remove
-#
-#     for (j,vortex) in enumerate(vort)
-#         v = try
-#         psi_int,xint,yint = zoom_interp(ψ,x,y,vortex.xv,vortex.yv) #periodic: peridic indices here
-#         v1 = findvortices_grid(Torus(psi_int,xint,yint))
-#         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
-#         psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.xv,vint.yv)
-#         v1 = findvortices_grid(Torus(psi_int,xint,yint))
-#         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
-#         catch nothing
-#         end
-#         vort[j] = v     # TODO a fallback for not found?
-#         # periodic: map coordinates to fundamental box
-#     end
-#     return vort
-# end
-
-#TODO essential for current tests: found_near!
-#NOTE: found_near uses rand_vortexfield which requires removing endge vortices
+#TODO add tests for periodic
 
 function findvortices_grid(psi::Torus;shift=true)
     vort = findvortices_jumps(psi,shift=shift)
@@ -89,35 +66,6 @@ function findvortices_grid(psi::Sphere;shift=true)
 
     vort = sortslices(vort,dims=1)
     return PointVortex(vort)
-end
-
-function findvortices_jumps(psi::Field;shift=true)
-    @unpack x,y,ψ = psi
-    phase = angle.(ψ)
-
-    # Nearest neighbour phase jumps
-    diffx,diffy = phase_jumps(phase,1),phase_jumps(phase,2)
-
-    # Plaquette loop integrals with in-place memory recycling
-    circshift!(phase,diffx,(0,1))
-    diffx .-= phase; diffx .-= diffy
-    circshift!(phase,diffy,(1,0))
-    diffx .+= phase
-
-    # Windings
-    ixp,iyp,vp = find_where(diffx .> 0.0)
-    xp = x[ixp]; yp = y[iyp]; np = length(vp)
-    ixn,iyn,vn = find_where(diffx .< 0.0)
-    xn = x[ixn]; yn = y[iyn]; nn = length(vn)
-
-    if shift
-        dx,dy = Δ(x),Δ(y)
-        xp .-= dx/2; yp .-= dy/2; xn .-= dx/2; yn .-= dy/2
-    end
-
-    vortices = [xn yn -vn; xp yp vp]
-
-    return PointVortex(vortices)
 end
 
 """
@@ -157,31 +105,31 @@ function zoom_interp(psi,x,y,xv,yv;win=1,nz=30,periodic=false)
     return psi_int,xint,yint
 end
 
-# """
-#     psiz,xz,yz = zoom(psi,x,y,xv,yv,win=1)
-#
-# Zoom in near (xv,yv) with a window `win=1`, which gives a 4x4 local grid.
-# """
-# function zoom_grid(psi,x,y,xv,yv;win=1)
-#     dx,dy = Δ(x),Δ(y)
-#     ix = isapprox.(x,xv,atol=dx) |> findfirst
-#     iy = isapprox.(y,yv,atol=dy) |> findfirst
-#     ixw = (ix-win):(ix+win+1)
-#     iyw = (iy-win):(iy+win+1)
-#     psiz,xz,yz = psi[ixw,iyw],x[ixw],y[iyw]
-#     return psiz,xz,yz
-# end
-#
-# """
-#     psiz,xz,yz = zoom_interp(psi,x,y,xv,yv,win=1,nz=30)
-#
-# Zoom in near (xv,yv) with a window `win=1`, which gives a 4x4 local grid.
-# The wavefunction psi is interpolated onto a 30x30 domain inside the local box.
-# """
-# function zoom_interp(psi,x,y,xv,yv;win=1,nz=30)
-#     psiz, xz, yz = zoom_grid(psi,x,y,xv,yv,win=win)
-#     psi_itp = interpolate((xz,yz), psiz, Gridded(Linear()))
-#     xint,yint = LinRange(xz[1],xz[end],nz),LinRange(yz[1],yz[end],nz)
-#     psi_int = psi_itp(xint,yint)
-#     return psi_int,xint,yint
-# end
+function findvortices_jumps(psi::Field;shift=true)
+    @unpack x,y,ψ = psi
+    phase = angle.(ψ)
+
+    # Nearest neighbour phase jumps
+    diffx,diffy = phase_jumps(phase,1),phase_jumps(phase,2)
+
+    # Plaquette loop integrals with in-place memory recycling
+    circshift!(phase,diffx,(0,1))
+    diffx .-= phase; diffx .-= diffy
+    circshift!(phase,diffy,(1,0))
+    diffx .+= phase
+
+    # Windings
+    ixp,iyp,vp = find_where(diffx .> 0.0)
+    xp = x[ixp]; yp = y[iyp]; np = length(vp)
+    ixn,iyn,vn = find_where(diffx .< 0.0)
+    xn = x[ixn]; yn = y[iyn]; nn = length(vn)
+
+    if shift
+        dx,dy = Δ(x),Δ(y)
+        xp .-= dx/2; yp .-= dy/2; xn .-= dx/2; yn .-= dy/2
+    end
+
+    vortices = [xn yn -vn; xp yp vp]
+
+    return PointVortex(vortices)
+end
