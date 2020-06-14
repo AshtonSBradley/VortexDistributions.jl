@@ -94,6 +94,7 @@ vort = findvortices(psi)
 @test length(vort) == 0
 
 @btime findvortices(psi)
+
 ## test periodic detection
 vort = findvortices(psi,periodic=true)
 @test length(vort) == 2
@@ -111,15 +112,19 @@ sp = ScalarVortex(vp)
 
 vortex!(psi,sp)
 vfound = findvortices(psi);@show vortex_array(vfound)
-## detect
+
+## detect 
+# test zoom window requirements and stability for single vortex
 vort = findvortices_grid(psi)
 
 psi_int,xint,yint = zoom_interp(psi.ψ,psi.x,psi.y,vort[1].xv,vort[1].yv,periodic=true)
 
-heatmap(xint,yint,angle.(psi_int))
-
 v1 = findvortices_grid(Torus(psi_int,xint,yint))
 vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
+
+@show vint
+heatmap(xint,yint,angle.(psi_int))
+scatter!([vint.xv],[vint.yv],label=false)
 
 ## round two
 psi_int,xint,yint = zoom_interp(psi_int,xint,yint,vint.xv,vint.yv)
