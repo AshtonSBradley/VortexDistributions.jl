@@ -27,7 +27,7 @@ function findvortices(psi::Field;periodic=false)
         vint = remove_vortices_edge(v1,Torus(psi_int,xint,yint))[1]
         catch nothing
         end
-        vort[j] = v     # NOTE fallback to grid if zoom fails
+        v != nothing && (vort[j] = v)    # NOTE fallback to grid if zoom fails
     end
     if periodic
         Lx,Ly = last(x)-first(x),last(y)-first(y)
