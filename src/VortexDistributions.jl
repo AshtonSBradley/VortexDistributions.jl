@@ -19,7 +19,7 @@ export scalar_ansatz, vortex_array, uniform
 export vortex!, findvortices, dipole_phase, periodic_dipole!
 export rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield
 export found_near, phase_jumps, phase_jumps!, unwrap, unwrap!, Δ
-export Dipole, Cluster, charge, xpos, ypos, pos
+export Dipole, Cluster, VortexGroup, charge, xpos, ypos, pos
 
 export find_where, findvortices_jumps, findvortices_grid
 export remove_vortices_edge, zoom_interp, zoom_grid
