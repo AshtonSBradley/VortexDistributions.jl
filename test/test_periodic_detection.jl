@@ -13,7 +13,7 @@ psi0 = one.(x*y') |> complex;
 # Periodic boundary conditions
 psi = Torus(copy(psi0),x,y)
 
-xp = 100
+xp = 99.5
 yp = 0
 xn = xp
 yn = -50
@@ -28,6 +28,7 @@ heatmap(x,y,angle.(psi.ψ))
 ## import for debugging
 using Parameters, Interpolations
 import VortexDistributions:findvortices, zoom_interp, zoom_grid
+
 function findvortices(psi::Field;periodic=false)
     @unpack ψ,x,y = psi
     vort = findvortices_grid(psi)
@@ -46,6 +47,16 @@ function findvortices(psi::Field;periodic=false)
         catch nothing
         end
         v != nothing && (vort[j] = v)    # NOTE fallback to grid if zoom fails
+    end
+    if periodic
+        Lx,Ly = last(x)-first(x),last(y)-first(y)
+        vdat = vortex_array(vort)
+        xx,yy,qq = vdat[:,1],vdat[:,2],vdat[:,3]
+        @. xx[xx>Lx/2] -= Lx
+        @. xx[xx<-Lx/2] += Lx
+        @. yy[yy>Ly/2] -= Ly
+        @. yy[yy<-Lx/2] += Ly
+        vort = PointVortex.(xx,yy,qq)
     end
     return vort
 end
@@ -86,7 +97,6 @@ function zoom_interp(psi,x,y,xv,yv;win=1,nz=30,periodic=false)
     psi_int = psi_itp(xint,yint)
     return psi_int,xint,yint
 end
-
 # @btime vort = findvortices(psi)
 
 ## test !periodic detection
@@ -113,9 +123,11 @@ sp = ScalarVortex(vp)
 vortex!(psi,sp)
 vfound = findvortices(psi);@show vortex_array(vfound)
 
-## detect: zoom loops
-# test zoom window requirements and stability for single vortex
+## test zoom window requirements and stability for single vortex
+# round one:
+
 vort = findvortices_grid(psi)
+vort = remove_vortices_edge(vort,psi)
 
 psi_int,xint,yint = zoom_interp(psi.ψ,psi.x,psi.y,vort[1].xv,vort[1].yv,periodic=true)
 
@@ -134,7 +146,7 @@ vint = remove_vortices_edge(v2,Torus(psi_int,xint,yint))[1]
 heatmap(xint,yint,angle.(psi_int))
 scatter!([vint.xv],[vint.yv],label=false)
 
-## test on real data
+## test zoom stages on failing cases in real data
 using JLD2
 loadpath="/Users/abradley/Dropbox/Julia/Vortices - simple results"
 f1 = joinpath(loadpath,"nv20-t_0.jld2")
@@ -159,10 +171,13 @@ p1
 ## load offending data
 @load f1 𝛹0 x y
 psi = Torus(𝛹0,x,y)
-p1=heatmap(x,y,angle.(psi200.ψ))
+p1=heatmap(x,y,angle.(psi.ψ))
 vfound = findvortices(psi,periodic=true)
+vdata = vortex_array(vfound)
 
 for j in 1:size(vdata)[1]
     scatter!(p1,[vdata[j,1]],[vdata[j,2]],label=false,color=(vdata[j,3]==1 ? :green : :blue),ms=4,alpha=.6,markerstrokecolor=(vdata[j,3]==1 ? :green : :blue))
 end
 p1
+
+## choose vortex that seem
