@@ -11,6 +11,8 @@ using SparseArrays
 using FFTW
 using FileIO
 using ProgressMeter
+using LightGraphs
+using SimpleWeightedGraphs
 
 const Λ = 0.8249
 export Field, Torus, Sphere
