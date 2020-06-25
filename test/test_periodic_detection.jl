@@ -100,16 +100,4 @@ for j in 1:size(vdata)[1]
 end
 p1
 
-## load offending data
-@load f1 𝛹0 x y
-psi = Torus(𝛹0,x,y)
-p1=heatmap(x,y,angle.(psi.ψ))
-vfound = findvortices(psi,periodic=true)
-vdata = vortex_array(vfound)
 
-for j in 1:size(vdata)[1]
-    scatter!(p1,[vdata[j,1]],[vdata[j,2]],label=false,color=(vdata[j,3]==1 ? :green : :blue),ms=4,alpha=.6,markerstrokecolor=(vdata[j,3]==1 ? :green : :blue))
-end
-p1
-
-## choose vortex that seem
