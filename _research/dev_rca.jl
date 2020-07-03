@@ -1,3 +1,6 @@
+## check update of local versus dev
+using Pkg;Pkg.update()
+
 ## initialize module
 using Pkg;Pkg.activate(".")
 # include("../src/RecursiveClusterAlgorithm.jl")
