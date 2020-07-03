@@ -28,10 +28,8 @@ export remove_vortices_edge, zoom_interp, zoom_grid
 # export gpecore_exact, chebdif, getChebDMatrix, getChebD2Matrix
 # export ψi, ψa
 
-## RCA
-export get_dipoles, seed_clusters, distances, periodic_distances,
-sparse_distances, spanning_tree, vortex_marker, plot_vortices!,
-plot_cluster!, vortex_marker
+using .RecursiveClusterAlgorithm
+
 
 include("types.jl")
 include("pointvortex.jl")

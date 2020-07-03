@@ -1,6 +1,6 @@
 module RecursiveClusterAlgorithm
 
-using VortexDistributions # not in project but can compile locally!
+# using VortexDistributions # not in project but can compile locally!
 using LinearAlgebra, SparseArrays, LightGraphs, SimpleWeightedGraphs, Test, Plots
 
 export get_dipoles, seed_clusters, distances, periodic_distances,
