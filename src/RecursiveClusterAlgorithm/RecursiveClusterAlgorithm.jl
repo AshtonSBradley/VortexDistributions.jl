@@ -1,6 +1,6 @@
 module RecursiveClusterAlgorithm
 
-# using VortexDistributions # not in project but can compile locally!
+# not currently in project but can compile locally!
 using VortexDistributions
 
 using VortexDistributions:VortexGroup, Dipole, xpos, ypos
