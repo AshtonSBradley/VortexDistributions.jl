@@ -1,4 +1,3 @@
-
 ## initialize module
 using Pkg;Pkg.activate(".")
 using VortexDistributions
@@ -58,3 +57,5 @@ push!(cvec,c3)
 Base.size(c::Cluster) = length(c.vortices)
 cvec[3] |> size
 size(cvec)
+
+## grow_plus_clusters

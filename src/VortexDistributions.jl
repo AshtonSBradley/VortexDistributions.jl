@@ -40,9 +40,10 @@ rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield,
 charge, xpos, ypos, pos,
 
 # RCA
-get_dipoles, seed_clusters, distances, periodic_distances,
-sparse_distances, spanning_tree, vortex_marker, plot_vortices!,
-plot_cluster!, vortex_marker
+distances, periodic_distances, sparse_distances, 
+spanning_tree, vortex_marker, plot_vortices!,
+plot_cluster!, vortex_marker, grow_plus_clusters, 
+grow_minus_clusers, get_dipoles, seed_clusters
 
 include("types.jl")
 include("pointvortex.jl")
@@ -52,6 +53,15 @@ include("creation.jl")
 # RCA
 include("get_dipoles.jl")
 include("seed_clusters.jl")
+include("grow_minus_clusters.jl")
+include("grow_plus_clusters.jl")
+# include("get_spanning_trees.jl")
+# include("get_negative_spanning_trees.jl")
+# include("get_positive_spanning_trees.jl")
+# include("find_smallest_spanning_trees.jl")
+# include("sort_RCA_structs.jl")
+# include("RCA.jl")
+
 # utils
 include("utils.jl")
 
