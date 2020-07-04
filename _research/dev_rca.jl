@@ -1,24 +1,26 @@
-## check update of local versus dev
-using Pkg;Pkg.update()
 
 ## initialize module
 using Pkg;Pkg.activate(".")
-# include("../src/RecursiveClusterAlgorithm.jl")
-# using .RecursiveClusterAlgorithm
-
 using VortexDistributions
+
+## other stuff
 using Test, Plots
 
 ## set up mock data
 N = 10
 xi = rand(N)
 yi = rand(N)
-tree = spanning_tree(xi,yi)
 
 ## make cluster using vortices and tree
 vort = PointVortex.(xi,yi,one.(xi))
-c1 = Cluster(vort,tree)
+
+# default constructor
+c0 = Cluster(vort,spanning_tree(xi,yi))
+
+## callable type
+c1 = Cluster(vort)
 @test c1.vortices |> length == N
+# @test c0 == c1
 
 ## plot cluster
 p1 = plot()

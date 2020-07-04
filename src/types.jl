@@ -61,12 +61,6 @@ mutable struct ScalarVortex{T<:CoreShape} <: Vortex
     vort::PointVortex
 end
 
-mutable struct Cluster <: VortexGroup
-    vortices::Array{PointVortex,1}
-    tree::Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}
-    # new(c,t) = Cluster()
-  end
-
 mutable struct Dipole <: VortexGroup
     vp::PointVortex
     vn::PointVortex
