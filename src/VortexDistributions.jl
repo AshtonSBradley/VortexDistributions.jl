@@ -13,6 +13,7 @@ using FileIO
 using ProgressMeter
 using LightGraphs
 using SimpleWeightedGraphs
+import Plots:stroke,scatter!,plot,plot!
 
 const Λ = 0.8249
 
@@ -20,7 +21,7 @@ const Λ = 0.8249
 export Field, Torus, Sphere,
 
 # vortex groups
-Dipole, VortexGroup, 
+VortexGroup, Dipole, Cluster,
 
 # cores
 Vortex, CoreShape, Ansatz, Exact, ScalarVortex, PointVortex,
@@ -36,22 +37,25 @@ vortex!, dipole_phase, periodic_dipole!,
 rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield,
 
 # convenient access
-charge, xpos, ypos, pos
+charge, xpos, ypos, pos,
+
+# RCA
+get_dipoles, seed_clusters, distances, periodic_distances,
+sparse_distances, spanning_tree, vortex_marker, plot_vortices!,
+plot_cluster!, vortex_marker
 
 include("types.jl")
 include("pointvortex.jl")
 include("detection.jl")
 include("creation.jl")
+
+# RCA
+include("get_dipoles.jl")
+include("seed_clusters.jl")
+# utils
 include("utils.jl")
 
 @load joinpath(@__DIR__,"exactcore.jld2") ψi
 @load joinpath(@__DIR__,"ansatzcore.jld2") ψa
-
-include("RecursiveClusterAlgorithm/RecursiveClusterAlgorithm.jl")
-using .RecursiveClusterAlgorithm
-
-export Cluster, get_dipoles, seed_clusters, distances, periodic_distances,
-sparse_distances, spanning_tree, vortex_marker, plot_vortices!,
-plot_cluster!, vortex_marker
 
 end

@@ -66,3 +66,9 @@ mutable struct Dipole <: VortexGroup
     vn::PointVortex
     Dipole(v1,v2) = (charge(v1) > 0 && charge(v2) < 0) ? new(v1,v2) : new(v2,v1)
 end
+
+mutable struct Cluster <: VortexGroup
+    vortices::Array{PointVortex,1}
+    tree::Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}
+end
+Cluster(vort::Array{PointVortex,1}) = Cluster(vort,spanning_tree(xpos(vort),ypos(vort)))

@@ -27,7 +27,7 @@ p1 = plot()
 plot_cluster!(p1,c1) # check that the plot method still works
 
 ## do some random tests of robustness
-N = 30
+N = 50
 xi,yi = randn(N),randn(N)
 tree = spanning_tree(xi,yi)
 c1 = Cluster(PointVortex.(xi,yi,one.(xi)),tree)
