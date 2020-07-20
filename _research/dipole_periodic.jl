@@ -3,7 +3,7 @@
 # should be eigenstate of Hamiltonian evolution
 
 using Pkg;Pkg.activate(".")
-using Test, Plots, Revise, VortexDistributions
+using Test, Plots, VortexDistributions
 
 ## test dipole
 xp = 20

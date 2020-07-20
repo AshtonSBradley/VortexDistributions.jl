@@ -2,7 +2,7 @@
 # https://dx.doi.org/10.1103/PhysRevLett.112.145301
 # should be eigenstate of Hamiltonian evolution
 
-using Test, Plots, Revise, VortexDistributions
+using Test, Plots, VortexDistributions
 
 
 # Methods
