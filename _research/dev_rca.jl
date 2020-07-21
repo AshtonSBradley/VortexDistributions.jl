@@ -58,4 +58,7 @@ Base.size(c::Cluster) = length(c.vortices)
 cvec[3] |> size
 size(cvec)
 
+## save 
+#savefig(p1,"rca.pdf")
+
 ## grow_plus_clusters
