@@ -27,7 +27,7 @@ p1 = plot()
 plot_cluster!(p1,c1) # check that the plot method still works
 
 ## do some random tests of robustness
-N = 20
+N = 50
 xi,yi = randn(N),randn(N)
 tree = spanning_tree(xi,yi)
 c1 = Cluster(PointVortex.(xi,yi,one.(xi)),tree)
@@ -57,5 +57,8 @@ push!(cvec,c3)
 Base.size(c::Cluster) = length(c.vortices)
 cvec[3] |> size
 size(cvec)
+
+## save 
+#savefig(p1,"rca.pdf")
 
 ## grow_plus_clusters
