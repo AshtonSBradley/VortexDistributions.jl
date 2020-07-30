@@ -30,7 +30,7 @@ Vortex, CoreShape, Ansatz, Exact, ScalarVortex, PointVortex,
 findvortices, found_near, phase_jumps, phase_jumps!, unwrap, unwrap!, Δ,
 find_where, findvortices_jumps, findvortices_grid,
 remove_vortices_edge, zoom_interp, zoom_grid,
-mask, keep_vortices,
+circ_mask, keep_vortices,
 
 # construction
 scalar_ansatz, vortex_array, uniform,
