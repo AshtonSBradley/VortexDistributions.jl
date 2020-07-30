@@ -160,7 +160,7 @@ See also: [`circ_mask`](@ref)
 """
 function keep_vortices(vort,mask=(x,y)->circ_mask(x,y,1.0))
     vortm = PointVortex[]
-    for (j,v) in enumerate(vort)
+    for v in vort
         x,y = pos(v)
         if mask(x,y)
             push!(vortm,v)
