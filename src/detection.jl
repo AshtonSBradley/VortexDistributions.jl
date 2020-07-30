@@ -133,3 +133,40 @@ function findvortices_jumps(psi::Field;shift=true)
 
     return PointVortex(vortices)
 end
+
+@doc raw"""
+    circ_mask(x,y,R)
+
+Return boolean `true` when $\sqrt{x^2+y^2}\leq R$, otherwise return `false`. Default supplied to `keep_vortices`, which allows a user supplied mask that returns a boolean.
+
+See also: [`keep_vortices`](@ref)
+"""
+circ_mask(x,y,R) = hypot(x,y)<=R 
+
+@doc raw"""
+    vortm = keep_vortices(vort,mask)
+
+Return vortices in `vort` specified by where `mask(x,y)` is `true`. The default (circular) mask returns `true` when $\sqrt{x^2+y^2}\leq R$. User can supply any mask that returns boolean values.
+
+For the default mask, set the radius as (default is $R=1$) 
+
+`vortm = keep_vortices(vort,R)`
+
+Specify a boolean mask using
+
+`vortm = keep_vortices(vort,(x,y)->mymask(x,y,args...)`.
+
+See also: [`circ_mask`](@ref)
+"""
+function keep_vortices(vort,mask=(x,y)->circ_mask(x,y,1.0))
+    vortm = PointVortex[]
+    for (j,v) in enumerate(vort)
+        x,y = pos(v)
+        if mask(x,y)
+            push!(vortm,v)
+        end
+    end
+    return vortm
+end
+
+keep_vortices(vort,R::Float64=1.0) = keep_vortices(vort,(x,y)->circ_mask(x,y,R))
