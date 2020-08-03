@@ -168,5 +168,3 @@ function keep_vortices(vort,mask=(x,y)->circ_mask(x,y,1.0))
     end
     return vortm
 end
-
-keep_vortices(vort,R::Float64=1.0) = keep_vortices(vort,(x,y)->circ_mask(x,y,R))
