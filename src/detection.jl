@@ -148,9 +148,9 @@ circ_mask(x,y,R) = hypot(x,y)<=R
 
 Return vortices in `vort` specified by where `mask(x,y)` is `true`. The default (circular) mask returns `true` when $\sqrt{x^2+y^2}\leq R$. User can supply any mask that returns boolean values.
 
-For the default mask, set the radius as (default is $R=1$) 
+For the default (circular) mask, set the radius as
 
-`vortm = keep_vortices(vort,R)`
+`vortm = keep_vortices(vort,(x,y)->circ_mask(x,y,R))`.
 
 Specify a boolean mask using
 
