@@ -36,6 +36,7 @@ circ_mask, keep_vortices,
 scalar_ansatz, vortex_array, uniform,
 vortex!, dipole_phase, periodic_dipole!,
 rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield,
+thetad, 
 
 # convenient access
 charge, xpos, ypos, pos,
