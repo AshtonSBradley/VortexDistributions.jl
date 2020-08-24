@@ -22,7 +22,6 @@ vn = PointVortex(xp,yn,-1)
 dip = ScalarVortex([vp;vn])
 
 periodic_dipole!(psi,dip)
-
 heatmap(x,y,angle.(psi.ψ))
 
 ## import for debugging
