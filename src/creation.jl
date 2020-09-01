@@ -175,7 +175,7 @@ function dipole_phase(x,y,xp,yp,xn,yn)
     return @. thetad(x*2*pi/Lx,y'*2*pi/Ly,xp*2*pi/Lx,yp*2*pi/Ly,xn*2*pi/Lx,yn*2*pi/Ly)
 end
 
-function periodic_dipole!(psi::F,dip::Array{ScalarVortex{T},1}) where {T <: CoreShape, F<:Field}
+function periodic_dipole!(psi::F,dip::Vector{ScalarVortex{T}}) where {T <: CoreShape, F<:Field}
     @assert length(dip) == 2
     @assert dip[1].vort.qv + dip[2].vort.qv == 0
     @unpack ψ,x,y = psi
@@ -187,14 +187,15 @@ function periodic_dipole!(psi::F,dip::Array{ScalarVortex{T},1}) where {T <: Core
     @pack! psi = ψ
 end
 
-function periodic_dipole!(psi::F,dip::Dipole) where F <: Field
-    @unpack ψ,x,y = psi
-    rp = vortex_array(dip.vp)[1:2]
-    rn = vortex_array(dip.vn)[1:2]
-    @. ψ *= abs(dip[jn](x,y')*dip[jp](x,y'))
-    ψ .*= exp.(im*dipole_phase(x,y,rp...,rn...))
-    @pack! psi = ψ
-end
+# TODO: dispatch on Dipole type
+# function periodic_dipole!(psi::F,dip::Dipole) where F <: Field
+#     @unpack ψ,x,y = psi
+#     rp = vortex_array(dip.vp)[1:2]
+#     rn = vortex_array(dip.vn)[1:2]
+#     @. ψ *= abs(dip.vp(x,y')*dip.vn(x,y'))
+#     ψ .*= exp.(im*dipole_phase(x,y,rp...,rn...))
+#     @pack! psi = ψ
+# end
 
 
 #Chebyshev methods
