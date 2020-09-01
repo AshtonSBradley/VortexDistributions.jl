@@ -182,7 +182,7 @@ function periodic_dipole!(psi::F,dip::Array{ScalarVortex{T},1}) where {T <: Core
     (dip[1].vort.qv > 0) ? (jp = 1;jn = 2) : (jp = 2;jn = 1)
     vp = vortex_array(dip[jp].vort)[1:2]
     vn = vortex_array(dip[jn].vort)[1:2]
-    ψ .*= abs.(dip[jn].core.(x,y')*dip[jp].core.(x,y'))
+    @. ψ *= abs(dip[jn](x,y')*dip[jp](x,y'))
     ψ .*= exp.(im*dipole_phase(x,y,vp...,vn...))
     @pack! psi = ψ
 end
@@ -191,7 +191,7 @@ function periodic_dipole!(psi::F,dip::Dipole) where F <: Field
     @unpack ψ,x,y = psi
     rp = vortex_array(dip.vp)[1:2]
     rn = vortex_array(dip.vn)[1:2]
-    ψ .*= abs.(dip[jn].core.(x,y')*dip[jp].core.(x,y'))
+    @. ψ *= abs(dip[jn](x,y')*dip[jp](x,y'))
     ψ .*= exp.(im*dipole_phase(x,y,rp...,rn...))
     @pack! psi = ψ
 end
