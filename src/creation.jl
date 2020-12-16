@@ -147,10 +147,10 @@ function rand_vortexfield(n)
     return psi,PointVortex(vort)
 end
 
-#--- periodic dipole phase
+## Periodic dipole phase
 # Billam et al, PRL 112, 145301 (2014), Supplemental
 H(x) = x > 0. ? 1.0 : 0.0
-shift(x,xi) = x - xi
+shift(x,y) = x - y
 tans(x,xk) = tan((shift(x,xk) - π)*0.5)
 tanhs(x,xk,j) = tanh((shift(x,xk) + 2*π*j)*0.5)
 

@@ -16,13 +16,6 @@ using Test
     v3 = vortex_array(w3)
     @test v3 == vortex_array(w3)
 
-    # # Positions
-    # @test xpos(vp) == 0.1
-    # @test ypos(vp) == 0.3
-    #
-    # vv = [vp; vn]
-    # @test xpos(vv) == [.1;-.2]
-    # @test ypos(vv) == [.3;.7]
 end
 
 @testset "Single vortex accuracy" begin
