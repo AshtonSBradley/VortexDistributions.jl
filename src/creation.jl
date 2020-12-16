@@ -149,7 +149,7 @@ end
 
 ## Periodic dipole phase
 # Billam et al, PRL 112, 145301 (2014), Supplemental
-H(x) = x > 0. ? 1.0 : 0.0
+H(x) = x >= 0. ? 1.0 : 0.0
 shift(x,y) = x - y
 tans(x,xk) = tan((shift(x,xk) - π)*0.5)
 tanhs(x,xk,j) = tanh((shift(x,xk) + 2*π*j)*0.5)
@@ -159,22 +159,24 @@ function kernel(x,y,xp,yp,xn,yn,j)
     atan(tanhs(y,yp,j)*tans(x,xp))
 end
 
-# arbitrary domains and dipole sizes:
+# unit domain; Eq (13)
 function thetad(x,y,xp,yp,xn,yn)
     s = 0.0
-    for j = -5:5
+    for j ∈ -5:5
         s += kernel(x,y,xp,yp,xn,yn,j)
     end
     s += π*(H(shift(x,xp)) - H(shift(x,xn))) - y*(xp - xn)/(2*π)
-    return s - x*H(abs(yp - yn) - π) + y*H(abs(xp - xn) - π)
+    return s - x*H(abs(yp - yn) - π)/(2*pi) + y*H(abs(xp - xn) - π)/(2*pi)
 end
 
+# scale to any domain
 function dipole_phase(x,y,xp,yp,xn,yn)
     Lx = x[end]-x[1]
     Ly = y[end]-y[1]
     return @. thetad(x*2*pi/Lx,y'*2*pi/Ly,xp*2*pi/Lx,yp*2*pi/Ly,xn*2*pi/Lx,yn*2*pi/Ly)
 end
 
+# apply cores and phase
 function periodic_dipole!(psi::F,dip::Vector{ScalarVortex{T}}) where {T <: CoreShape, F<:Field}
     @assert length(dip) == 2
     @assert dip[1].vort.qv + dip[2].vort.qv == 0
@@ -187,7 +189,7 @@ function periodic_dipole!(psi::F,dip::Vector{ScalarVortex{T}}) where {T <: CoreS
     @pack! psi = ψ
 end
 
-# TODO: dispatch on Dipole type
+# TODO: dispatch on dipole type
 # function periodic_dipole!(psi::F,dip::Dipole) where F <: Field
 #     @unpack ψ,x,y = psi
 #     rp = vortex_array(dip.vp)[1:2]
