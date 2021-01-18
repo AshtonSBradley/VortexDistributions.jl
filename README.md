@@ -62,7 +62,7 @@ and density at successive zoom levels with vortex location and detected location
  The benchmark gives (2018 MacBook Pro 2.33GHz Intel i5)
  ```julia
  using BenchmarkTools
- julia> @btime vort = find_vortices(psi)
+ julia> @btime vort = findvortices(psi)
    4.037 ms (585 allocations: 3.84 MiB)
  ```
 
