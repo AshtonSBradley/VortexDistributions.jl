@@ -65,10 +65,10 @@ function phase_jumps(phase,dim=1)
     end
 
     elseif dim == 2
-    for i in 1:s1
-        @inbounds dϕ = phase[i,1] - phase[i,s2]
-        @inbounds abs(dϕ) > π && (pdiff[i,1] += sign(dϕ))
-        for j in 2:s2
+    for j in 2:s2
+        for i in 1:s1
+            j==2 && (@inbounds dϕ = phase[i,1] - phase[i,s2];
+            @inbounds abs(dϕ) > π && (pdiff[i,1] += sign(dϕ)))
             @inbounds dϕ = phase[i,j] - phase[i,j-1]
             @inbounds abs(dϕ) > π && (pdiff[i,j] += sign(dϕ))
         end
@@ -93,10 +93,10 @@ function phase_jumps!(pdiff,phase,dim=1)
     end
 
     elseif dim == 2
-    for i in 1:s1
-        @inbounds dϕ = phase[i,1] - phase[i,s2]
-        @inbounds abs(dϕ) > π && (pdiff[i,1] += sign(dϕ))
-        for j in 2:s2
+    for j in 2:s2
+        for i in 1:s1
+            j==2 && (@inbounds dϕ = phase[i,1] - phase[i,s2];
+            @inbounds abs(dϕ) > π && (pdiff[i,1] += sign(dϕ)))
             @inbounds dϕ = phase[i,j] - phase[i,j-1]
             @inbounds abs(dϕ) > π && (pdiff[i,j] += sign(dϕ))
         end
@@ -126,10 +126,10 @@ function unwrap(phase::Array{Float64,2},dim=1)
     end
 
     elseif dim == 2
-    for i in 1:s1
-            @inbounds uphase[i,1] - uphase[i,s2] >= π && (uphase[i,1] -= 2π)
-            @inbounds uphase[i,1] - uphase[i,s2] <= -π && (uphase[i,1] += 2π)
-        for j in 2:s2
+    for j in 2:s2
+        for i in 1:s1
+            j==2 && (@inbounds uphase[i,1] - uphase[i,s2] >= π && (uphase[i,1] -= 2π);
+            @inbounds uphase[i,1] - uphase[i,s2] <= -π && (uphase[i,1] += 2π))
             @inbounds uphase[i,j] - uphase[i,j-1] >= π && (uphase[i,j] -= 2π)
             @inbounds uphase[i,j] - uphase[i,j-1] <= -π && (uphase[i,j] += 2π)
         end
@@ -163,10 +163,10 @@ function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
     end
 
     elseif dim == 2
-    for i in 1:s1
-            @inbounds uphase[i,1] - uphase[i,s2] >= π && (uphase[i,1] -= 2π)
-            @inbounds uphase[i,1] - uphase[i,s2] <= -π && (uphase[i,1] += 2π)
-        for j in 2:s2
+    for j in 2:s2
+        for i in 1:s1
+            j==2 && (@inbounds uphase[i,1] - uphase[i,s2] >= π && (uphase[i,1] -= 2π);
+            @inbounds uphase[i,1] - uphase[i,s2] <= -π && (uphase[i,1] += 2π))
             @inbounds uphase[i,j] - uphase[i,j-1] >= π && (uphase[i,j] -= 2π)
             @inbounds uphase[i,j] - uphase[i,j-1] <= -π && (uphase[i,j] += 2π)
         end
