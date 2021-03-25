@@ -1,6 +1,6 @@
 ## TODO
 - [ ] Make Torus periodic?
-- [ ] Periodic vortex detection
+- [x] Periodic vortex detection
 - [ ] Implement RCA.
 - [ ] More detection precision and speed tests
 - [ ] Trim allocations on `findvortices`
