@@ -117,21 +117,21 @@ function unwrap(phase::Array{Float64,2},dim=1)
 
     if dim == 1
     for j in 1:s2
-        @inbounds uphase[1,j] - uphase[s1,j] >= π && (uphase[1,j] -= 2π)
-        @inbounds uphase[1,j] - uphase[s1,j] <= -π && (uphase[1,j] += 2π)
+        @inbounds (k=uphase[1,j] - uphase[s1,j];k > π) && (uphase[1,j] -= 2π*div(k,2pi,RoundNearest))
+        @inbounds (k=uphase[1,j] - uphase[s1,j];k < -π) && (uphase[1,j] += 2π*div(-k,2pi,RoundNearest))
         for i in 2:s1
-        @inbounds uphase[i,j] - uphase[i-1,j] >= π && (uphase[i,j] -= 2π)
-        @inbounds uphase[i,j] - uphase[i-1,j] <= -π && (uphase[i,j] += 2π)
+        @inbounds (k=uphase[i,j] - uphase[i-1,j];k > π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
+        @inbounds (k=uphase[i,j] - uphase[i-1,j];k < -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
         end
     end
 
     elseif dim == 2
-    for j in 2:s2
+        for j in 2:s2
         for i in 1:s1
-            j==2 && (@inbounds uphase[i,1] - uphase[i,s2] >= π && (uphase[i,1] -= 2π);
-            @inbounds uphase[i,1] - uphase[i,s2] <= -π && (uphase[i,1] += 2π))
-            @inbounds uphase[i,j] - uphase[i,j-1] >= π && (uphase[i,j] -= 2π)
-            @inbounds uphase[i,j] - uphase[i,j-1] <= -π && (uphase[i,j] += 2π)
+            j==2 && (@inbounds (k= uphase[i,1] - uphase[i,s2]; k > π) && (uphase[i,1] -= 2π*div(k,2pi,RoundNearest));
+            @inbounds (k=uphase[i,1] - uphase[i,s2];k < -π) && (uphase[i,1] += 2π*div(-k,2pi,RoundNearest)))
+            @inbounds (k=uphase[i,j] - uphase[i,j-1];k > π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
+            @inbounds (k=uphase[i,j] - uphase[i,j-1];k < -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
         end
     end
 end
@@ -153,48 +153,50 @@ function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
     uphase .= phase
 
     if dim == 1
-    for j in 1:s2
-        @inbounds uphase[1,j] - uphase[s1,j] >= π && (uphase[1,j] -= 2π)
-        @inbounds uphase[1,j] - uphase[s1,j] <= -π && (uphase[1,j] += 2π)
-        for i in 2:s1
-        @inbounds uphase[i,j] - uphase[i-1,j] >= π && (uphase[i,j] -= 2π)
-        @inbounds uphase[i,j] - uphase[i-1,j] <= -π && (uphase[i,j] += 2π)
+        for j in 1:s2
+            @inbounds (k=uphase[1,j] - uphase[s1,j];k > π) && (uphase[1,j] -= 2π*div(k,2pi,RoundNearest))
+            @inbounds (k=uphase[1,j] - uphase[s1,j];k < -π) && (uphase[1,j] += 2π*div(-k,2pi,RoundNearest))
+            for i in 2:s1
+            @inbounds (k=uphase[i,j] - uphase[i-1,j];k > π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
+            @inbounds (k=uphase[i,j] - uphase[i-1,j];k < -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
+            end
         end
-    end
+    
+        elseif dim == 2
 
-    elseif dim == 2
-    for j in 2:s2
-        for i in 1:s1
-            j==2 && (@inbounds uphase[i,1] - uphase[i,s2] >= π && (uphase[i,1] -= 2π);
-            @inbounds uphase[i,1] - uphase[i,s2] <= -π && (uphase[i,1] += 2π))
-            @inbounds uphase[i,j] - uphase[i,j-1] >= π && (uphase[i,j] -= 2π)
-            @inbounds uphase[i,j] - uphase[i,j-1] <= -π && (uphase[i,j] += 2π)
+        for j in 2:s2
+            for i in 1:s1
+                j==2 && (@inbounds (k= uphase[i,1] - uphase[i,s2]; k > π) && (uphase[i,1] -= 2π*div(k,2pi,RoundNearest));
+                @inbounds (k=uphase[i,1] - uphase[i,s2];k < -π) && (uphase[i,1] += 2π*div(-k,2pi,RoundNearest)))
+                @inbounds (k=uphase[i,j] - uphase[i,j-1];k > π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
+                @inbounds (k=uphase[i,j] - uphase[i,j-1];k < -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
+            end
         end
     end
-end
 end
 
 function unwrap(phase::Array{Float64,1})
     uphase = copy(phase)
     s1 = length(phase)
-        @inbounds uphase[1] - uphase[s1] >= π && (uphase[1] -= 2π)
-        @inbounds uphase[1] - uphase[s1] <= -π && (uphase[1] += 2π)
+        @inbounds (k=uphase[1] - uphase[s1];k > π) && (uphase[1] -= 2π*div(k,2pi,RoundNearest))
+        @inbounds (k=uphase[1] - uphase[s1];k < -π) && (uphase[1] += 2π*div(-k,2pi,RoundNearest))
         for i in 2:s1
-        @inbounds uphase[i] - uphase[i-1] >= π && (uphase[i] -= 2π)
-        @inbounds uphase[i] - uphase[i-1] <= -π && (uphase[i] += 2π)
+        @inbounds (k=uphase[i] - uphase[i-1];k > π) && (uphase[i] -= 2π*div(k,2pi,RoundNearest))
+        @inbounds (k=uphase[i] - uphase[i-1];k < -π) && (uphase[i] += 2π*div(-k,2pi,RoundNearest))
         end
 
         return uphase
 end
 
 function unwrap!(uphase::Array{Float64,1},phase::Array{Float64,1})
+    uphase .= phase
     s1 = length(phase)
-        @inbounds uphase[1] - uphase[s1] >= π && (uphase[1] -= 2π)
-        @inbounds uphase[1] - uphase[s1] <= -π && (uphase[1] += 2π)
-        for i in 2:s1
-        @inbounds uphase[i] - uphase[i-1] >= π && (uphase[i] -= 2π)
-        @inbounds uphase[i] - uphase[i-1] <= -π && (uphase[i] += 2π)
-        end
+    @inbounds (k=uphase[1] - uphase[s1];k > π) && (uphase[1] -= 2π*div(k,2pi,RoundNearest))
+    @inbounds (k=uphase[1] - uphase[s1];k < -π) && (uphase[1] += 2π*div(-k,2pi,RoundNearest))
+    for i in 2:s1
+    @inbounds (k=uphase[i] - uphase[i-1];k > π) && (uphase[i] -= 2π*div(k,2pi,RoundNearest))
+    @inbounds (k=uphase[i] - uphase[i-1];k < -π) && (uphase[i] += 2π*div(-k,2pi,RoundNearest))
+    end
 end
 
 function distances(x,y)
