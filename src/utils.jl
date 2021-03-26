@@ -117,22 +117,24 @@ function unwrap(phase::Array{Float64,2},dim=1)
 
     if dim == 1
     for j in 1:s2
-        @inbounds (k=uphase[1,j] - uphase[s1,j];k >= π) && (uphase[1,j] -= 2π*div(k,2pi,RoundNearest))
-        @inbounds (k=uphase[1,j] - uphase[s1,j];k <= -π) && (uphase[1,j] += 2π*div(-k,2pi,RoundNearest))
+        @inbounds (k=uphase[1,j] - uphase[s1,j];k > π) && (uphase[1,j] -= 2π*div(k,2pi,RoundNearest))
+        @inbounds (k=uphase[1,j] - uphase[s1,j];k < -π) && (uphase[1,j] += 2π*div(-k,2pi,RoundNearest))
         for i in 2:s1
-        @inbounds (k=uphase[i,j] - uphase[i-1,j];k >= π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
-        @inbounds (k=uphase[i,j] - uphase[i-1,j];k <= -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
+        @inbounds (k=uphase[i,j] - uphase[i-1,j];k > π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
+        @inbounds (k=uphase[i,j] - uphase[i-1,j];k < -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
         end
     end
 
     elseif dim == 2
-    for i in 1:s1
-            @inbounds (k=uphase[i,1] - uphase[i-1,s2];k >= π) && (uphase[i,1] -= 2π*div(k,2pi,RoundNearest))
-            @inbounds (k=uphase[i,1] - uphase[i-1,s2];k <= -π) && (uphase[i,1] += 2π*div(-k,2pi,RoundNearest))
-        for j in 2:s2
-            @inbounds (k=uphase[i,j] - uphase[i-1,j];k >= π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
-            @inbounds (k=uphase[i,j] - uphase[i-1,j];k <= -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
+
+            for j in 2:s2
+        for i in 1:s1
+            j==2 && (@inbounds (k= uphase[i,1] - uphase[i,s2]; k > π) && (uphase[i,1] -= 2π*div(k,2pi,RoundNearest));
+            @inbounds (k=uphase[i,1] - uphase[i,s2];k < -π) && (uphase[i,1] += 2π*div(-k,2pi,RoundNearest)))
+            @inbounds (k=uphase[i,j] - uphase[i,j-1];k > π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
+            @inbounds (k=uphase[i,j] - uphase[i,j-1];k < -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
         end
+
     end
 end
 
@@ -163,13 +165,15 @@ function unwrap!(uphase::Array{Float64,2},phase::Array{Float64,2},dim=1)
         end
     
         elseif dim == 2
-        for i in 1:s1
-                @inbounds (k=uphase[i,1] - uphase[i-1,s2];k >= π) && (uphase[i,1] -= 2π*div(k,2pi,RoundNearest))
-                @inbounds (k=uphase[i,1] - uphase[i-1,s2];k <= -π) && (uphase[i,1] += 2π*div(-k,2pi,RoundNearest))
-            for j in 2:s2
-                @inbounds (k=uphase[i,j] - uphase[i-1,j];k >= π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
-                @inbounds (k=uphase[i,j] - uphase[i-1,j];k <= -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
+
+        for j in 2:s2
+            for i in 1:s1
+                j==2 && (@inbounds (k= uphase[i,1] - uphase[i,s2]; k > π) && (uphase[i,1] -= 2π*div(k,2pi,RoundNearest));
+                @inbounds (k=uphase[i,1] - uphase[i,s2];k < -π) && (uphase[i,1] += 2π*div(-k,2pi,RoundNearest)))
+                @inbounds (k=uphase[i,j] - uphase[i,j-1];k > π) && (uphase[i,j] -= 2π*div(k,2pi,RoundNearest))
+                @inbounds (k=uphase[i,j] - uphase[i,j-1];k < -π) && (uphase[i,j] += 2π*div(-k,2pi,RoundNearest))
             end
+    
         end
     end
 end
