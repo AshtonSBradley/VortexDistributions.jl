@@ -15,7 +15,7 @@ Tools for creating and detecting quantum vortices in Bose-Einstein condensates.
 # Detection Example
 ```julia
 using VortexDistributions, Plots
-gr(xlabel="x",ylabel="y",transpose=true,legend=false)
+gr(xlabel="x",ylabel="y",legend=false)
 
 # make a simple 2D test field
 Nx = 400; Ny = Nx
@@ -62,7 +62,7 @@ and density at successive zoom levels with vortex location and detected location
  The benchmark gives (2018 MacBook Pro 2.33GHz Intel i5)
  ```julia
  using BenchmarkTools
- julia> @btime vort = find_vortices(psi)
+ julia> @btime vort = findvortices(psi)
    4.037 ms (585 allocations: 3.84 MiB)
  ```
 
