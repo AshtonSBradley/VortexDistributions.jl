@@ -58,7 +58,7 @@ jobs:
             using Pkg
             Pkg.add("Documenter")
             using Documenter: DocMeta, doctest
-            using QFluidSpectra
+            using VortexDistributions
             DocMeta.setdocmeta!(VortexDistributions, :DocTestSetup, :(using VortexDistributions); recursive=true)
             doctest(VortexDistributions)'
       - run: julia --project=docs docs/make.jl
