@@ -1,6 +1,5 @@
 module VortexDistributions
 
-using Test
 using JLD2
 using Parameters
 using SpecialFunctions
@@ -69,5 +68,8 @@ include("utils.jl")
 
 @load joinpath(@__DIR__,"exactcore.jld2") ψi
 @load joinpath(@__DIR__,"ansatzcore.jld2") ψa
+
+# @load joinpath(@__DIR__,"cores.jld2") ψi ψa 
+
 
 end

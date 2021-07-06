@@ -4,19 +4,6 @@ using Plots
 using VortexDistributions
 
 ##
-# function unwrap(phase::Array{Float64,1})
-#     uphase = copy(phase)
-#     s1 = length(phase)
-#         @inbounds (k=uphase[1] - uphase[s1];k > π) && (uphase[1] -= 2π*div(k,2pi,RoundNearest))
-#         @inbounds (k=uphase[1] - uphase[s1];k < -π) && (uphase[1] += 2π*div(-k,2pi,RoundNearest))
-#         for i in 2:s1
-#         @inbounds (k=uphase[i] - uphase[i-1];k > π) && (uphase[i] -= 2π*div(k,2pi,RoundNearest))
-#         @inbounds (k=uphase[i] - uphase[i-1];k < -π) && (uphase[i] += 2π*div(-k,2pi,RoundNearest))
-#         end
-#         return uphase
-# end
-
-##
 N=1000
 θ = LinRange(0,4*pi,N)
 psi = exp.(im*θ) + 0.1*(randn(N)+im*randn(N))
