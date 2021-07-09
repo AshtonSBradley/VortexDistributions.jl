@@ -61,6 +61,12 @@ mutable struct ScalarVortex{T<:CoreShape} <: Vortex
     vort::PointVortex
 end
 
+mutable struct ChannelVortex{T<:CoreShape} <: Vortex
+    core::T
+    vort::PointVortex
+end
+
+
 mutable struct Dipole <: VortexGroup
     vp::PointVortex
     vn::PointVortex
