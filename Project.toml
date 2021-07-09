@@ -22,7 +22,7 @@ ToeplitzMatrices = "c751599d-da0a-543b-9d20-d0a503d91d24"
 Julia = "1.6"
 
 [compat]
-Reexport = "1.0"
+Reexport = "1, 1.0"
 FileIO = "1, 1.8, 1.9"
 ProgressMeter = "1, 1.5, 1.6, 1.7"
 SimpleWeightedGraphs = "1, 1.1"
