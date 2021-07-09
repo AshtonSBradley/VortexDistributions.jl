@@ -1,9 +1,10 @@
 module VortexDistributions
 
+using Reexport
+@reexport using Interpolations 
 using JLD2
 using Parameters
 using SpecialFunctions
-using Interpolations
 using LinearAlgebra
 using ToeplitzMatrices
 using SparseArrays
