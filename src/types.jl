@@ -46,13 +46,13 @@ mutable struct PointVortex <: Vortex
 end
 
 struct Ansatz <: CoreShape
-    f::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
+    f::Interpolations.GriddedInterpolation{Float64, 1, Float64, Gridded{Linear{Throw{OnGrid}}}, Tuple{Vector{Float64}}}
     ξ::Float64
     Λ::Float64
 end
 
 struct Exact <: CoreShape
-    f::Interpolations.GriddedInterpolation{Float64,1,Float64,Gridded{Linear},Tuple{Array{Float64,1}}}
+    f::Interpolations.GriddedInterpolation{Float64, 1, Float64, Gridded{Linear{Throw{OnGrid}}}, Tuple{Vector{Float64}}}
     ξ::Float64
 end
 
