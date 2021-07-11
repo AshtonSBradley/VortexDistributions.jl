@@ -1,6 +1,5 @@
 module VortexDistributions
 
-using Reexport
 using Interpolations 
 using JLD2
 using Parameters
@@ -67,10 +66,6 @@ include("grow_plus_clusters.jl")
 # utils
 include("utils.jl")
 
-# function __init__()
-#     @load joinpath(@__DIR__,"exactcore.jld2") ψi
-#     @load joinpath(@__DIR__,"ansatzcore.jld2") ψa
-# end 
 @load joinpath(@__DIR__,"cores.jld2") ψi ψa 
 
 end
