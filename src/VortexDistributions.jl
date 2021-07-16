@@ -1,9 +1,9 @@
 module VortexDistributions
 
+using Interpolations 
 using JLD2
 using Parameters
 using SpecialFunctions
-using Interpolations
 using LinearAlgebra
 using ToeplitzMatrices
 using SparseArrays
@@ -66,10 +66,6 @@ include("grow_plus_clusters.jl")
 # utils
 include("utils.jl")
 
-@load joinpath(@__DIR__,"exactcore.jld2") ψi
-@load joinpath(@__DIR__,"ansatzcore.jld2") ψa
-
-# @load joinpath(@__DIR__,"cores.jld2") ψi ψa 
-
+@load joinpath(@__DIR__,"cores.jld2") ψi ψa 
 
 end
