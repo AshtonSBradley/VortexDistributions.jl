@@ -1,4 +1,4 @@
-# VortexDistributions.jl <img align="right" src="/examples/vortfluid.gif" width="100" height="100">
+# VortexDistributions.jl  
 
 <!-- [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://AshtonSBradley.github.io/VortexDistributions.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://AshtonSBradley.github.io/VortexDistributions.jl/dev) -->
