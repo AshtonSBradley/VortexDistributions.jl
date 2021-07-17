@@ -95,6 +95,20 @@ ScalarVortex(ξ::Array{Float64,1},pv::Array{PointVortex,1}) = @. ScalarVortex(Ex
 ScalarVortex(ξ::Float64,pv::PointVortex) = ScalarVortex(ξ,[pv])
 ScalarVortex(pv::Array{PointVortex,1}) = ScalarVortex(1.0,pv)
 
+
+#Same construction as scalar vortex but due to being in a channel needs the channel width as an extra parameter
+#Vortex in a infinite channel.
+#Toikka et al,  2017 New J. Phys. 19 023029
+
+
+ChannelVortex(vort::PointVortex) = ChannelVortex(Exact(),vort)
+function (s::ChannelVortex{T})(x,y,z::Real) where T <: CoreShape
+    @unpack xv,yv,qv = s.vort
+    return s.core(x - xv, y - yv)*exp(im*qv*(real(1im*log((exp(π*(x+1im*(y+z/2))/z)
+                                -exp(π*(xv-1im*(yv+z/2))/z))/(exp(π*(x+1im*(y+z/2))/z)
+                                -exp(π*(xv+1im*(yv+z/2))/z)+1e-10)))))
+end
+
 """
     rv = rand_scalarvortex()
     rv = rand_scalarvortex(n::Int)
@@ -133,6 +147,16 @@ function vortex!(psi::F,vort::Array{S}) where {F <: Field, S <: Vortex}
     for j in eachindex(vort)
         vortex!(psi,vort[j])
     end
+end
+
+
+#New dispatch for channel. Assertion that channel length should not be complex
+
+function vortex!(psi::F,vort::ChannelVortex{T},D) where {T <: CoreShape, F<:Field}
+    @unpack ψ,x,y = psi
+    @assert typeof(D)<:Real "Channel length cannot be imaginary"
+    ψ .*= vort.(x,y',D)
+    @pack! psi = ψ
 end
 
 function rand_vortexfield(n)
@@ -188,6 +212,9 @@ function periodic_dipole!(psi::F,dip::Vector{ScalarVortex{T}}) where {T <: CoreS
     ψ .*= exp.(im*dipole_phase(x,y,vp...,vn...))
     @pack! psi = ψ
 end
+
+
+
 
 # TODO: dispatch on dipole type
 # function periodic_dipole!(psi::F,dip::Dipole) where F <: Field
