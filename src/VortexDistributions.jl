@@ -12,7 +12,7 @@ using FileIO
 using ProgressMeter
 using LightGraphs
 using SimpleWeightedGraphs
-import Plots:stroke,scatter!,plot,plot!
+# import Plots:stroke,scatter!,plot,plot!
 
 const Λ = 0.8249
 
@@ -42,9 +42,10 @@ charge, xpos, ypos, pos,
 
 # RCA
 distances, periodic_distances, sparse_distances, 
-spanning_tree, vortex_marker, plot_vortices!,
-plot_cluster!, vortex_marker, grow_plus_clusters, 
+spanning_tree, vortex_marker, 
+ grow_plus_clusters, 
 grow_minus_clusers, get_dipoles, seed_clusters
+#plot_vortices!, plot_cluster!, vortex_marker
 
 include("types.jl")
 include("pointvortex.jl")

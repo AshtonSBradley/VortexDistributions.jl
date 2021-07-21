@@ -257,65 +257,65 @@ function vortex_marker(c)
     end
 end
 
-"""
-    plot_vortices!(p,vdata)
+# """
+#     plot_vortices!(p,vdata)
 
-Plot vortices defined in `vdata` on figure `p`.
-"""
-function plot_vortices!(p,vdata)
-    for j in 1:size(vdata)[1]
-        vx,vy = vdata[j,1],vdata[j,2]
-        scatter!(p1,[vx],[vy],marker=vortex_marker(vdata[j,3]),label=false)
-    end
-    return p1
-end
+# Plot vortices defined in `vdata` on figure `p`.
+# """
+# function plot_vortices!(p,vdata)
+#     for j in 1:size(vdata)[1]
+#         vx,vy = vdata[j,1],vdata[j,2]
+#         scatter!(p1,[vx],[vy],marker=vortex_marker(vdata[j,3]),label=false)
+#     end
+#     return p1
+# end
 
-"""
-    plot_cluster_vortices!(p,cluster::Cluster)
+# """
+#     plot_cluster_vortices!(p,cluster::Cluster)
 
-Plot cluster in figure `p` using `vortex_marker`.
-"""
-function plot_cluster_vortices!(p,cluster::Cluster)
-    vdata = vortex_array(cluster.vortices)
-    for j in 1:size(vdata)[1]
-        vx,vy = vdata[j,1],vdata[j,2]
-        scatter!(p,[vx],[vy],marker=vortex_marker(vdata[j,3]),label=false)
-    end
-    return p
-end
+# Plot cluster in figure `p` using `vortex_marker`.
+# """
+# function plot_cluster_vortices!(p,cluster::Cluster)
+#     vdata = vortex_array(cluster.vortices)
+#     for j in 1:size(vdata)[1]
+#         vx,vy = vdata[j,1],vdata[j,2]
+#         scatter!(p,[vx],[vy],marker=vortex_marker(vdata[j,3]),label=false)
+#     end
+#     return p
+# end
 
-"""
-    plot_cluster_tree!(p,cluster::Cluster)
+# """
+#     plot_cluster_tree!(p,cluster::Cluster)
 
-Plot minimal spanning tree on figure `p` for `cluster`.
-"""
-function plot_cluster_tree!(p,cluster::Cluster)
-    vortices = cluster.vortices
-    tree = cluster.tree
-    va = vortex_array(vortices)
-    xi = @view va[:,1]
-    yi = @view va[:,2]
-    ci = @view va[:,3]
+# Plot minimal spanning tree on figure `p` for `cluster`.
+# """
+# function plot_cluster_tree!(p,cluster::Cluster)
+#     vortices = cluster.vortices
+#     tree = cluster.tree
+#     va = vortex_array(vortices)
+#     xi = @view va[:,1]
+#     yi = @view va[:,2]
+#     ci = @view va[:,3]
 
-    for i in 1:length(tree)
-        edge = tree[i]
-        src,dst = edge.src,edge.dst
-        x1,y1 = xi[src],yi[src]
-        x2,y2 = xi[dst],yi[dst]
-        csign = vortices[1].qv
-        col = csign == 1.0 ? :green : :blue
-        plot!(p,[x1,x2],[y1,y2],label=false,c=col,alpha=0.4)
-    end
-    return p
-end
+#     for i in 1:length(tree)
+#         edge = tree[i]
+#         src,dst = edge.src,edge.dst
+#         x1,y1 = xi[src],yi[src]
+#         x2,y2 = xi[dst],yi[dst]
+#         csign = vortices[1].qv
+#         col = csign == 1.0 ? :green : :blue
+#         plot!(p,[x1,x2],[y1,y2],label=false,c=col,alpha=0.4)
+#     end
+#     return p
+# end
 
-"""
-    plot_custer!(p,c)
+# """
+#     plot_custer!(p,c)
 
-Plot the vortices and minimal spanning tree.
-"""
-function plot_cluster!(p,c)
-    plot_cluster_vortices!(p,c)
-    plot_cluster_tree!(p,c)
-    return p
-end
+# Plot the vortices and minimal spanning tree.
+# """
+# function plot_cluster!(p,c)
+#     plot_cluster_vortices!(p,c)
+#     plot_cluster_tree!(p,c)
+#     return p
+# end
