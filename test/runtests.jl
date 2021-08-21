@@ -1,7 +1,7 @@
-using VortexDistributions, Test
+using VortexDistributions, Test, SafeTestsets
 
-include("point_vortex_test.jl")
-include("single_vort_acc_test.jl")
-include("multivort_test.jl")
-include("periodic_dipole_test.jl")
-include("creations_test.jl")
+@safetestset "Point Vortex" begin include("point_vortex_test.jl") end
+@safetestset "Single Vortex Accuracy" begin include("single_vort_acc_test.jl") end
+@safetestset "Multiple Vortices" begin include("multivort_test.jl") end
+@safetestset "Periodic Dipole" begin include("periodic_dipole_test.jl") end 
+@safetestset "Creation functions" begin include("creations_test.jl") end 
