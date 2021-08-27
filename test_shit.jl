@@ -7,3 +7,7 @@ y = f.(x)
 
 foo.(3,4)
 foo(5)
+
+using VortexDistributions
+vorts = found_near(30, 10)
+

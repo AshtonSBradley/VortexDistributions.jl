@@ -5,3 +5,4 @@ using VortexDistributions, Test, SafeTestsets
 @safetestset "Multiple Vortices" begin include("multivort_test.jl") end
 @safetestset "Periodic Dipole" begin include("periodic_dipole_test.jl") end 
 @safetestset "Creation functions" begin include("creations_test.jl") end 
+@safetestset "Multiple Vortices 2" begin include("multivort_test2.jl") end

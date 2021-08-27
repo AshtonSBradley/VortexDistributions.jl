@@ -5,3 +5,5 @@
 docs/build/
 Manifest.toml
 lcov.info
+.vscode/settings.json
+.vscode/*
