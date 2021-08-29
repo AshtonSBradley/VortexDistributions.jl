@@ -18,4 +18,6 @@ vortex!(psi, sp)
 
 vfound = findvortices(psi)
 
-keep_vortices(vfound)
+vortm = keep_vortices(vfound)
+
+@test length(vfound) == length(vortm)
