@@ -82,19 +82,19 @@ end
 
 function plot_vfound3D(vorts_3d, X, m_size=1500)
     x = X[1]; y = X[2]; z = X[3];
-
+    vorts_copy = copy(vorts_3d)
     charge = false
     if length(vorts_3d) == 1
         charge = true
     end
 
-    for vorts in vorts_3d
+    for vorts in vorts_copy
         for vidx in 1:length(vorts)
             v = vorts[vidx]
             vx = findidx_uniform(v[1], x);
             vy = findidx_uniform(v[2], y);
             vz = findidx_uniform(v[3], z);
-            vq = v[4]
+            # v[vidx][1:3] = [vx, vy, vz]
             if charge
                 if vq > 0
                     scatter!([vx], [vy], [vz], color="red", markersize=m_size)
@@ -102,10 +102,19 @@ function plot_vfound3D(vorts_3d, X, m_size=1500)
                     scatter!([vx], [vy], [vz], color="blue", markersize=m_size)
                 end
             else
-                scatter!([vx], [vy], [vz], color="black", markersize=m_size)
+                scatter!([vx], [vy], [vz], color="red", markersize=m_size)
             end
         end
     end
+    # if charge
+    #     if vq > 0
+    #         scatter!([vx], [vy], [vz], color="red", markersize=m_size)
+    #     else
+    #         scatter!([vx], [vy], [vz], color="blue", markersize=m_size)
+    #     end
+    # else
+    #     scatter!([vx], [vy], [vz], color="black", markersize=m_size)
+    # end
 end
 
 function plot_vfound3D_box(vorts, X, charge=false)
@@ -115,7 +124,6 @@ function plot_vfound3D_box(vorts, X, charge=false)
         vx = findidx_uniform(v[1], x);
         vy = findidx_uniform(v[2], y);
         vz = findidx_box(v[3], z);
-        vq = v[4]
         if charge
             if vq > 0
                 scatter!([vx], [vy], [vz], color="red", markersize=1500)
@@ -123,7 +131,7 @@ function plot_vfound3D_box(vorts, X, charge=false)
                 scatter!([vx], [vy], [vz], color="blue", markersize=1500)
             end
         else
-            scatter!([vx], [vy], [vz], color="black", markersize=1500)
+            scatter!([vx], [vy], [vz], color="yellow", markersize=1500)
         end
     end
 end
