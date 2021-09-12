@@ -1,4 +1,0 @@
-[deps]
-GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
-JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
-VortexDistributions = "b688e990-d167-11e8-1f13-43a2532b2fa8"
