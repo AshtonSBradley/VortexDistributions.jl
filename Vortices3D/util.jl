@@ -1,140 +1,3 @@
-function plot_iso(psi)
-    density = abs2.(psi)
-    pmax = maximum(density)
-    density = density/pmax
-    volume(density, algorithm = :iso, show_axis=true)
-end
-
-function findvortices3D_z(psi, X)
-    x = X[1]; y = X[2];
-    z = X[3];
-    vorts_3d = []
-    for zidx in 1:length(z)
-        vorts = vortex_array(findvortices(Torus(psi[:, :, zidx], x, y)));
-        if length(vorts) != 0
-            for vidx in 1:length(vorts[:, 1])
-                v = vorts[vidx, :]
-                vz = [v[1], v[2], z[zidx], v[3]]
-                push!(vorts_3d, vz)
-            end
-        end
-    end
-    return vorts_3d;
-end
-
-function findvortices3D_x(psi, X)
-    x = X[1]; y = X[2];
-    z = X[3];
-    vorts_3d = []
-    for xidx in 1:length(x)
-        vorts = vortex_array(findvortices(Torus(psi[xidx, :, :], y, z)));
-        if length(vorts) != 0
-            for vidx in 1:length(vorts[:, 1])
-                v = vorts[vidx, :]
-                vx = [x[xidx], v[1], v[2], v[3]]
-                push!(vorts_3d, vx)
-            end
-        end
-    end
-    return vorts_3d;
-end
-
-function findvortices3D_y(psi, X)
-    x = X[1]; y = X[2];
-    z = X[3];
-    vorts_3d = []
-    for yidx in 1:length(y)
-        vorts = vortex_array(findvortices(Torus(psi[:, yidx, :], x, z)));
-        if length(vorts) != 0
-            for vidx in 1:length(vorts[:, 1])
-                v = vorts[vidx, :]
-                vy = [v[1], y[yidx], v[2], v[3]]
-                push!(vorts_3d, vy)
-            end
-        end
-    end
-    return vorts_3d;
-end
-
-function findidx_uniform(x, arr)
-    # For arrays where xi is between [-L, L] and uniform spacing
-    # So xi = -L/2 + (L/N)*i
-    # => i = (N/L)*(x + L/2)
-    N = length(arr);
-    L = arr[end]*2;
-    idx = (N/L)*(x + L/2);
-    if idx < 1
-        println("x is not within the bounds of this array");
-        return;
-    else
-        return idx;
-    end
-end
-
-function findidx_box(x, arr)
-    idx = findidx_uniform(x, arr)
-    L = 14
-
-    idx = idx/(length(arr)/L);
-    idx = idx + 8
-    return idx
-end 
-
-function plot_vfound3D(vorts_3d, X, m_size=1500)
-    x = X[1]; y = X[2]; z = X[3];
-    vorts_copy = copy(vorts_3d)
-    charge = false
-    if length(vorts_3d) == 1
-        charge = true
-    end
-
-    for vorts in vorts_copy
-        for vidx in 1:length(vorts)
-            v = vorts[vidx]
-            vx = findidx_uniform(v[1], x);
-            vy = findidx_uniform(v[2], y);
-            vz = findidx_uniform(v[3], z);
-            # v[vidx][1:3] = [vx, vy, vz]
-            if charge
-                if vq > 0
-                    scatter!([vx], [vy], [vz], color="red", markersize=m_size)
-                else
-                    scatter!([vx], [vy], [vz], color="blue", markersize=m_size)
-                end
-            else
-                scatter!([vx], [vy], [vz], color="red", markersize=m_size)
-            end
-        end
-    end
-    # if charge
-    #     if vq > 0
-    #         scatter!([vx], [vy], [vz], color="red", markersize=m_size)
-    #     else
-    #         scatter!([vx], [vy], [vz], color="blue", markersize=m_size)
-    #     end
-    # else
-    #     scatter!([vx], [vy], [vz], color="black", markersize=m_size)
-    # end
-end
-
-function plot_vfound3D_box(vorts, X, charge=false)
-    x = X[1]; y = X[2]; z = X[3];
-    for vidx in 1:length(vorts)
-        v = vorts[vidx]
-        vx = findidx_uniform(v[1], x);
-        vy = findidx_uniform(v[2], y);
-        vz = findidx_box(v[3], z);
-        if charge
-            if vq > 0
-                scatter!([vx], [vy], [vz], color="red", markersize=1500)
-            else
-                scatter!([vx], [vy], [vz], color="blue", markersize=1500)
-            end
-        else
-            scatter!([vx], [vy], [vz], color="yellow", markersize=1500)
-        end
-    end
-end
 
 function findvortices3D_itp(psi, X, N=1)
     
@@ -145,7 +8,6 @@ function findvortices3D_itp(psi, X, N=1)
     z_itp = interpolate(X[3], BSpline(Linear()));
 
     psi_itp = interpolate(psi, BSpline(Cubic(Line(OnGrid()))))
-
 
     x_range = LinRange(1,length(x),N*length(x))
     y_range = LinRange(1,length(y),N*length(y))
@@ -186,5 +48,91 @@ function findvortices3D_itp(psi, X, N=1)
             end
         end
     end
-    return [vorts_xslice, vorts_yslice, vorts_zslice];
+    return vcat([vorts_xslice, vorts_yslice, vorts_zslice]...);
 end
+
+function plot_iso(psi, X)
+    density = abs2.(psi)
+    pmax = maximum(density)
+    density = density/pmax
+    volume(X[1], X[2], X[3], density, algorithm = :iso, show_axis=true)
+end
+
+function scatterVortsOnIso(vorts, markersize=200)
+    # vorts = vorts3DMatrix(vorts);
+    scatter!(vorts[:, 1], vorts[:, 2], vorts[:, 3], color="red", markersize=markersize)
+end
+
+function vorts3DMatrix(vorts)
+    vorts = vcat(vorts'...)
+end
+
+function uniqueVortices(rtol, psi, X, N)
+    vorts_all = findvortices3D_itp(psi, X, N) # Find all vortex points 
+    vorts = copy(vorts_all)
+
+    filaments = [] # Array to hold unique collection's of vortices
+    current = [] # The current collection 
+    
+    # Pop a vortex off and add it to the current collection
+    vi = pop!(vorts) 
+    push!(current, vi)
+
+    count = 0 # Used to propogate down other side of filament
+
+    while length(vorts) > 0
+        dist, idx = rtol, 0 # dist and idx are used to find the nearest neighbour, initialise dist to rtol
+        
+        # Loop through other vortices excluding the current one
+        for j in 1:length(vorts)
+            vj = vorts[j]
+            c_dist = sqrt((vj[1]-vi[1])^2 + (vj[2]-vi[2])^2 + (vj[3]-vi[3])^2) # euclidian distance
+            
+            # If we encounter a smaller distance that our current distance, update it
+            if c_dist < dist
+                dist, idx = c_dist, j 
+            end
+        end
+        if dist != rtol # Found a close neighbour 
+            vi = vorts[idx]
+            deleteat!(vorts, idx) # Remove this vortex from vorts
+            push!(current, vi) # Add it to current collection
+        else  # No close neighbour found
+            if count == 0 # compute the other side of vortex
+                vi = current[1] # Return to starting vortex
+                count+=1
+            else # computed both sides, continue to next filament
+                push!(filaments, current)
+                current = []
+                vi = pop!(vorts)
+                push!(current, vi)
+                count = 0
+            end
+        end
+    end
+    push!(filaments, current)
+    return filaments
+end
+
+function scatterDemo(fils)
+    f = copy(fils)
+    color = "red"
+    count = 0
+    while length(f) > 0
+        fi = pop!(f)
+        fi_c = copy(fi)
+        while length(fi_c) > 0
+            vi = popfirst!(fi_c)
+            scatter!([vi[1]],[vi[2]],[vi[3]],markersize=350,color=color)
+            sleep(0.003)
+        end
+        sleep(1)
+        count += 1
+        if count % 2 == 0
+            color = "red"
+        else 
+            color = "blue"
+        end
+    end
+end
+
