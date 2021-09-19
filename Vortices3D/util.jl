@@ -136,3 +136,46 @@ function scatterDemo(fils)
     end
 end
 
+function skip_v(x)
+    if x in found
+        return true
+    end
+    return false
+end
+
+# Find all vortices within an ϵ-ball around a vortex and put this into a set.
+# Then interate over the sets performing union operations if their insersetion 
+function setMethod(psi, X, N, ϵ)
+    vorts_3d = findvortices3D_itp(psi, X, N) # Find vortex points with interpolation depth N
+    v_matrix = vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
+    num_vorts = length(vorts_3d)
+    kdtree = KDTree(v_matrix)
+
+    unvisited = Set(1:num_vorts) # Set of all unvisited vortices
+    vfound = [] # Will contain sets of vortices within the ϵ-balls
+    while length(unvisited) > 0
+        idx = first(unvisited)
+        vi = v_matrix[:, idx]
+        v_idxs = inrange(kdtree, vi, ϵ) # Returns indices of vortices within radius ϵ
+        if length(v_idxs) > 1 # Will always return itself, so throw away rouge vortices
+            v_set = Set(v_idxs)
+            push!(vfound, v_set)
+        end
+        setdiff!(unvisited, Set(idx)) # Remove this index from unvisited 
+    end
+
+    # A loop that unions sets that have an intersection.
+    i = 1
+    while i <= length(vfound)
+        for j in i+1:length(vfound)
+            if length(intersect(vfound[i], vfound[j])) > 0
+                union!(vfound[i], vfound[j])
+                deleteat!(vfound, j)
+                i += -1
+                break
+            end
+        end
+        i+=1
+    end
+    return vfound
+end

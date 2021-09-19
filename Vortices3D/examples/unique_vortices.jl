@@ -16,7 +16,7 @@ include("../util.jl")
 
 
 ## Set psi 
-psi = psi_tubes1;
+psi = psi_knots4;
 
 
 ## Plot iso surface
@@ -28,7 +28,6 @@ plot_iso(psi, X)
 num_vorts = length(vcat(vorts_3d...)[:,1])
 print("Number of vortices found: ", length(vcat(vorts_3d...)[:,1]))
 
-vorts_3d
 ## Scatter vortices found
 scatterVortsOnIso(vcat(vorts_3d'...))
 
@@ -36,7 +35,7 @@ scatterVortsOnIso(vcat(vorts_3d'...))
 
 ## Unique vortices 
 interp_depth = 2
-rtol = 0.8 # Largest distance between two points
+rtol = 0.44 # Largest distance between two points
 
 @time fils = uniqueVortices(rtol, psi, X, interp_depth);
 
@@ -47,3 +46,4 @@ plot_iso(psi, X)
 scatterDemo(fils)
 
 
+plot!()
