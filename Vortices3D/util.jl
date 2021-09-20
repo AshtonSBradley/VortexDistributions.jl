@@ -59,7 +59,7 @@ function plot_iso(psi, X)
 end
 
 function scatterVortsOnIso(vorts, markersize=200)
-    # vorts = vorts3DMatrix(vorts);
+    vorts = vorts3DMatrix(vorts);
     scatter!(vorts[:, 1], vorts[:, 2], vorts[:, 3], color="red", markersize=markersize)
 end
 
@@ -144,7 +144,7 @@ function skip_v(x)
 end
 
 # Find all vortices within an ϵ-ball around a vortex and put this into a set.
-# Then interate over the sets performing union operations if their insersetion 
+# Then interate over the sets performing union operations if there is an intersection
 function setMethod(psi, X, N, ϵ)
     vorts_3d = findvortices3D_itp(psi, X, N) # Find vortex points with interpolation depth N
     v_matrix = vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
@@ -178,4 +178,61 @@ function setMethod(psi, X, N, ϵ)
         i+=1
     end
     return vfound
+end
+
+function setMethod2(psi, X, N, ϵ)
+    vorts_3d = findvortices3D_itp(psi, X, N) # Find vortex points with interpolation depth N
+    v_matrix = vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
+    num_vorts = length(vorts_3d)
+    kdtree = KDTree(v_matrix)
+
+    balls = inrange(kdtree, v_matrix, ϵ)
+    balls = [Set(balls[i]) for i=1:length(balls) if length(balls[i]) > 1]
+    # A loop that unions sets that have an intersection.
+    i = 1
+    while i <= length(balls)
+        for j in i+1:length(balls)
+            if length(intersect(balls[i], balls[j])) > 0
+                union!(balls[i], balls[j])
+                deleteat!(balls, j)
+                i += -1
+                break
+            end
+        end
+        i+=1
+    end
+    return balls
+end
+
+function setMethod3(psi, X, N, ϵ)
+    vorts_3d = findvortices3D_itp(psi, X, N) # Find vortex points with interpolation depth N
+    v_matrix = vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
+    num_vorts = length(vorts_3d)
+    kdtree = KDTree(v_matrix)
+
+    # BFS using sets 
+    unvisited = Set(collect(1:num_vorts))
+    fils = []
+    while length(unvisited) > 0
+        idx = first(unvisited)
+        vc = v_matrix[:, idx]
+        f_idxs = inrange(kdtree, vc, ϵ)
+        f = Set(f_idxs)
+        search = Set(f_idxs)
+        setdiff!(search, idx)
+        while length(search) > 0
+            idx = first(search)
+            setdiff!(search, idx)
+            vc = v_matrix[:, idx]
+            vc_idxs = inrange(kdtree, vc, ϵ)
+            setdiff!(vc_idxs, f)
+            union!(f, Set(vc_idxs))
+            union!(search, vc_idxs)
+        end
+        if length(f) > 1
+            push!(fils, f)
+        end
+        setdiff!(unvisited, f)
+    end
+    return fils
 end
