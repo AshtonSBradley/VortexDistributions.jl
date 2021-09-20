@@ -180,12 +180,9 @@ function setMethod(psi, X, N, ϵ)
     return vfound
 end
 
-function setMethod2(psi, X, N, ϵ)
-    vorts_3d = findvortices3D_itp(psi, X, N) # Find vortex points with interpolation depth N
-    v_matrix = vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
-    num_vorts = length(vorts_3d)
+function setMethod2(v_matrix, ϵ)
     kdtree = KDTree(v_matrix)
-
+    
     balls = inrange(kdtree, v_matrix, ϵ)
     balls = [Set(balls[i]) for i=1:length(balls) if length(balls[i]) > 1]
     # A loop that unions sets that have an intersection.
@@ -204,13 +201,11 @@ function setMethod2(psi, X, N, ϵ)
     return balls
 end
 
-function setMethod3(psi, X, N, ϵ)
-    vorts_3d = findvortices3D_itp(psi, X, N) # Find vortex points with interpolation depth N
-    v_matrix = vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
-    num_vorts = length(vorts_3d)
+function setMethod3(v_matrix, ϵ)
     kdtree = KDTree(v_matrix)
 
     # BFS using sets 
+    num_vorts = length(v_matrix[1,:])
     unvisited = Set(collect(1:num_vorts))
     fils = []
     while length(unvisited) > 0
