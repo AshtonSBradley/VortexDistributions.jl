@@ -359,6 +359,34 @@ function setMethodPeriodic(v_matrix, X, ϵ, periodic=false)
     return fils
 end
             
-            
+function naivePlaquette(psi, X, ϵ)
+    x = X[1]; y = X[2];
+    vorts = []
+    phase = angle.(psi)
+    for i in 1:(length(x)-1)
+        for j in 1:(length(y)-1)
+            # start from top left corner and work anti-clockwise
+            n = 0
+            square = [phase[i, j], phase[i+1, j], phase[i+1, j+1], phase[i, j+1], phase[i, j]]
+            for k in 2:5
+                diff = square[k]-square[k-1]
+                if diff > π
+                    count += 1
+                    square[k] += count*2*π
+                else if diff < - pi
+                    count -= 1
+                    square[k] += count*2*pi
+                end
+            end
+            phase_diff = square[end] - square[1]
+            m = phase_diff/(2*π)
+            if abs(m) > ϵ
+                ## vort in box
+                push!(vorts, [i, j])
+            end
+        end
+    end
+end
+
 
 
