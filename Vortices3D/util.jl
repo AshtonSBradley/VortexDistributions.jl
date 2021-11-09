@@ -7,19 +7,33 @@ function findvortices3D_itp(psi, X, N=1)
     y_itp = interpolate(X[2], BSpline(Linear()));
     z_itp = interpolate(X[3], BSpline(Linear()));
 
-    psi_itp = interpolate(psi, BSpline(Cubic(Line(OnGrid()))))
+    x_etp = extrapolate(x_itp, Line())
+    y_etp = extrapolate(y_itp, Line())
+    z_etp = extrapolate(z_itp, Line())
 
-    x_range = LinRange(1,length(x),N*length(x))
-    y_range = LinRange(1,length(y),N*length(y))
-    z_range = LinRange(1,length(z),N*length(z))
+
+    psi_itp = interpolate(psi, BSpline(Quadratic(Periodic(OnCell()))))
+    psi_etp = extrapolate(psi_itp, Periodic())
+
+    x_range = LinRange(0,length(x)+1,N*(length(x)))
+    y_range = LinRange(0,length(y)+1,N*(length(y)))
+    z_range = LinRange(0,length(z)+1,N*(length(z)))
+
+    # x_range = vcat(LinRange(0, 1, 20*N), x_range, LinRange(length(x), length(x)+1, 10*N))
+    # y_range = vcat(LinRange(0, 1, 20*N), y_range, LinRange(length(y), length(y)+1, 10*N))
+    # z_range = vcat(LinRange(0, 1, 20*N), z_range, LinRange(length(z), length(z)+1, 10*N))
+
+    x = LinRange(-8.25, 8.5, 68);
+    y = LinRange(-8.25, 8.5, 68);
+    z = LinRange(-8.25, 8.5, 68);
 
     vorts_xslice = []
     for xidx in x_range
-        vorts = vortex_array(findvortices(Torus(psi_itp[xidx, :, :], y, z)))
+        vorts = vortex_array(findvortices(Torus(psi_etp[xidx, -1:66, -1:66], y, z)))
         if length(vorts) != 0
             for vidx in 1:length(vorts[:, 1])
                 v = vorts[vidx, :]
-                vx = [x_itp(xidx), v[1], v[2], v[3]]
+                vx = [x_etp(xidx), v[1], v[2], v[3]]
                 push!(vorts_xslice, vx)
             end
         end
@@ -27,11 +41,11 @@ function findvortices3D_itp(psi, X, N=1)
 
     vorts_yslice = []
     for yidx in y_range
-        vorts = vortex_array(findvortices(Torus(psi_itp[:, yidx, :], x, z)))
+        vorts = vortex_array(findvortices(Torus(psi_etp[-1:66, yidx, -1:66], x, z)))
         if length(vorts) != 0
             for vidx in 1:length(vorts[:, 1])
                 v = vorts[vidx, :]
-                vy = [v[1], y_itp(yidx), v[2], v[3]]
+                vy = [v[1], y_etp(yidx), v[2], v[3]]
                 push!(vorts_yslice, vy)
             end
         end
@@ -39,11 +53,11 @@ function findvortices3D_itp(psi, X, N=1)
 
     vorts_zslice = []
     for zidx in z_range
-        vorts = vortex_array(findvortices(Torus(psi_itp[:, :, zidx], x, y)))
+        vorts = vortex_array(findvortices(Torus(psi_etp[-1:66, -1:66, zidx], x, y)))
         if length(vorts) != 0
             for vidx in 1:length(vorts[:, 1])
                 v = vorts[vidx, :]
-                vz = [v[1], v[2], z_itp[zidx], v[3]]
+                vz = [v[1], v[2], z_etp[zidx], v[3]]
                 push!(vorts_zslice, vz)
             end
         end
@@ -222,7 +236,7 @@ function setMethod3(v_matrix, ϵ)
             vc_idxs = inrange(kdtree, vc, ϵ)
             setdiff!(vc_idxs, f)
             union!(f, Set(vc_idxs))
-            union!(search, vc_idxs)
+            union!(search, Set(vc_idxs))
         end
         if length(f) > 1
             push!(fils, f)
@@ -231,3 +245,120 @@ function setMethod3(v_matrix, ϵ)
     end
     return fils
 end
+
+function setMethodPeriodic(v_matrix, X, ϵ, periodic=false)
+    kdtree = KDTree(v_matrix)
+
+    num_vorts = length(v_matrix[1,:])
+    unvisited = Set(collect(1:num_vorts))
+    fils = []
+    x = X[1]; y = X[2]; z = X[3];
+    Δx = x[2]-x[1]; Δy = y[2]-y[1]; Δz = z[2]-z[1];
+
+    xdist = x[end]-x[1]; ydist = y[end]-y[1]; zdist = z[end]-z[1];
+
+    while length(unvisited) > 0
+        idx = first(unvisited)
+        vc = v_matrix[:, idx]
+        f_idxs = inrange(kdtree, vc, ϵ)
+        f = Set(f_idxs)
+        search = Set(f_idxs)
+        setdiff!(search, idx)
+        if periodic
+            vcx = v_matrix[1,idx]; vcy=v_matrix[2,idx]; vcz = v_matrix[3,idx];
+            if abs(vcx - x[1]) < ϵ
+                vp = [vcx + xdist + Δx, vcy, vcz]
+                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                union!(f, Set(p_idxs))
+                union!(search, Set(p_idxs))
+            elseif abs(vcx - x[end]) < ϵ
+                vp = [vcx - xdist-Δx, vcy, vcz]
+                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                union!(f, Set(p_idxs))
+                union!(search, Set(p_idxs))
+            end
+            if abs(vcy - y[1]) < ϵ
+                vp = [vcx, vcy + ydist+Δy, vcz]
+                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                union!(f, Set(p_idxs))
+                union!(search, Set(p_idxs))
+            elseif abs(vcy - y[end]) < ϵ
+                vp = [vcx, vcy - ydist-Δy, vcz]
+                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                union!(f, Set(p_idxs))
+                union!(search, Set(p_idxs))
+            end
+            if abs(vcz - z[1]) < ϵ
+                vp = [vcx, vcy, vcz + zdist+Δz]
+                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                union!(f, Set(p_idxs))
+                union!(search, Set(p_idxs))
+            elseif abs(vcz - z[end]) < ϵ
+                vp = [vcx, vcy, vcz - zdist-Δz]
+                p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
+                union!(f, Set(p_idxs))
+                union!(search, Set(p_idxs))
+            end
+        end
+        while length(search) > 0
+            idx = first(search)
+            setdiff!(search, idx)
+            vc = v_matrix[:, idx]
+            vc_idxs = inrange(kdtree, vc, ϵ)
+            setdiff!(vc_idxs, f)
+            union!(f, Set(vc_idxs))
+            union!(search, Set(vc_idxs))
+            if periodic
+                vcx = v_matrix[1,idx]; vcy=v_matrix[2,idx]; vcz = v_matrix[3,idx];
+                if abs(vcx - x[1]) < ϵ
+                    vp = [vcx + xdist+Δx, vcy, vcz]
+                    p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time
+                    setdiff!(p_idxs, f) 
+                    union!(f, Set(p_idxs))
+                    union!(search, Set(p_idxs))
+                elseif abs(vcx - x[end]) < ϵ
+                    vp = [vcx - xdist-Δx, vcy, vcz]
+                    p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                    setdiff!(p_idxs, f) 
+                    union!(f, Set(p_idxs))
+                    union!(search, Set(p_idxs))
+                end
+                if abs(vcy - y[1]) < ϵ
+                    vp = [vcx, vcy + ydist+Δy, vcz]
+                    p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
+                    setdiff!(p_idxs, f) 
+                    union!(f, Set(p_idxs))
+                    union!(search, Set(p_idxs))
+                elseif abs(vcy - y[end]) < ϵ
+                    vp = [vcx, vcy - ydist-Δy, vcz]
+                    p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time
+                    setdiff!(p_idxs, f) 
+                    union!(f, Set(p_idxs))
+                    union!(search, Set(p_idxs))
+                end
+                if abs(vcz - z[1]) < ϵ
+                    vp = [vcx, vcy, vcz + zdist+Δz]
+                    p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
+                    setdiff!(p_idxs, f) 
+                    union!(f, Set(p_idxs))
+                    union!(search, Set(p_idxs))
+                elseif abs(vcz - z[end]) < ϵ
+                    vp = [vcx, vcy, vcz - zdist-Δz]
+                    p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                    setdiff!(p_idxs, f) 
+                    union!(f, Set(p_idxs))
+                    union!(search, Set(p_idxs))
+                end
+            end
+        end
+        if length(f) > N
+            push!(fils, f)
+        end
+        setdiff!(unvisited, f)
+    end
+    return fils
+end
+            
+            
+
+
