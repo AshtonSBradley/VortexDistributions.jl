@@ -10,17 +10,20 @@ include("../util.jl")
 
 
 ## Load psi simulation 
-# @load "data/box_rings.jld2" psi_ring1 psi_ring2 psi_ring3 X # make sure julia repl is in base directory 
-@load "data/box_vorts.jld2" psi_chaos1 psi_chaos2 psi_knots1 psi_knots2 psi_knots3 psi_knots4 psi_tubes1 psi_tubes2 psi_ringtube X
+@load "data/box_rings.jld2" psi_ring1 psi_ring2 psi_ring3 X # make sure julia repl is in base directory 
+# @load "data/box_vorts.jld2" psi_chaos1 psi_chaos2 psi_knots1 psi_knots2 psi_knots3 psi_knots4 psi_tubes1 psi_tubes2 psi_ringtube X
 # @load "data/slab_tubes.jld2" psi_tubes1 psi_tubes2 psi_tubes3 X 
 
 
 ## Set psi 
-psi = psi_knots4;
+psi = psi_ring3;
 
 
 ## Plot iso surface
 plot_iso(psi, X)
+
+naivePlaquette(psi[:, :, 42], X, 0)
+findvortices(Torus(psi[:, :, 42], X[1], X[2]))
 
 
 ## Find vortices

@@ -359,34 +359,73 @@ function setMethodPeriodic(v_matrix, X, ϵ, periodic=false)
     return fils
 end
             
-function naivePlaquette(psi, X, ϵ)
+function naivePlaquetteInterp(psi, X, ϵ)
     x = X[1]; y = X[2];
+    dx = x[2]-x[1]; dy=y[2]-y[1];
+    N = 1;
+
+    x_itp = interpolate(x, BSpline(Linear()));
+    y_itp = interpolate(y, BSpline(Linear()));
+    psi_itp = interpolate(psi, BSpline(Quadratic(Periodic(OnCell()))))
+    x_range = LinRange(1,length(x),N*(length(x)))
+    y_range = LinRange(1,length(y),N*(length(y)))
+    # psi_itp = interpolate((x, y), psi, Gridded(Linear()))
+    
+    psi_itp_arr = psi_itp[x_range, y_range]
+
     vorts = []
-    phase = angle.(psi)
-    for i in 1:(length(x)-1)
-        for j in 1:(length(y)-1)
+    phase = angle.(psi_itp_arr)
+    for i in 1:length(phase[:, 1])-1
+        for j in 1:length(phase[1, :])-1
             # start from top left corner and work anti-clockwise
-            n = 0
             square = [phase[i, j], phase[i+1, j], phase[i+1, j+1], phase[i, j+1], phase[i, j]]
             for k in 2:5
-                diff = square[k]-square[k-1]
-                if diff > π
-                    count += 1
-                    square[k] += count*2*π
-                else if diff < - pi
-                    count -= 1
-                    square[k] += count*2*pi
+                # diff = square[k]-square[k-1]
+                while (diff = square[k]-square[k-1]) > π
+                    square[k] += -2*pi
+                end
+                while (diff = square[k]-square[k-1]) < -π
+                    square[k] += 2*pi
                 end
             end
             phase_diff = square[end] - square[1]
             m = phase_diff/(2*π)
             if abs(m) > ϵ
                 ## vort in box
-                push!(vorts, [i, j])
+                push!(vorts, PointVortex(x_itp[x_range[i]] + (dx/(2*N)), y_itp(y_range[j])+(dy/(2*N)), round(m)))
             end
         end
     end
+    return vorts
 end
 
+function naivePlaquette(psi, X, ϵ)
+    x = X[1]; y = X[2];
+    dx = x[2]-x[1]; dy=y[2]-y[1];
+    N = 1;
 
-
+    vorts = []
+    phase = angle.(psi)
+    for i in 1:length(x)-1
+        for j in 1:length(y)-1
+            # start from top left corner and work anti-clockwise
+            square = [phase[i, j], phase[i+1, j], phase[i+1, j+1], phase[i, j+1], phase[i, j]]
+            for k in 2:5
+                # diff = square[k]-square[k-1]
+                while (diff = square[k]-square[k-1]) > π
+                    square[k] += -2*pi
+                end
+                while (diff = square[k]-square[k-1]) < -π
+                    square[k] += 2*pi
+                end
+            end
+            phase_diff = square[end] - square[1]
+            m = phase_diff/(2*π)
+            if abs(m) > ϵ
+                ## vort in box
+                push!(vorts, PointVortex(x[i] + dx/2, y[j]+dy/2*N, round(m)))
+            end
+        end
+    end
+    return vorts
+end
