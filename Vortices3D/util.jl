@@ -429,3 +429,33 @@ function naivePlaquette(psi, X, ϵ)
     end
     return vorts
 end
+
+N = [2^x for x=2:12]
+
+
+function benchmark2Dnaive(num_vorts)
+    N = [2^x for x=4:14]
+    Lx = 200; Ly = Lx;
+    bench = []
+    for n in N
+        Nx = n; Ny = n;
+        x = LinRange(-Lx/2,Lx/2, Nx+1)[1:end-1]; y = LinRange(-Ly/2,Ly/2, Ny+1)[1:end-1];
+        psi0 = one.(x*y') |> complex
+        psi = Torus(psi0,x,y)
+        rand_vorts = rand_pointvortex(num_vorts, psi)
+        vortex!(psi, rand_vorts)
+        vfound = @benchmark naivePlaquette(psi.ψ, [psi.x, psi.y], 0)
+        push!(bench, (vfound, n))
+    end
+    return bench
+end
+        
+
+
+
+        
+
+
+
+
+
