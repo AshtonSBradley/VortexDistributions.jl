@@ -1,4 +1,4 @@
-
+using VortexDistributions, BenchmarkTools, Parameters
 function findvortices3D_itp(psi, X, N=1)
     
     x = X[1]; y = X[2]; z = X[3];
@@ -399,13 +399,12 @@ function naivePlaquetteInterp(psi, X, ϵ)
     return vorts
 end
 
-function naivePlaquette(psi, X, ϵ)
-    x = X[1]; y = X[2];
+function naivePlaquette(psi)
+    @unpack ψ,x,y = psi
     dx = x[2]-x[1]; dy=y[2]-y[1];
-    N = 1;
 
     vorts = []
-    phase = angle.(psi)
+    phase = angle.(ψ)
     for i in 1:length(x)-1
         for j in 1:length(y)-1
             # start from top left corner and work anti-clockwise
@@ -421,41 +420,66 @@ function naivePlaquette(psi, X, ϵ)
             end
             phase_diff = square[end] - square[1]
             m = phase_diff/(2*π)
-            if abs(m) > ϵ
+            if abs(m) > 0
                 ## vort in box
-                push!(vorts, PointVortex(x[i] + dx/2, y[j]+dy/2*N, round(m)))
+                push!(vorts, PointVortex(x[i] + dx/2, y[j]+dy/2, round(m)))
             end
         end
     end
     return vorts
 end
 
-N = [2^x for x=2:12]
 
-
-function benchmark2Dnaive(num_vorts)
-    N = [2^x for x=4:14]
+# function benchmark2D(num_vorts)
+#     N = [2^x for x=4:10]
+#     Lx = 100; Ly = Lx;
+#     bench = []
+#     for n in N
+#         Nx = n; Ny = n;
+#         x = LinRange(-Lx/2,Lx/2, Nx+1)[1:end-1]; y = LinRange(-Ly/2,Ly/2, Ny+1)[1:end-1];
+#         psi0 = one.(x*y') |> complex
+#         psi = Torus(psi0,x,y)
+#         rand_vorts = rand_pointvortex(num_vorts, psi)
+#         vortex!(psi, rand_vorts)
+#         vfoundNaive = @benchmark naivePlaquette(psi)
+#         vfoundOptimised = @benchmark findvortices(psi)
+#         push!(bench, (vfound, n))
+#     end
+#     return bench
+# end
+ 
+function setupTestArea(num_vorts, n)
     Lx = 200; Ly = Lx;
-    bench = []
-    for n in N
-        Nx = n; Ny = n;
-        x = LinRange(-Lx/2,Lx/2, Nx+1)[1:end-1]; y = LinRange(-Ly/2,Ly/2, Ny+1)[1:end-1];
-        psi0 = one.(x*y') |> complex
-        psi = Torus(psi0,x,y)
-        rand_vorts = rand_pointvortex(num_vorts, psi)
-        vortex!(psi, rand_vorts)
-        vfound = @benchmark naivePlaquette(psi.ψ, [psi.x, psi.y], 0)
-        push!(bench, (vfound, n))
-    end
-    return bench
+    Nx = n; Ny = n;
+    # x = LinRange(-Lx/2,Lx/2, Nx+1)[1:end-1]; y = LinRange(-Ly/2,Ly/2, Ny+1)[1:end-1];
+    x = LinRange(-Lx/2,Lx/2, Nx); y = LinRange(-Ly/2,Ly/2, Ny);
+
+    psi0 = one.(x*y') |> complex
+    psi = Torus(psi0,x,y)
+    rand_vorts = rand_pointvortex(num_vorts, psi)
+    vortex!(psi, rand_vorts)
+    return psi
 end
-        
 
+    
+function benchmark2D(num_vorts, Nstart, Nend)
+    N = [2^x for x=Nstart:Nend]
+    benchmarks = []
+    for n in N
+        println("Running tests for: " * string(n))
+        psi = setupTestArea(num_vorts, n)
+        benchNaive = @benchmark naivePlaquette($psi)
+        benchOptimised = @benchmark remove_vortices_edge(findvortices_jumps($psi), $psi)
+        benchOptimisedInterp = @benchmark findvortices($psi)
+        push!(benchmarks, [benchNaive, benchOptimised, benchOptimisedInterp, n])
+    end
+    return benchmarks
+end
 
+function euclid(x, y)
+    return sqrt((x[1]-y[1])^2 + (x[2]-y[2])^2)
+end
 
-        
-
-
-
-
-
+function euclidVorts(v1, v2)
+    return euclid([v1.xv, v1.yv], [v2.xv, v2.yv])
+end

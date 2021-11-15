@@ -47,3 +47,9 @@ naive = benchmark2Dnaive(2)
 
 naive = @benchmark naivePlaquette(psi.ψ, [psi.x, psi.y], 0)
 optimised = @benchmark remove_vortices_edge(findvortices_grid(psi), psi)
+
+benchmarks = benchmark2Dnaive2(2)
+
+using JLD2
+
+@save "data/naiveBenchmarks.jld2" benchmarks;
