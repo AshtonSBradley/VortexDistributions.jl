@@ -64,7 +64,7 @@ function findvortices_grid(psi::Sphere;shift=true)
     w2 = sum(windvals[end,:])
     (sign(w2) != 0) && (rawvort = [rawvort; pi 0.0 w2])
 
-    vort = sortslices(vort,dims=1)
+    vort = sortslices(rawvort,dims=1)
     return PointVortex(vort)
 end
 

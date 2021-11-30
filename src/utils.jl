@@ -21,6 +21,26 @@ function found_near(n)
     return near
 end
 
+function found_near(n, nvorts)
+    near = true
+    for j in 1:n
+        psi,vort = rand_vortexfield(nvorts)
+        vortfound = findvortices(psi)
+        vfdata = vortex_array(vortfound)
+        vdata = vortex_array(vort)
+        if length(vfdata[:, 1]) != nvorts
+            return false
+        end
+        dx = Δ(psi.x)
+        sort!(vdata, dims=1)
+        sort!(vfdata, dims=1)
+        for i in 1:nvorts
+            near *= isapprox(vdata[i, :], vfdata[i, :], rtol = dx/4)
+        end
+    end
+    return near
+end
+
 """
     vortices = remove_vortices_edge(vort::Array{PointVortex,1},x,y,edge=1)
 
