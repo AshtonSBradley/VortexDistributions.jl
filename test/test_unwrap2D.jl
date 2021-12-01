@@ -1,4 +1,4 @@
-using VortexDistributions, Plots
+using VortexDistributions 
 
 Nx=1000; Ny=1000;
 θx = LinRange(0,4*pi,Nx); θy = LinRange(0,4*pi,Ny);
