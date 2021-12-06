@@ -15,6 +15,11 @@ Tools for creating and detecting quantum vortices in Bose-Einstein condensates.
 - [ ] Recursive cluster algorithm
 - [ ] Vortex correlation functions
 
+# Installation
+```julia
+]add VortexDistributions
+```
+
 # Detection Example
 ```julia
 using VortexDistributions, Plots
