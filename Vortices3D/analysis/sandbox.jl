@@ -24,11 +24,15 @@ t = LinRange(0.,tf,Nt);
 x,y,z = X;
 
 ## Load data 
-data = joinpath(@__DIR__, "../data/64quench4heal.bson")
-BSON.@load data sol
+# data = joinpath(@__DIR__, "../data/64quench4heal.bson")
+data = joinpath(@__DIR__, "../data/box_vorts.jld2")
+
+# BSON.@load data sol
+@load data psi_tubes1 X
 
 ## Pick a psi and plot it
-psi = xspace(sol(25.), sim);
+# psi = xspace(sol(25.), sim);
+psi = psi_tubes1
 plot_iso(psi, X, true, true)
 
 ## Classification 
