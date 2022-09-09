@@ -67,12 +67,12 @@ function plot_iso(psi, X, visible=true, heal_2=false)
     pmax = maximum(density)
     density = density/pmax
     if heal_2
-        scene = volume(X[1], X[2], X[3], density, algorithm = :iso, show_axis=true, visible=visible, isovalue=0.65,isorange=0.075)
+        scene = volume(X[1], X[2], X[3], density, algorithm = :iso, visible=visible, isovalue=0.65,isorange=0.075)
     else
-        scene = volume(X[1], X[2], X[3], density, algorithm = :iso, show_axis=true, visible=visible)
+        scene = volume(X[1], X[2], X[3], density, algorithm = :iso, visible=visible)
     end
     screen = display(scene)
-    resize!(screen, 2998, 1920)
+    # resize!(screen, 2998, 1920)
 end
 
 function scatterVortsOnIso(vorts, markersize=200)
