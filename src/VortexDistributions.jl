@@ -38,7 +38,14 @@ rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield,
 thetad, 
 
 # convenient access
-charge, xpos, ypos, pos
+charge, xpos, ypos, pos,
+
+# 3d functions
+
+findvortices3D_itp, plot_iso, scatterVortsOnIso, vorts3DMatrix,
+setMethodPeriodic, vortInBounds, vortInBounds2, vortInBounds3,
+scatterClassifiedVortices, plot_line, euclid, sort_classified_vorts4, periodicPlotting
+
 
 # RCA
 # distances, periodic_distances, sparse_distances, 
@@ -66,6 +73,9 @@ include("creation.jl")
 
 # utils
 include("utils.jl")
+
+# 3d utils
+include("utils_3d.jl")
 
 @load joinpath(@__DIR__,"cores.jld2") ψi ψa 
 

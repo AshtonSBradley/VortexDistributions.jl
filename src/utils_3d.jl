@@ -1,4 +1,4 @@
-using VortexDistributions, BenchmarkTools, Parameters
+# using VortexDistributions, BenchmarkTools, Parameters
 
 # Add periodic checks 
 function findvortices3D_itp(psi, X, N=1)
