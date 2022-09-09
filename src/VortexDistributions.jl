@@ -13,6 +13,7 @@ using ProgressMeter
 using LightGraphs
 using SimpleWeightedGraphs
 using GLMakie
+using ScikitLearn
 # import Plots:stroke,scatter!,plot,plot!
 
 const Λ = 0.8249
