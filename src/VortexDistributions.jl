@@ -14,6 +14,7 @@ using LightGraphs
 using SimpleWeightedGraphs
 using GLMakie
 using ScikitLearn
+using NearestNeighbors
 # import Plots:stroke,scatter!,plot,plot!
 
 const Λ = 0.8249
