@@ -12,9 +12,12 @@ using FileIO
 using ProgressMeter
 using LightGraphs
 using SimpleWeightedGraphs
+
+# 3d deps
 using GLMakie
 using ScikitLearn
 using NearestNeighbors
+using Distances
 # import Plots:stroke,scatter!,plot,plot!
 
 const Λ = 0.8249
