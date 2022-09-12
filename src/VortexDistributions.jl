@@ -18,6 +18,9 @@ using GLMakie
 using ScikitLearn
 using NearestNeighbors
 using Distances
+using Colors
+
+
 # import Plots:stroke,scatter!,plot,plot!
 
 const Λ = 0.8249
