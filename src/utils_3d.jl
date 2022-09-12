@@ -327,7 +327,7 @@ function sort_classified_vorts4(v_class, vorts_3d, X)
         # Find the nearest neighbour to vc excluding vortices found (not in vi_set),
         # push to vi_sorted_index and take away from vi_set, then set vc to the vortex found.
         # Finish when no vortex found near to vc within dx distance
-        while true
+        while length(vi_set) != 0
             v_new_index, dist = nn(tree, vc, i -> i ∉ vi_set)
             if dist < dx
                 push!(vi_sorted_index, v_new_index)
