@@ -18,7 +18,7 @@ using SimpleWeightedGraphs
 using ScikitLearn
 using NearestNeighbors
 using Distances
-using Colors
+# using Colors
 
 
 # import Plots:stroke,scatter!,plot,plot!
