@@ -14,7 +14,7 @@ using LightGraphs
 using SimpleWeightedGraphs
 
 # 3d deps
-using GLMakie
+# using GLMakie
 using ScikitLearn
 using NearestNeighbors
 using Distances
@@ -51,10 +51,11 @@ charge, xpos, ypos, pos,
 
 # 3d functions
 
-findvortices3D_itp, plot_iso, scatterVortsOnIso, vorts3DMatrix,
+findvortices3D_itp, vorts3DMatrix,
 setMethodPeriodic, vortInBounds, vortInBounds2, vortInBounds3,
-scatterClassifiedVortices, plot_line, euclid, sort_classified_vorts4, periodicPlotting
+euclid, sort_classified_vorts4 
 
+# plot_iso, scatterVortsOnIso, plot_line, scatterClassifiedVortices, periodicPlotting
 
 # RCA
 # distances, periodic_distances, sparse_distances, 
