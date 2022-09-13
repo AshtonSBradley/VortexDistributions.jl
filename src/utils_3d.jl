@@ -1,8 +1,5 @@
-# using VortexDistributions, BenchmarkTools, Parameters
-
-# Add periodic checks 
 function findvortices3D_itp(psi, X, N=1)
-    
+    # TODO: Add periodic checks 
     @assert N <= 16
     x = X[1]; y = X[2]; z = X[3];
     dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
@@ -61,15 +58,6 @@ function findvortices3D_itp(psi, X, N=1)
     vorts3d = vcat([vorts_xslice, vorts_yslice, vorts_zslice]...);
     return vorts3d
 end
-
-
-
-
-
-function vorts3DMatrix(vorts)
-    vorts = vcat(vorts'...)
-end
-
 
 function setMethodPeriodic(vorts_3d, X, α, N, periodic=false)
     @assert size(vorts_3d)[1] != 0
@@ -245,17 +233,6 @@ function vortInBounds3(v, X)
         return false
     end
 end
-
-function euclid(v1, v2)
-    @assert length(v1) == length(v2)
-    sum = 0
-    for i in 1:length(v1)
-        sum += (v1[i]-v2[i])^2
-    end
-    sum = sqrt(sum)
-    return sum
-end
-
 
 function sort_classified_vorts4(v_class, vorts_3d, X)
 
