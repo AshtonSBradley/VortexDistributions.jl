@@ -85,6 +85,6 @@ include("utils.jl")
 # 3d utils
 include("utils_3d.jl")
 
-@load joinpath(@__DIR__,"cores.jld2") ψi ψa 
+@load joinpath(@__DIR__,"cores.jld2") ψi ψa
 
 end
