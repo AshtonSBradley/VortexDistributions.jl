@@ -1,4 +1,4 @@
-function findvortices3D_itp(psi, X, N=1)
+function find_vortex_points_3d(psi, X, N=1)
     # TODO: Add periodic checks 
     @assert N <= 16
     x = X[1]; y = X[2]; z = X[3];
@@ -59,7 +59,7 @@ function findvortices3D_itp(psi, X, N=1)
     return vorts3d
 end
 
-function setMethodPeriodic(vorts_3d, X, α, N, periodic=false)
+function connect_vortex_points_3d(vorts_3d, X, α, N, periodic=false)
     @assert size(vorts_3d)[1] != 0
     # vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
     v_matrix = zeros(3, size(vorts_3d)[1])
@@ -234,7 +234,7 @@ function vortInBounds3(v, X)
     end
 end
 
-function sort_classified_vorts4(v_class, vorts_3d, X)
+function sort_classified_vorts_3d(v_class, vorts_3d, X)
 
     ## Paramaters of box
     x = X[1]; y = X[2]; z = X[3];
