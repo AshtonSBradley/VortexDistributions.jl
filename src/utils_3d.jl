@@ -1,4 +1,4 @@
-function findvortices3D_itp(psi, X, N=1)
+function find_vortex_points_3d(psi, X, N=1)
     # TODO: Add periodic checks 
     @assert N <= 16
     x = X[1]; y = X[2]; z = X[3];
@@ -59,7 +59,7 @@ function findvortices3D_itp(psi, X, N=1)
     return vorts3d
 end
 
-function setMethodPeriodic(vorts_3d, X, α, N, periodic=false)
+function connect_vortex_points_3d(vorts_3d, X, α, N, periodic=false)
     @assert size(vorts_3d)[1] != 0
     # vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
     v_matrix = zeros(3, size(vorts_3d)[1])
@@ -194,47 +194,7 @@ function setMethodPeriodic(vorts_3d, X, α, N, periodic=false)
     return fils
 end
 
-
-function vortInBounds(v, X)
-    x = X[1]; y = X[2]; z = X[3];
-    dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
-    if ((v[1] >= x[1]) && (v[1] <= x[end]) && 
-        (v[2] >= y[1]) && (v[2] <= y[end]) && 
-        (v[3] >= z[1]) && (v[3] <= z[end]))
-        return true
-    else 
-        return false
-    end
-end
-
-function vortInBounds2(v, X)
-    x = X[1]; y = X[2]; z = X[3];
-    dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
-
-    # dx = dx/2; dy = dy/2; dz = dz/2;
-
-    if (v[1] >= x[1] - dx) && (v[1] <= x[end] + dx) &&
-        (v[2] >= y[1] - dy) && (v[2] <= y[end] + dy) &&
-        (v[3] >= z[1] - dz) && (v[3] <= z[end] + dy)
-        return true
-    else
-        return false
-    end
-end
-
-function vortInBounds3(v, X)
-    x = X[1]; y = X[2]; z = X[3];
-    dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
-    if ((v[1] >= x[1]-dx) && (v[1] <= x[end]) && 
-        (v[2] >= y[1]-dy) && (v[2] <= y[end]) && 
-        (v[3] >= z[1]-dz) && (v[3] <= z[end]))
-        return true
-    else 
-        return false
-    end
-end
-
-function sort_classified_vorts4(v_class, vorts_3d, X)
+function sort_classified_vorts_3d(v_class, vorts_3d, X)
 
     ## Paramaters of box
     x = X[1]; y = X[2]; z = X[3];
@@ -282,4 +242,44 @@ function sort_classified_vorts4(v_class, vorts_3d, X)
         push!(vorts_sorted, vi_sorted_array) # Append to the vorts_sorted array
     end
     return vorts_sorted
+end
+
+# non-exported helper funcs
+function vortInBounds(v, X)
+    x = X[1]; y = X[2]; z = X[3];
+    dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
+    if ((v[1] >= x[1]) && (v[1] <= x[end]) && 
+        (v[2] >= y[1]) && (v[2] <= y[end]) && 
+        (v[3] >= z[1]) && (v[3] <= z[end]))
+        return true
+    else 
+        return false
+    end
+end
+
+function vortInBounds2(v, X)
+    x = X[1]; y = X[2]; z = X[3];
+    dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
+
+    # dx = dx/2; dy = dy/2; dz = dz/2;
+
+    if (v[1] >= x[1] - dx) && (v[1] <= x[end] + dx) &&
+        (v[2] >= y[1] - dy) && (v[2] <= y[end] + dy) &&
+        (v[3] >= z[1] - dz) && (v[3] <= z[end] + dy)
+        return true
+    else
+        return false
+    end
+end
+
+function vortInBounds3(v, X)
+    x = X[1]; y = X[2]; z = X[3];
+    dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
+    if ((v[1] >= x[1]-dx) && (v[1] <= x[end]) && 
+        (v[2] >= y[1]-dy) && (v[2] <= y[end]) && 
+        (v[3] >= z[1]-dz) && (v[3] <= z[end]))
+        return true
+    else 
+        return false
+    end
 end
