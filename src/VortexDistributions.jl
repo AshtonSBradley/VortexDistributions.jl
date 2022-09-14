@@ -51,8 +51,8 @@ charge, xpos, ypos, pos,
 
 # 3d functions
 
-findvortices3D_itp, setMethodPeriodic, vortInBounds, vortInBounds2, vortInBounds3, sort_classified_vorts4 
-
+findvortices3D_itp, setMethodPeriodic, sort_classified_vorts4 
+# , vortInBounds, vortInBounds2, vortInBounds3
 # plot_iso, scatterVortsOnIso, plot_line, scatterClassifiedVortices, periodicPlotting, euclid, vorts3DMatri
 
 # RCA
