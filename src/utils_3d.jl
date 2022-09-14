@@ -257,20 +257,6 @@ function vortInBounds(v, X)
     end
 end
 
-function vortInBounds2(v, X)
-    x = X[1]; y = X[2]; z = X[3];
-    dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
-
-    # dx = dx/2; dy = dy/2; dz = dz/2;
-
-    if (v[1] >= x[1] - dx) && (v[1] <= x[end] + dx) &&
-        (v[2] >= y[1] - dy) && (v[2] <= y[end] + dy) &&
-        (v[3] >= z[1] - dz) && (v[3] <= z[end] + dy)
-        return true
-    else
-        return false
-    end
-end
 
 function vortInBounds3(v, X)
     x = X[1]; y = X[2]; z = X[3];
