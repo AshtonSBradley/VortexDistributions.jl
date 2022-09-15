@@ -71,7 +71,13 @@ function find_vortex_points_3d(
     return vorts3d
 end
 
-function connect_vortex_points_3d(vorts_3d, X, α, N, periodic=false)
+function connect_vortex_points_3d(
+    vorts_3d :: Vector{Any}, 
+    X :: Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}, 
+    α :: Float64, 
+    N :: Int, 
+    periodic :: Bool =false
+    ) :: Vector{Any}
     @assert size(vorts_3d)[1] != 0
     # vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
     v_matrix = zeros(3, size(vorts_3d)[1])
@@ -102,7 +108,7 @@ function connect_vortex_points_3d(vorts_3d, X, α, N, periodic=false)
     if ϵ < Δx/3
         ϵ = Δx/3
     end
-    print(ϵ)
+    # print(ϵ)
 
     while length(unvisited) > 0
         idx = first(unvisited)
@@ -206,7 +212,11 @@ function connect_vortex_points_3d(vorts_3d, X, α, N, periodic=false)
     return fils
 end
 
-function sort_classified_vorts_3d(v_class, vorts_3d, X)
+function sort_classified_vorts_3d(
+    v_class :: Vector{Any}, 
+    vorts_3d :: Vector{Any}, 
+    X :: Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}
+    ) :: Vector{Any}
 
     ## Paramaters of box
     x = X[1]; y = X[2]; z = X[3];
