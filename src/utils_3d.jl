@@ -1,8 +1,20 @@
-function find_vortex_points_3d(psi, X, N=1)
+function find_vortex_points_3d(
+    psi :: Array{ComplexF64, 3}, 
+    X :: Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}, 
+    N :: Int = 1
+    ) :: Vector{Any}
     # TODO: Add periodic checks 
     @assert N <= 16
+    @assert N >= 1
+
+
     x = X[1]; y = X[2]; z = X[3];
     dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
+
+
+    @assert size(psi)[1] == length(x)
+    @assert size(psi)[2] == length(y)
+    @assert size(psi)[3] == length(z)
 
     x_itp = interpolate(X[1], BSpline(Linear()));
     y_itp = interpolate(X[2], BSpline(Linear()));

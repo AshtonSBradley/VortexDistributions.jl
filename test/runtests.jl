@@ -23,4 +23,6 @@ using VortexDistributions, Test, SafeTestsets
 
 @safetestset "Keep Vortices" begin include("keep_vortices_test.jl") end
 
-@safetestset "Vortex 3D example" begin include("find_vortex_points_3d_test.jl") end
+@safetestset "Vortex 3D example" begin include("box_vorts_example_test.jl") end
+
+@safetestset "find_vortex_points_3d unit tests" begin include("find_vortex_points_3d_unit_test.jl") end
