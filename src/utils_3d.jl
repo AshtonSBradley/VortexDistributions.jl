@@ -2,7 +2,7 @@ function find_vortex_points_3d(
     psi :: Array{ComplexF64, 3}, 
     X :: Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}, 
     N :: Int = 1
-    ) :: Vector{Any}
+    ) :: Vector{Vector{Float64}}
     # TODO: Add periodic checks 
     @assert N <= 16
     @assert N >= 1
@@ -72,13 +72,13 @@ function find_vortex_points_3d(
 end
 
 function connect_vortex_points_3d(
-    vorts_3d :: Vector{Any}, 
+    vorts_3d :: Vector{Vector{Float64}}, 
     X :: Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}, 
     α :: Float64, 
     N :: Int, 
     periodic :: Bool =false
-    ) :: Vector{Any}
-    @assert size(vorts_3d)[1] != 0
+    ) :: Vector{Set{Int64}}
+    @assert size(vorts_3d)[1] != 4
     # vcat(vorts_3d'...)[:,1:3]' # Convert to matrix for kdtree 
     v_matrix = zeros(3, size(vorts_3d)[1])
     for i in 1:3
@@ -213,8 +213,8 @@ function connect_vortex_points_3d(
 end
 
 function sort_classified_vorts_3d(
-    v_class :: Vector{Any}, 
-    vorts_3d :: Vector{Any}, 
+    v_class :: Vector{Set{Int64}}, 
+    vorts_3d :: Vector{Vector{Float64}}, 
     X :: Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}
     ) :: Vector{Any}
 
@@ -263,6 +263,7 @@ function sort_classified_vorts_3d(
         vi_sorted_array = vi_sorted_array[[vortInBounds(vi_sorted_array[j], X) for j = 1:length(vi_sorted_array)]] # Filter all vortices not on grid
         push!(vorts_sorted, vi_sorted_array) # Append to the vorts_sorted array
     end
+    @assert length(vorts_sorted) == length(v_class)
     return vorts_sorted
 end
 
