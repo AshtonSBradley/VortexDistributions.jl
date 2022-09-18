@@ -4,33 +4,15 @@ using VortexDistributions, JLD2, Test
 
 psi = psi_tubes1;
 
-for N = 13:16
-    print(N)
-    vorts_3d = find_vortex_points_3d(psi, X, N);
+N = 4
 
-    vorts_class = connect_vortex_points_3d(vorts_3d, X, 0., N, true)
+vorts_3d = find_vortex_points_3d(psi, X, N);
 
-    v_sort = sort_classified_vorts_3d(vorts_class, vorts_3d, X)
+vorts_class = connect_vortex_points_3d(vorts_3d, X, 0., N, true)
 
-    @test length(vorts_class) == 3
+v_sort = sort_classified_vorts_3d(vorts_class, vorts_3d, X)
 
-    @test length(v_sort) == 3
+@test length(vorts_class) == 3
 
-end
+@test length(v_sort) == 3
 
-# N = 4
-
-# vorts_3d = find_vortex_points_3d(psi, X, N)
-
-# fetch(vorts_3d)
-
-# vorts_3d
-
-# vorts_3d
-# vorts_class = connect_vortex_points_3d(vorts_3d, X, 0., N, true)
-
-# v_sort = sort_classified_vorts_3d(vorts_class, vorts_3d, X)
-
-# @test length(vorts_class) == 3
-
-# @test length(v_sort) == 3
