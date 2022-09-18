@@ -38,7 +38,8 @@ function find_vortex_points_3d(
     ## loop vectorisation, run in parallel 
     vorts3d = []
     vorts_xslice = []
-    Threads.@threads for xidx in x_range
+    # Threads.@threads 
+    for xidx in x_range
         vorts = vortex_array(findvortices(Torus(psi_etp[xidx, y_range[1]:y_range[end], z_range[1]:z_range[end]], y, z)))
         for vidx in 1:size(vorts)[1]
             v = vorts[vidx, :]
@@ -48,7 +49,8 @@ function find_vortex_points_3d(
     end
 
     vorts_yslice = []
-    Threads.@threads for yidx in y_range
+    # Threads.@threads for yidx in y_range
+    for yidx in y_range
         vorts = vortex_array(findvortices(Torus(psi_etp[x_range[1]:x_range[end], yidx, z_range[1]:z_range[end]], x, z)))
         for vidx in 1:size(vorts)[1]
             v = vorts[vidx, :]
@@ -58,7 +60,8 @@ function find_vortex_points_3d(
     end
 
     vorts_zslice = []
-    Threads.@threads for zidx in z_range
+    # Threads.@threads for zidx in z_range
+    for zidx in z_range
         vorts = vortex_array(findvortices(Torus(psi_etp[x_range[1]:x_range[end], y_range[1]:y_range[end], zidx], x, y)))
         for vidx in 1:size(vorts)[1]
             v = vorts[vidx, :]
@@ -120,37 +123,47 @@ function connect_vortex_points_3d(
         if periodic
             vcx = v_matrix[1,idx]; vcy=v_matrix[2,idx]; vcz = v_matrix[3,idx];
             if abs(vcx - x[1]) < ϵ
-                vp = [vcx + xdist + Δx, vcy, vcz]
-                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
-                union!(f, Set(p_idxs))
-                union!(search, Set(p_idxs))
+                # vp = [vcx + xdist + Δx, vcy, vcz]
+                # p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                # union!(f, Set(p_idxs))
+                # union!(search, Set(p_idxs))
+                vortInBall1!(vcx, vcy, vcz, xdist+Δx, 0, 0, kdtree, ϵ, f, search)
             elseif abs(vcx - x[end]) < ϵ
-                vp = [vcx - xdist-Δx, vcy, vcz]
-                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
-                union!(f, Set(p_idxs))
-                union!(search, Set(p_idxs))
+                # vp = [vcx - xdist-Δx, vcy, vcz]
+                # p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                # union!(f, Set(p_idxs))
+                # union!(search, Set(p_idxs))
+                vortInBall1!(vcx, vcy, vcz, -xdist-Δx, 0, 0, kdtree, ϵ, f, search)
             end
             if abs(vcy - y[1]) < ϵ
-                vp = [vcx, vcy + ydist+Δy, vcz]
-                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
-                union!(f, Set(p_idxs))
-                union!(search, Set(p_idxs))
+                # vp = [vcx, vcy + ydist+Δy, vcz]
+                # p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                # union!(f, Set(p_idxs))
+                # union!(search, Set(p_idxs))
+                vortInBall1!(vcx, vcy, vcz, 0, ydist+Δy, 0, kdtree, ϵ, f, search)
+
             elseif abs(vcy - y[end]) < ϵ
-                vp = [vcx, vcy - ydist-Δy, vcz]
-                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
-                union!(f, Set(p_idxs))
-                union!(search, Set(p_idxs))
+                # vp = [vcx, vcy - ydist-Δy, vcz]
+                # p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                # union!(f, Set(p_idxs))
+                # union!(search, Set(p_idxs))
+                vortInBall1!(vcx, vcy, vcz, 0, -ydist-Δy, 0, kdtree, ϵ, f, search)
+
             end
             if abs(vcz - z[1]) < ϵ
-                vp = [vcx, vcy, vcz + zdist+Δz]
-                p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
-                union!(f, Set(p_idxs))
-                union!(search, Set(p_idxs))
+                # vp = [vcx, vcy, vcz + zdist+Δz]
+                # p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                # union!(f, Set(p_idxs))
+                # union!(search, Set(p_idxs))
+                vortInBall1!(vcx, vcy, vcz, 0, 0, zdist+Δz, kdtree, ϵ, f, search)
+
             elseif abs(vcz - z[end]) < ϵ
-                vp = [vcx, vcy, vcz - zdist-Δz]
-                p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
-                union!(f, Set(p_idxs))
-                union!(search, Set(p_idxs))
+                # vp = [vcx, vcy, vcz - zdist-Δz]
+                # p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
+                # union!(f, Set(p_idxs))
+                # union!(search, Set(p_idxs))
+                vortInBall1!(vcx, vcy, vcz, 0, 0, -zdist-Δz, kdtree, ϵ, f, search)
+
             end
         end
         while length(search) > 0
@@ -164,43 +177,54 @@ function connect_vortex_points_3d(
             if periodic
                 vcx = v_matrix[1,idx]; vcy=v_matrix[2,idx]; vcz = v_matrix[3,idx];
                 if abs(vcx - x[1]) < ϵ
-                    vp = [vcx + xdist+Δx, vcy, vcz]
-                    p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time
-                    setdiff!(p_idxs, f) 
-                    union!(f, Set(p_idxs))
-                    union!(search, Set(p_idxs))
+                    # vp = [vcx + xdist+Δx, vcy, vcz]
+                    # p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time
+                    # setdiff!(p_idxs, f) 
+                    # union!(f, Set(p_idxs))
+                    # union!(search, Set(p_idxs))
+                    vortInBall2!(vcx, vcy, vcz, xdist+Δx, 0, 0, kdtree, ϵ, f, search)
+
                 elseif abs(vcx - x[end]) < ϵ
-                    vp = [vcx - xdist-Δx, vcy, vcz]
-                    p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
-                    setdiff!(p_idxs, f) 
-                    union!(f, Set(p_idxs))
-                    union!(search, Set(p_idxs))
+                    # vp = [vcx - xdist-Δx, vcy, vcz]
+                    # p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                    # setdiff!(p_idxs, f) 
+                    # union!(f, Set(p_idxs))
+                    # union!(search, Set(p_idxs))
+                    vortInBall2!(vcx, vcy, vcz, -xdist-Δx, 0, 0, kdtree, ϵ, f, search)
+
                 end
                 if abs(vcy - y[1]) < ϵ
-                    vp = [vcx, vcy + ydist+Δy, vcz]
-                    p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
-                    setdiff!(p_idxs, f) 
-                    union!(f, Set(p_idxs))
-                    union!(search, Set(p_idxs))
+                    # vp = [vcx, vcy + ydist+Δy, vcz]
+                    # p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
+                    # setdiff!(p_idxs, f) 
+                    # union!(f, Set(p_idxs))
+                    # union!(search, Set(p_idxs))
+                    vortInBall2!(vcx, vcy, vcz, 0, ydist+Δy, 0, kdtree, ϵ, f, search)
+
                 elseif abs(vcy - y[end]) < ϵ
-                    vp = [vcx, vcy - ydist-Δy, vcz]
-                    p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time
-                    setdiff!(p_idxs, f) 
-                    union!(f, Set(p_idxs))
-                    union!(search, Set(p_idxs))
+                    # vp = [vcx, vcy - ydist-Δy, vcz]
+                    # p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time
+                    # setdiff!(p_idxs, f) 
+                    # union!(f, Set(p_idxs))
+                    # union!(search, Set(p_idxs))
+                    vortInBall2!(vcx, vcy, vcz, 0, -ydist-Δy, 0, kdtree, ϵ, f, search)
+
                 end
                 if abs(vcz - z[1]) < ϵ
-                    vp = [vcx, vcy, vcz + zdist+Δz]
-                    p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
-                    setdiff!(p_idxs, f) 
-                    union!(f, Set(p_idxs))
-                    union!(search, Set(p_idxs))
+                    # vp = [vcx, vcy, vcz + zdist+Δz]
+                    # p_idxs = inrange(kdtree, vp,  ϵ) # Won't include itself this time 
+                    # setdiff!(p_idxs, f) 
+                    # union!(f, Set(p_idxs))
+                    # union!(search, Set(p_idxs))
+                    vortInBall2!(vcx, vcy, vcz, 0, 0, zdist+Δz, kdtree, ϵ, f, search)
+
                 elseif abs(vcz - z[end]) < ϵ
-                    vp = [vcx, vcy, vcz - zdist-Δz]
-                    p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
-                    setdiff!(p_idxs, f) 
-                    union!(f, Set(p_idxs))
-                    union!(search, Set(p_idxs))
+                    # vp = [vcx, vcy, vcz - zdist-Δz]
+                    # p_idxs = inrange(kdtree, vp, ϵ) # Won't include itself this time 
+                    # setdiff!(p_idxs, f) 
+                    # union!(f, Set(p_idxs))
+                    # union!(search, Set(p_idxs))
+                    vortInBall2!(vcx, vcy, vcz, 0, 0, -zdist-Δz, kdtree, ϵ, f, search)
                 end
             end
         end
@@ -291,4 +315,20 @@ function vortInBounds3(v, X)
     else 
         return false
     end
+end
+
+
+function vortInBall1!(vcx, vcy, vcz, Δvcx, Δvcy, Δvcz, kdtree, ϵ, f, search)
+    vp = [vcx + Δvcx, vcy + Δvcy, vcz + Δvcz]
+    p_idxs = inrange(kdtree, vp, ϵ)
+    union!(f, Set(p_idxs))
+    union!(search, Set(p_idxs))
+end
+
+function vortInBall2!(vcx, vcy, vcz, Δvcx, Δvcy, Δvcz, kdtree, ϵ, f, search)
+    vp = [vcx + Δvcx, vcy + Δvcy, vcz + Δvcz]
+    p_idxs = inrange(kdtree, vp, ϵ)
+    setdiff!(p_idxs, f) 
+    union!(f, Set(p_idxs))
+    union!(search, Set(p_idxs))
 end
