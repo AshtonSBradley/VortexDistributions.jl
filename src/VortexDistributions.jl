@@ -12,6 +12,15 @@ using FileIO
 using ProgressMeter
 using LightGraphs
 using SimpleWeightedGraphs
+
+# 3d deps
+# using GLMakie
+using ScikitLearn
+using NearestNeighbors
+using Distances
+# using Colors
+
+
 # import Plots:stroke,scatter!,plot,plot!
 
 const Λ = 0.8249
@@ -38,7 +47,13 @@ rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield,
 thetad, 
 
 # convenient access
-charge, xpos, ypos, pos
+charge, xpos, ypos, pos,
+
+# 3d functions
+
+find_vortex_points_3d, connect_vortex_points_3d, sort_classified_vorts_3d 
+# , vortInBounds, vortInBounds2, vortInBounds3
+# plot_iso, scatterVortsOnIso, plot_line, scatterClassifiedVortices, periodicPlotting, euclid, vorts3DMatri
 
 # RCA
 # distances, periodic_distances, sparse_distances, 
@@ -67,6 +82,9 @@ include("creation.jl")
 # utils
 include("utils.jl")
 
-@load joinpath(@__DIR__,"cores.jld2") ψi ψa 
+# 3d utils
+include("utils_3d.jl")
+
+@load joinpath(@__DIR__,"cores.jld2") ψi ψa
 
 end
