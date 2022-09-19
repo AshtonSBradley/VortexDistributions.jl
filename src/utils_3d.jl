@@ -40,7 +40,7 @@ function find_vortex_points_3d(
     vorts_xslice = []
     # Threads.@threads 
     for xidx in x_range
-        vorts = vortex_array(findvortices(Torus(psi_etp[xidx, y_range[1]:y_range[end], z_range[1]:z_range[end]], y, z)))
+        vorts = vortex_array(findvortices(Torus(psi_etp(xidx, y_range[1]:y_range[end], z_range[1]:z_range[end]), y, z)))
         for vidx in 1:size(vorts)[1]
             v = vorts[vidx, :]
             vx = [x_etp(xidx), v[1], v[2], v[3]]
@@ -51,7 +51,7 @@ function find_vortex_points_3d(
     vorts_yslice = []
     # Threads.@threads for yidx in y_range
     for yidx in y_range
-        vorts = vortex_array(findvortices(Torus(psi_etp[x_range[1]:x_range[end], yidx, z_range[1]:z_range[end]], x, z)))
+        vorts = vortex_array(findvortices(Torus(psi_etp(x_range[1]:x_range[end], yidx, z_range[1]:z_range[end]), x, z)))
         for vidx in 1:size(vorts)[1]
             v = vorts[vidx, :]
             vy = [v[1], y_etp(yidx), v[2], v[3]]
@@ -62,10 +62,10 @@ function find_vortex_points_3d(
     vorts_zslice = []
     # Threads.@threads for zidx in z_range
     for zidx in z_range
-        vorts = vortex_array(findvortices(Torus(psi_etp[x_range[1]:x_range[end], y_range[1]:y_range[end], zidx], x, y)))
+        vorts = vortex_array(findvortices(Torus(psi_etp(x_range[1]:x_range[end], y_range[1]:y_range[end], zidx), x, y)))
         for vidx in 1:size(vorts)[1]
             v = vorts[vidx, :]
-            vz = [v[1], v[2], z_etp[zidx], v[3]]
+            vz = [v[1], v[2], z_etp(zidx), v[3]]
             push!(vorts_zslice, vz)
         end
     end
