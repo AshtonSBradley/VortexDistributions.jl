@@ -18,6 +18,8 @@ using SimpleWeightedGraphs
 using ScikitLearn
 using NearestNeighbors
 using Distances
+using FLoops
+
 # using Colors
 
 
