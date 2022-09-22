@@ -1,3 +1,5 @@
+
+
 function find_vortex_points_3d(
     psi :: Array{ComplexF64, 3}, 
     X :: Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}, 
@@ -6,7 +8,7 @@ function find_vortex_points_3d(
     # TODO: Add periodic checks 
     @assert N <= 16
     @assert N >= 1
-
+    # print("inner: " + N)
 
     x = X[1]; y = X[2]; z = X[3];
     dx = x[2]-x[1]; dy = y[2]-y[1]; dz = z[2]-z[1];
@@ -38,37 +40,67 @@ function find_vortex_points_3d(
     ## loop vectorisation, run in parallel 
     vorts3d = []
     vorts_xslice = []
-    # Threads.@threads 
-    for xidx in x_range
-        vorts = vortex_array(findvortices(Torus(psi_etp(xidx, y_range[1]:y_range[end], z_range[1]:z_range[end]), y, z)))
-        for vidx in 1:size(vorts)[1]
-            v = vorts[vidx, :]
-            vx = [x_etp(xidx), v[1], v[2], v[3]]
-            push!(vorts_xslice, vx)
-        end
-    end
-
     vorts_yslice = []
-    # Threads.@threads for yidx in y_range
-    for yidx in y_range
-        vorts = vortex_array(findvortices(Torus(psi_etp(x_range[1]:x_range[end], yidx, z_range[1]:z_range[end]), x, z)))
-        for vidx in 1:size(vorts)[1]
-            v = vorts[vidx, :]
-            vy = [v[1], y_etp(yidx), v[2], v[3]]
-            push!(vorts_yslice, vy)
+    vorts_zslice = []
+
+    results_x = [[] for _ in 1:Threads.nthreads()]
+    results_y = [[] for _ in 1:Threads.nthreads()]
+    results_z = [[] for _ in 1:Threads.nthreads()]
+
+    let z = z, y=y
+        # Threads.@threads :static for xidx in x_range
+        # Threads.@threads for xidx in x_range
+        # for xidx in x_range
+        @floop for xidx in x_range
+            vorts_x = vortex_array(findvortices(Torus(psi_etp(xidx, y_range[1]:y_range[end], z_range[1]:z_range[end]), y, z)))
+            for vidx_x in 1:size(vorts_x)[1]
+                v_x = vorts_x[vidx_x, :]
+                vx_x = [x_etp(xidx), v_x[1], v_x[2], v_x[3]]
+                # push!(vorts_xslice, vx_x)
+                push!(results_x[Threads.threadid()], vx_x)
+            end
         end
     end
 
-    vorts_zslice = []
-    # Threads.@threads for zidx in z_range
-    for zidx in z_range
-        vorts = vortex_array(findvortices(Torus(psi_etp(x_range[1]:x_range[end], y_range[1]:y_range[end], zidx), x, y)))
-        for vidx in 1:size(vorts)[1]
-            v = vorts[vidx, :]
-            vz = [v[1], v[2], z_etp(zidx), v[3]]
-            push!(vorts_zslice, vz)
+    let x=x, z=z
+        # Threads.@threads :static for yidx in y_range
+        # Threads.@threads for yidx in y_range
+        # @sync @floop for yidx in y_range
+        # for yidx in y_range
+        @floop for yidx in y_range
+            vorts_y = vortex_array(findvortices(Torus(psi_etp(x_range[1]:x_range[end], yidx, z_range[1]:z_range[end]), x, z)))
+            for vidx_y in 1:size(vorts_y)[1]
+                # if isdefined(vorts, vidx)
+                v_y = vorts_y[vidx_y, :]
+                vy_y = [v_y[1], y_etp(yidx), v_y[2], v_y[3]]
+                # push!(vorts_yslice, vy_y)
+                push!(results_y[Threads.threadid()], vy_y)
+                # end
+            end
         end
     end
+
+    let x=x, y=y
+        # Threads.@threads :static for zidx in z_range
+        # Threads.@threads for zidx in z_range
+        # for zidx in z_range
+        @floop for zidx in z_range
+            local vorts_z = vortex_array(findvortices(Torus(psi_etp(x_range[1]:x_range[end], y_range[1]:y_range[end], zidx), x, y)))
+            for vidx_z in 1:size(vorts_z)[1]
+
+                v_z = vorts_z[vidx_z, :]
+                vz_z = [v_z[1], v_z[2], z_etp(zidx), v_z[3]]
+
+                # push!(vorts_zslice, vz_z)
+                push!(results_z[Threads.threadid()], vz_z)
+
+            end
+        end
+    end
+
+    vorts_xslice = reduce(vcat, results_x)
+    vorts_yslice = reduce(vcat, results_y)
+    vorts_zslice = reduce(vcat, results_z)
 
     vorts3d = vcat([vorts_xslice, vorts_yslice, vorts_zslice]...);
     return vorts3d
