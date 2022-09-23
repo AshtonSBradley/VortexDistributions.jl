@@ -6,7 +6,7 @@ psi = psi_tubes1;
 
 
 
-for N = 1:16
+for N = 1:4
 
     vorts_3d = find_vortex_points_3d(psi, X, N)
 
