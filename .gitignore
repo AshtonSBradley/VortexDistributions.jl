@@ -8,3 +8,6 @@ lcov.info
 .vscode/settings.json
 .vscode/*
 lcov.info
+*.bson
+*.jld2
+
