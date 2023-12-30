@@ -1,5 +1,7 @@
 using VortexDistributions, Test, SafeTestsets
 
+@safetestset "No Vortex Fallback" begin include("no_vortex_test.jl") end
+
 @safetestset "Point Vortex" begin include("point_vortex_test.jl") end
 
 @safetestset "Single Vortex Accuracy" begin include("single_vort_acc_test.jl") end
