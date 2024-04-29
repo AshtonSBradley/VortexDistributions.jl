@@ -10,3 +10,20 @@ y = f.(x)
 
 y, ψ, res = VortexDistributions.gpecore_exact(1,2,100)
 @test length(y) == 100
+
+# create exact core
+N = 100
+L = 100
+dx = L/N
+x = LinRange(-L / 2, L / 2-dx, N); y = x
+psi0 = one.(x*y') |> complex
+psi = Torus(psi0,x,y)
+
+# make a point vortex
+pv = PointVortex(10.0,10.0,1)
+nv = PointVortex(-10.0,-10.0,-1)
+# make a scalar GPE vortex with exact core
+spv = ScalarVortex(pv)
+snv = ScalarVortex(nv)
+vortex!(psi,spv)
+vortex!(psi,snv)
