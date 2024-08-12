@@ -213,22 +213,7 @@ function periodic_dipole!(psi::F,dip::Vector{ScalarVortex{T}}) where {T <: CoreS
     @pack! psi = ψ
 end
 
-
-
-
-# TODO: dispatch on dipole type
-# function periodic_dipole!(psi::F,dip::Dipole) where F <: Field
-#     @unpack ψ,x,y = psi
-#     rp = vortex_array(dip.vp)[1:2]
-#     rn = vortex_array(dip.vn)[1:2]
-#     @. ψ *= abs(dip.vp(x,y')*dip.vn(x,y'))
-#     ψ .*= exp.(im*dipole_phase(x,y,rp...,rn...))
-#     @pack! psi = ψ
-# end
-
-
 #Chebyshev methods
-
 function gpecore_exact(K,L=2,N=100,R = K)
     #currently r does  nothing!
     #N = 100
@@ -367,3 +352,16 @@ function getChebD2Matrix(n)
    D2z = M[:,:,2]
    return z, D2z
 end
+
+
+# TODO: dispatch on dipole type
+# function periodic_dipole!(psi::F,dip::Dipole) where F <: Field
+#     @unpack ψ,x,y = psi
+#     rp = vortex_array(dip.vp)[1:2]
+#     rn = vortex_array(dip.vn)[1:2]
+#     @. ψ *= abs(dip.vp(x,y')*dip.vn(x,y'))
+#     ψ .*= exp.(im*dipole_phase(x,y,rp...,rn...))
+#     @pack! psi = ψ
+# end
+
+

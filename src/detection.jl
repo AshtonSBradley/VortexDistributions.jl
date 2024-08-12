@@ -32,12 +32,15 @@ function findvortices(psi::Field;periodic=false)
     if periodic
         Lx,Ly = last(x)-first(x),last(y)-first(y)
         vdat = vortex_array(vort)
-        xx,yy,qq = vdat[:,1],vdat[:,2],vdat[:,3]
-        @. xx[xx>Lx/2] -= Lx
-        @. xx[xx<-Lx/2] += Lx
-        @. yy[yy>Ly/2] -= Ly
-        @. yy[yy<-Lx/2] += Ly
-        vort = PointVortex.(xx,yy,qq)
+        if size(vdat) != (0,0)
+            xx,yy,qq = vdat[:,1],vdat[:,2],vdat[:,3]
+            @. xx[xx>Lx/2] -= Lx
+            @. xx[xx<-Lx/2] += Lx
+            @. yy[yy>Ly/2] -= Ly
+            @. yy[yy<-Lx/2] += Ly
+            vort = PointVortex.(xx,yy,qq)
+        else
+        end
     end
     return vort
 end
