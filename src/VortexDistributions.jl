@@ -14,16 +14,9 @@ using LightGraphs
 using SimpleWeightedGraphs
 
 # 3d deps
-# using GLMakie
-using ScikitLearn
-using NearestNeighbors
-using Distances
+
 using FLoops
 
-# using Colors
-
-
-# import Plots:stroke,scatter!,plot,plot!
 
 const Λ = 0.8249
 
@@ -68,6 +61,7 @@ include("types.jl")
 include("pointvortex.jl")
 include("detection.jl")
 include("creation.jl")
+
 
 # RCA
 # include("get_dipoles.jl")
