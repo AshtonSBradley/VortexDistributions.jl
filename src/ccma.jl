@@ -1,5 +1,3 @@
-using LinearAlgebra, Distributions, DSP 
-
 # Auxiliary Functions
 function get_unit_vector(vec)
     vec_norm = norm(vec)

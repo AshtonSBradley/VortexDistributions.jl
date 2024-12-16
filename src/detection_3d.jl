@@ -1,5 +1,3 @@
-using FLoops, Graphs, Interpolations
-
 function link_graph_vorts(g; repeat_end_of_ring=true)
     g_temp = deepcopy(g)
     visited = Set()
@@ -168,6 +166,19 @@ function connect_vortex_ends(vorts, vort_lines, vort_loops, vort_rings, X)
     end
 
     return connected_vorts
+end
+
+function findvortices_jumps_plane(phase)
+    # phase = angle.(ψ);
+
+    Δϕx, Δϕy = phase_jumps(phase,1),phase_jumps(phase,2)
+
+    circshift!(phase,Δϕx,(0,1))
+    Δϕx .-= phase; Δϕx .-= Δϕy
+    circshift!(phase,Δϕy,(1,0))
+    Δϕx .+= phase
+
+    return abs.(Δϕx)
 end
 
 function findvortices_planes_threaded(ψ; n_itr = 1)

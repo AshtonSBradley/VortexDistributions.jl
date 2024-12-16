@@ -10,13 +10,15 @@ using SparseArrays
 using FFTW
 using FileIO
 using ProgressMeter
-using LightGraphs
+# using LightGraphs
 using SimpleWeightedGraphs
 
 # 3d deps
+using FLoops, Graphs, Interpolations
+using LinearAlgebra, Distributions, DSP # ccma
 
-using FLoops
-
+# plots
+using GLMakie, GraphPlot, GraphMakie, Colors
 
 const Λ = 0.8249
 
@@ -46,9 +48,11 @@ charge, xpos, ypos, pos,
 
 # 3d functions
 
-find_vortex_points_3d, connect_vortex_points_3d, sort_classified_vorts_3d 
-# , vortInBounds, vortInBounds2, vortInBounds3
-# plot_iso, scatterVortsOnIso, plot_line, scatterClassifiedVortices, periodicPlotting, euclid, vorts3DMatri
+full_algorithm, vortex_ccma_j,
+
+# plotting
+plot_unconnected_vorts_mat
+
 
 # RCA
 # distances, periodic_distances, sparse_distances, 
@@ -62,6 +66,10 @@ include("pointvortex.jl")
 include("detection.jl")
 include("creation.jl")
 
+# 3d 
+include("detection_3d.jl")
+include("ccma.jl")
+include("plotting.jl")
 
 # RCA
 # include("get_dipoles.jl")
@@ -77,9 +85,6 @@ include("creation.jl")
 
 # utils
 include("utils.jl")
-
-# 3d utils
-include("utils_3d.jl")
 
 @load joinpath(@__DIR__,"cores.jld2") ψi ψa
 
