@@ -75,6 +75,6 @@ end
 
 mutable struct Cluster <: VortexGroup
     vortices::Array{PointVortex,1}
-    tree::Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}
+    tree::Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}
 end
 Cluster(vort::Array{PointVortex,1}) = Cluster(vort,spanning_tree(xpos(vort),ypos(vort)))
