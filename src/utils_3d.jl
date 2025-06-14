@@ -38,6 +38,7 @@ function link_graph_vorts(g; repeat_end_of_ring=true)
         push!(vort_lines, current_vort)
         setdiff!(deg_1, visited)
     end
+end
 
 function neighbour_vort(vorts, i, Δϕd, vorts_map_d, Δneighbour)
     v_idx = vorts[i]

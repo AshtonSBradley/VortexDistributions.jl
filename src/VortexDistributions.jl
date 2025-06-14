@@ -19,7 +19,7 @@ using ScikitLearn
 using NearestNeighbors
 using Distances
 using FLoops
-
+using Graphs
 # using Colors
 
 
