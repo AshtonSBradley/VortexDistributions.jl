@@ -38,6 +38,84 @@ function link_graph_vorts(g; repeat_end_of_ring=true)
         push!(vort_lines, current_vort)
         setdiff!(deg_1, visited)
     end
+
+    # Only rings are left, now link rings that have reconnection points
+    g_temp = deepcopy(g)
+    deg_2g = Set(findall(x -> x > 2, degree(g_temp)))
+    vort_loops = []
+
+    while length(deg_2g) > 0
+        current_vort = []
+        vi = pop!(deg_2g)
+        push!(current_vort, vi)
+        push!(visited, vi)
+        
+        vi_neighbors = neighbors(g_temp, vi)
+
+        # Now traverse a neighbor that is not a reconnection point and not visited
+        vi = nothing
+        for v in vi_neighbors
+            if v ∉ visited
+                if length(neighbors(g_temp, v)) <= 2 # This should only be 2 but just in case 
+                    vi = v
+                    break
+                end
+            end
+        end
+
+        while !(isnothing(vi))
+            push!(current_vort, vi)
+            push!(visited, vi)
+            vi_neighbors = neighbors(g_temp, vi)
+            setdiff!(vi_neighbors, visited)
+            if length(vi_neighbors) == 1
+                vi = pop!(vi_neighbors)
+                # Check not reconnection point
+                if length(neighbors(g_temp, vi)) > 2
+                    push!(current_vort, vi)
+                    push!(visited, vi)
+                    vi = nothing
+                end
+            else
+                vi = nothing
+            end
+        end
+
+        # Now we've traversed the ring, remove visited vertices
+        push!(vort_loops, current_vort)
+        setdiff!(deg_2g, visited)
+    end
+        
+    # Now what's left are rings that don't have reconnection points
+    g_temp = deepcopy(g)
+
+    deg_2 = Set(findall(x -> x == 2, degree(g_temp)))
+    setdiff!(deg_2, visited)
+    vort_rings = []
+    while length(deg_2) > 0
+        current_vort = []
+        vi = pop!(deg_2)
+        push!(current_vort, vi)
+        push!(visited, vi)
+        vi_neighbors = neighbors(g_temp, vi)
+        setdiff!(vi_neighbors, visited)
+        while length(vi_neighbors) != 0
+            vc = pop!(vi_neighbors)
+            push!(current_vort, vc)
+            push!(visited, vc)
+            vi_neighbors = neighbors(g_temp, vc)
+            setdiff!(vi_neighbors, visited)
+        end
+        push!(vort_rings, current_vort)
+        # put start point at end for ring plotting
+        if repeat_end_of_ring
+            push!(current_vort, current_vort[1])
+        end
+        deg_2 = setdiff!(deg_2, visited)
+    end
+
+    return vort_lines, vort_loops, vort_rings
+    # return vort_lines, vort_loops
 end
 
 function neighbour_vort(vorts, i, Δϕd, vorts_map_d, Δneighbour)
@@ -254,8 +332,10 @@ function full_algorithm(psi, x, y, z; n_itp = 1)
     print("Creating graph:")
     @time g = SimpleGraph(Edge.(edge_list))
 
+    # print(edge_list)
+
     print("Linking vortices:")
-    @time vort_lines, vort_loops, vort_rings = link_graph_vorts(g, repeat_end_of_ring=true);
+    @time vort_lines, vort_loops, vort_rings = link_graph_vorts(g, repeat_end_of_ring=false);
 
     print("Vort coords:")
     @time vorts_coords = vortex_coords(vorts_x, vorts_y, vorts_z, x, y, z)

@@ -10,7 +10,7 @@ using SparseArrays
 using FFTW
 using FileIO
 using ProgressMeter
-using LightGraphs
+# using LightGraphs
 using SimpleWeightedGraphs
 
 # 3d deps
@@ -53,7 +53,7 @@ charge, xpos, ypos, pos,
 
 # 3d functions
 
-find_vortex_points_3d, connect_vortex_points_3d, sort_classified_vorts_3d 
+find_vortex_points_3d, connect_vortex_points_3d, sort_classified_vorts_3d, full_algorithm
 # , vortInBounds, vortInBounds2, vortInBounds3
 # plot_iso, scatterVortsOnIso, plot_line, scatterClassifiedVortices, periodicPlotting, euclid, vorts3DMatri
 
