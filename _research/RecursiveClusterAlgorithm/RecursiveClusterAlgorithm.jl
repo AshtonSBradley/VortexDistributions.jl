@@ -5,11 +5,11 @@ using VortexDistributions
 
 using VortexDistributions:VortexGroup, Dipole, xpos, ypos
 
-using LinearAlgebra, SparseArrays, LightGraphs, SimpleWeightedGraphs 
+using LinearAlgebra, SparseArrays, SimpleWeightedGraphs 
 
 mutable struct Cluster <: VortexGroup
     vortices::Array{PointVortex,1}
-    tree::Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}
+    tree::Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}
 end
 
 include("get_dipoles.jl")
