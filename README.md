@@ -6,9 +6,10 @@
 [![Coverage](https://codecov.io/gh/AshtonSBradley/VortexDistributions.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/AshtonSBradley/VortexDistributions.jl)
 
 Tools for creating and detecting quantum vortices in Bose-Einstein condensates.
-- [x] Fast, accurate vortex detection.
-  - Highly optimized version of the plaquette method (phase integral around each 4-point plaquette), with recursive interpolation to achieve a good balance between speed and accuracy.
-  - At present only tests for charge +/-1 in 2D
+- Fast, accurate vortex detection.
+  - [x] Highly optimized version of the plaquette method (phase integral around each 4-point plaquette), with recursive interpolation to achieve a good balance between speed and accuracy.
+  - [x] Charge +/-1 in 2D
+  - [x] Find vortices in 3D 
 - [x] Vortex creation
   - Solves the 2D GPE problem for charge n on the infinite domain
   - Interpolates vortex solution to density and phase imprint on arbitrary 2D domains
