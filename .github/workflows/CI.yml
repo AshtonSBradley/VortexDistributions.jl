@@ -18,8 +18,8 @@ jobs:
           - x64
           # - x86
     steps:
-      - uses: actions/checkout@v2
-      - uses: julia-actions/setup-julia@v1
+      - uses: actions/checkout
+      - uses: julia-actions/setup-julia
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
@@ -33,10 +33,10 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@v1
-      - uses: julia-actions/julia-runtest@v1
-      - uses: julia-actions/julia-processcoverage@v1
-      - uses: codecov/codecov-action@v1
+      - uses: julia-actions/julia-buildpkg
+      - uses: julia-actions/julia-runtest
+      - uses: julia-actions/julia-processcoverage
+      - uses: codecov/codecov-action
         with: 
           file: lcov.info
   # docs:
