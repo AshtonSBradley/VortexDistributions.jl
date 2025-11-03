@@ -1,7 +1,7 @@
 name = "VortexDistributions"
 uuid = "b688e990-d167-11e8-1f13-43a2532b2fa8"
-authors = ["Ashton Bradley <ashton.bradley@gmail.com>"]
 version = "0.3.7"
+authors = ["Ashton Bradley <ashton.bradley@gmail.com>"]
 
 [deps]
 Coverage = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
@@ -30,7 +30,7 @@ FFTW = "1.6,1.7"
 FLoops = "~0.2"
 FileIO = "1, 1.8, 1.9"
 Graphs = "1.13"
-Interpolations = "~0.15"
+Interpolations = "~0.16"
 JLD2 = "0.6.1"
 NearestNeighbors = "~0.4"
 Parameters = "~0.12"
