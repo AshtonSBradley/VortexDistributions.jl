@@ -1060,7 +1060,7 @@ version = "1.3.0"
 deps = ["Coverage", "Distances", "FFTW", "FLoops", "FileIO", "Graphs", "Interpolations", "JLD2", "LinearAlgebra", "NearestNeighbors", "Parameters", "ProgressMeter", "ScikitLearn", "SimpleWeightedGraphs", "SparseArrays", "SpecialFunctions", "ToeplitzMatrices", "UnPack"]
 path = "."
 uuid = "b688e990-d167-11e8-1f13-43a2532b2fa8"
-version = "0.3.7"
+version = "0.3.8"
 
 [[deps.WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
