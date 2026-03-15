@@ -6,20 +6,47 @@
 [![Coverage](https://codecov.io/gh/AshtonSBradley/VortexDistributions.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/AshtonSBradley/VortexDistributions.jl)
 
 Tools for creating and detecting quantum vortices in Bose-Einstein condensates.
-- Fast, accurate vortex detection.
-  - [x] Highly optimized version of the plaquette method (phase integral around each 4-point plaquette), with recursive interpolation to achieve a good balance between speed and accuracy.
-  - [x] Charge +/-1 in 2D
-  - [x] Find vortices in 3D 
-- [x] Vortex creation
-  - Solves the 2D GPE problem for charge n on the infinite domain
-  - Interpolates vortex solution to density and phase imprint on arbitrary 2D domains
-- [ ] Recursive cluster algorithm
-- [ ] Vortex correlation functions
+
+## Stable 2D API
+
+Phase 1 refactoring keeps the established 2D user-facing API at the package root:
+
+- `Field`, `Torus`, `Sphere`
+- `PointVortex`, `ScalarVortex`
+- `findvortices`, `findvortices_grid`, `findvortices_jumps`
+- `phase_jumps`, `unwrap`, `zoom_interp`, `zoom_grid`
+- `remove_vortices_edge`, `keep_vortices`, `circ_mask`
+- `vortex_array` and the current 2D vortex creation helpers
+
+Internally, the package is now split into:
+
+- `VortexDistributions.Core`
+- `VortexDistributions.Detection2D`
+- `VortexDistributions.Creation2D`
+- `VortexDistributions.Analysis2D`
+- `VortexDistributions.Detection3D.Legacy`
+
+Low-level helpers are no longer exported from the root namespace.
+
+## Experimental 3D API
+
+Current 3D code is treated as experimental / legacy and is intentionally isolated under:
+
+```julia
+VortexDistributions.Detection3D.Legacy
+```
+
+The legacy entry point `VortexDistributions.full_algorithm` is still available as a compatibility shim, but new work should target the experimental namespace until the phase 2 backend lands.
 
 # Installation
 ```julia
 ]add VortexDistributions
 ```
+
+See also:
+
+- [Phase 1 migration note](docs/phase1-migration.md)
+- [Phase 2 integration map](docs/phase2-integration-map.md)
 
 # Detection Example
 ```julia

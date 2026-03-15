@@ -17,7 +17,7 @@ vortex!(psi, sp)
 
 vfound = findvortices(psi)
 
-dx = Δ(psi.x)
+dx = VortexDistributions.Core.Δ(psi.x)
 
 @test isapprox(vfound[1].xv, xp, rtol=dx/4)
 @test isapprox(vfound[1].yv, yp, rtol=dx/4)

@@ -32,7 +32,7 @@ vnf1 = vfound1[1];
 vpf2 = vfound2[2];
 vnf2 = vfound2[1];
 
-dx = Δ(psi1.x)
+dx = VortexDistributions.Core.Δ(psi1.x)
 @test isapprox(vpf1.xv, xp, atol=dx/4)
 @test isapprox(vpf1.yv, yp, atol=dx/4)
 @test vpf1.qv == 1
@@ -48,5 +48,4 @@ dx = Δ(psi1.x)
 @test isapprox(vnf2.xv, xn, atol=dx/4)
 @test isapprox(vnf2.yv, yn, atol=dx/4)
 @test vnf2.qv == -1
-
 
