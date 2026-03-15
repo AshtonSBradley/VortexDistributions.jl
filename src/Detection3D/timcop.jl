@@ -390,3 +390,7 @@ function full_algorithm(psi, x, y, z; n_itp = 1, repeat_end_of_ring = true)
 
     return g, vort_lines, vort_loops, vort_rings, vorts_coords, edge_list_periodic
 end
+
+function detect_vortices_3d(psi, x, y, z; n_itp = 1, repeat_end_of_ring = true)
+    return Detection3DResult(full_algorithm(psi, x, y, z; n_itp = n_itp, repeat_end_of_ring = repeat_end_of_ring)...)
+end

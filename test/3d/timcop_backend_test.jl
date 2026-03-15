@@ -8,8 +8,13 @@ using VortexDistributions
 psi = psi_tubes1
 x, y, z = X
 
-g, vort_lines, vort_loops, vort_rings, vorts_coords, edge_list_periodic =
-    VortexDistributions.Detection3D.TimCop.full_algorithm(psi, x, y, z)
+result = VortexDistributions.detect_vortices_3d(psi, x, y, z)
+g = result.graph
+vort_lines = result.vortex_lines
+vort_loops = result.vortex_loops
+vort_rings = result.vortex_rings
+vorts_coords = result.coords
+edge_list_periodic = result.periodic_edges
 
 @test Graphs.nv(g) == length(vorts_coords)
 @test Graphs.ne(g) > 0
@@ -17,13 +22,7 @@ g, vort_lines, vort_loops, vort_rings, vorts_coords, edge_list_periodic =
 @test (length(vort_lines), length(vort_loops), length(vort_rings)) == (16, 0, 1)
 @test !isempty(edge_list_periodic)
 
-connected_vorts = VortexDistributions.Detection3D.TimCop.connect_vortex_ends(
-    vorts_coords,
-    vort_lines,
-    vort_loops,
-    vort_rings,
-    X,
-)
+connected_vorts = VortexDistributions.Detection3D.connect_vortex_ends(result, X)
 
 @test length(connected_vorts) == 3
 

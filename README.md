@@ -36,9 +36,61 @@ The integrated 3D detection backend from `timcop/VortexDetection.jl` now lives u
 VortexDistributions.Detection3D.TimCop
 ```
 
-The experimental root entry point `VortexDistributions.full_algorithm` now routes to that vendored backend. The older code path is still preserved under `VortexDistributions.Detection3D.Legacy` for comparison only.
+The experimental root entry points are:
+
+```julia
+result = detect_vortices_3d(psi, x, y, z)
+g, lines, loops, rings, coords, periodic_edges = full_algorithm(psi, x, y, z) # compatibility wrapper
+```
+
+The typed `Detection3DResult` returned by `detect_vortices_3d` is the preferred phase 3 API. The older code path is still preserved under `VortexDistributions.Detection3D.Legacy` for comparison only.
 
 The package test suite exercises the vendored backend against the reference fixture at `test/3d/box_vorts.jld2`.
+
+## Deeper 3D Testing
+
+For heavier manual validation, this repo includes a local workflow for generating
+and analyzing 64^3 reference data with the experimental 3D detector.
+
+1. Install the optional simulation dependency:
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.add("FourierGPE")'
+```
+
+2. Generate reference data:
+
+```bash
+julia --project=. examples/generate_3d_validation_data.jl
+```
+
+This writes:
+
+- `examples/3d_validation_data/sim_64.jld2`
+- `examples/3d_validation_data/sol_64.jld2`
+
+3. Run the deeper validation script:
+
+```bash
+julia --project=. examples/timcop_deep_test.jl \
+  examples/3d_validation_data/sim_64.jld2 \
+  examples/3d_validation_data/sol_64.jld2
+```
+
+Optional arguments:
+
+- third argument: simulation time index, default `20`
+- fourth argument: interpolation factor `n_itp`, default `4`
+
+The script:
+
+- loads the generated 64^3 simulation data
+- runs `detect_vortices_3d(psi, x, y, z; n_itp=...)`
+- computes connected vortex structures with `Detection3D.connect_vortex_ends`
+- prints a structural summary
+- saves a JLD2 bundle of the result next to the supplied solution file
+
+This path is intended for exploratory validation and stress testing that is too heavy or dataset-specific for the package test suite.
 
 # Installation
 ```julia

@@ -36,7 +36,7 @@ using .Creation2D: gpecore_exact,
     dipole_phase,
     vortex!
 using .Detection2D: findvortices, findvortices_grid, findvortices_jumps, found_near, remove_vortices_edge
-using .Detection3D: full_algorithm
+using .Detection3D: detect_vortices_3d, full_algorithm
 
 const Detection3DLegacy = Detection3D.Legacy
 
@@ -52,6 +52,7 @@ export thetad
 export charge, xpos, ypos, pos
 export VortexGroup, Dipole, Cluster
 export Vortex, CoreShape, Ansatz, Exact
+export detect_vortices_3d
 
 using .Core: rand_pointvortex
 
