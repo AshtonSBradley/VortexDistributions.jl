@@ -30,13 +30,15 @@ Low-level helpers are no longer exported from the root namespace.
 
 ## Experimental 3D API
 
-Current 3D code is treated as experimental / legacy and is intentionally isolated under:
+The integrated 3D detection backend from `timcop/VortexDetection.jl` now lives under:
 
 ```julia
-VortexDistributions.Detection3D.Legacy
+VortexDistributions.Detection3D.TimCop
 ```
 
-The legacy entry point `VortexDistributions.full_algorithm` is still available as a compatibility shim, but new work should target the experimental namespace until the phase 2 backend lands.
+The experimental root entry point `VortexDistributions.full_algorithm` now routes to that vendored backend. The older code path is still preserved under `VortexDistributions.Detection3D.Legacy` for comparison only.
+
+The package test suite exercises the vendored backend against the reference fixture at `test/3d/box_vorts.jld2`.
 
 # Installation
 ```julia
