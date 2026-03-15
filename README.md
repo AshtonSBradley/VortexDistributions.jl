@@ -36,7 +36,14 @@ The integrated 3D detection backend from `timcop/VortexDetection.jl` now lives u
 VortexDistributions.Detection3D.TimCop
 ```
 
-The experimental root entry point `VortexDistributions.full_algorithm` now routes to that vendored backend. The older code path is still preserved under `VortexDistributions.Detection3D.Legacy` for comparison only.
+The experimental root entry points are:
+
+```julia
+result = detect_vortices_3d(psi, x, y, z)
+g, lines, loops, rings, coords, periodic_edges = full_algorithm(psi, x, y, z) # compatibility wrapper
+```
+
+The typed `Detection3DResult` returned by `detect_vortices_3d` is the preferred phase 3 API. The older code path is still preserved under `VortexDistributions.Detection3D.Legacy` for comparison only.
 
 The package test suite exercises the vendored backend against the reference fixture at `test/3d/box_vorts.jld2`.
 
