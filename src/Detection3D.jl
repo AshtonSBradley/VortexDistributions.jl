@@ -1,5 +1,23 @@
 module Detection3D
 
+abstract type AbstractDetectionBackend3D end
+
+struct LegacyPlaneBackend3D <: AbstractDetectionBackend3D end
+struct TimCopBackend3D <: AbstractDetectionBackend3D end
+
+module TimCop
+
+using Base.Threads
+using FLoops
+using Graphs
+using Interpolations
+
+using ...Analysis2D: phase_jumps
+
+include("Detection3D/timcop.jl")
+
+end
+
 module Legacy
 
 using FLoops
@@ -8,17 +26,16 @@ using Interpolations
 
 using ...Analysis2D: phase_jumps
 
-abstract type AbstractDetectionBackend3D end
-
-struct LegacyPlaneBackend3D <: AbstractDetectionBackend3D end
-
-# TODO Phase 2: replace this legacy threaded plane-linking path with the new
-# VortexDetection.jl-backed 3D backend while keeping the experimental boundary.
-
 include("Detection3D/legacy.jl")
 
-export AbstractDetectionBackend3D, LegacyPlaneBackend3D, full_algorithm
-
 end
+
+full_algorithm(args...; kwargs...) = TimCop.full_algorithm(args...; kwargs...)
+full_algorithm(::TimCopBackend3D, args...; kwargs...) = TimCop.full_algorithm(args...; kwargs...)
+full_algorithm(::LegacyPlaneBackend3D, args...; kwargs...) = Legacy.full_algorithm(args...; kwargs...)
+
+connect_vortex_ends(args...; kwargs...) = TimCop.connect_vortex_ends(args...; kwargs...)
+
+export AbstractDetectionBackend3D, LegacyPlaneBackend3D, TimCopBackend3D, connect_vortex_ends, full_algorithm
 
 end
