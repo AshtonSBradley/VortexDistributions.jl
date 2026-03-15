@@ -1,92 +1,58 @@
 module VortexDistributions
 
-using Interpolations 
-using JLD2
-using Parameters
-using SpecialFunctions
-using LinearAlgebra
-using ToeplitzMatrices
-using SparseArrays
-using FFTW
-using FileIO
-using ProgressMeter
-# using LightGraphs
-using SimpleWeightedGraphs
+include("Core.jl")
+include("Analysis2D.jl")
+include("Creation2D.jl")
+include("Detection2D.jl")
+include("Detection3D.jl")
 
-# 3d deps
-# using GLMakie
-using ScikitLearn
-using NearestNeighbors
-using Distances
-using FLoops
-using Graphs
-# using Colors
+using .Core: Ansatz,
+    ChannelVortex,
+    Cluster,
+    CoreShape,
+    Dipole,
+    Exact,
+    Field,
+    PointVortex,
+    ScalarVortex,
+    Sphere,
+    Torus,
+    Vortex,
+    VortexGroup,
+    charge,
+    pos,
+    xpos,
+    ypos,
+    vortex_array
+using .Analysis2D: circ_mask, keep_vortices, phase_jumps, phase_jumps!, unwrap, unwrap!, zoom_grid, zoom_interp
+using .Creation2D: gpecore_exact,
+    periodic_dipole!,
+    rand_charge,
+    rand_scalarvortex,
+    rand_vortex,
+    rand_vortexfield,
+    scalar_ansatz,
+    thetad,
+    dipole_phase,
+    vortex!
+using .Detection2D: findvortices, findvortices_grid, findvortices_jumps, found_near, remove_vortices_edge
+using .Detection3D.Legacy: full_algorithm
 
+const Detection3DLegacy = Detection3D.Legacy
 
-# import Plots:stroke,scatter!,plot,plot!
+export Field, Torus, Sphere
+export PointVortex, ScalarVortex
+export findvortices, findvortices_grid, findvortices_jumps
+export phase_jumps, phase_jumps!, unwrap, unwrap!, zoom_interp, zoom_grid
+export remove_vortices_edge, keep_vortices, circ_mask
+export vortex_array
+export scalar_ansatz, vortex!, dipole_phase, periodic_dipole!
+export rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield
+export thetad
+export charge, xpos, ypos, pos
+export VortexGroup, Dipole, Cluster
+export Vortex, CoreShape, Ansatz, Exact
 
-const Λ = 0.8249
-
-# topology
-export Field, Torus, Sphere,
-
-# vortex groups
-VortexGroup, Dipole, Cluster,
-
-# cores
-Vortex, CoreShape, Ansatz, Exact, ScalarVortex, PointVortex,
-
-# detection 
-findvortices, found_near, phase_jumps, phase_jumps!, unwrap, unwrap!, Δ,
-find_where, findvortices_jumps, findvortices_grid,
-remove_vortices_edge, zoom_interp, zoom_grid,
-circ_mask, keep_vortices,
-
-# construction
-scalar_ansatz, vortex_array, uniform,
-vortex!, dipole_phase, periodic_dipole!,
-rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield,
-thetad, 
-
-# convenient access
-charge, xpos, ypos, pos,
-
-# 3d functions
-
-find_vortex_points_3d, connect_vortex_points_3d, sort_classified_vorts_3d, full_algorithm
-# , vortInBounds, vortInBounds2, vortInBounds3
-# plot_iso, scatterVortsOnIso, plot_line, scatterClassifiedVortices, periodicPlotting, euclid, vorts3DMatri
-
-# RCA
-# distances, periodic_distances, sparse_distances, 
-# spanning_tree, vortex_marker, 
-#  grow_plus_clusters, 
-# grow_minus_clusers, get_dipoles, seed_clusters
-# plot_vortices!, plot_cluster!, vortex_marker
-
-include("types.jl")
-include("pointvortex.jl")
-include("detection.jl")
-include("creation.jl")
-
-# RCA
-# include("get_dipoles.jl")
-# include("seed_clusters.jl")
-# include("grow_minus_clusters.jl")
-# include("grow_plus_clusters.jl")
-# include("get_spanning_trees.jl")
-# include("get_negative_spanning_trees.jl")
-# include("get_positive_spanning_trees.jl")
-# include("find_smallest_spanning_trees.jl")
-# include("sort_RCA_structs.jl")
-# include("RCA.jl")
-
-# utils
-include("utils.jl")
-
-# 3d utils
-include("utils_3d.jl")
-
-@load joinpath(@__DIR__,"cores.jld2") ψi ψa
+using .Core: rand_pointvortex
 
 end
