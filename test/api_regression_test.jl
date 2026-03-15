@@ -40,4 +40,4 @@ end
 
 @test !(:Δ in names(VortexDistributions))
 @test !(:find_where in names(VortexDistributions))
-@test VortexDistributions.full_algorithm === VortexDistributions.Detection3D.Legacy.full_algorithm
+@test VortexDistributions.full_algorithm === VortexDistributions.Detection3D.full_algorithm
