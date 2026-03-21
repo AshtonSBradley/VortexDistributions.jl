@@ -92,6 +92,32 @@ and density at successive zoom levels with vortex location and detected location
    4.037 ms (585 allocations: 3.84 MiB)
  ```
 
+## Recursive Cluster Algorithm Example
+
+The recursive cluster algorithm (RCA) is available under:
+
+```julia
+VortexDistributions.RecursiveClusterAlgorithm
+```
+
+A simple usage example:
+
+```julia
+using VortexDistributions
+
+const RCA = VortexDistributions.RecursiveClusterAlgorithm
+
+include("examples/rca_random_example.jl")
+```
+
+A runnable usage example lives in `examples/rca_random_example.jl`. It:
+
+- generates a random set of 10 positive and 10 negative vortices
+- runs `RCA.recursive_cluster_algorithm(...)`
+- saves a `Plots.jl` classification figure to `examples/rca_random_example.png`
+- overlays stream-function contours computed from the point-vortex field on a `100 x 100` grid
+- draws cluster minimal spanning trees and dipole links on top of the vortex markers
+
 ## Experimental 3D API
 
 The integrated 3D detection backend from `timcop/VortexDetection.jl` now lives under:
