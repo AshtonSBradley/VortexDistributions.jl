@@ -19,7 +19,7 @@ UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 [compat]
 FFTW = "1.6,1.7"
 FLoops = "~0.2"
-Graphs = "1.13"
+Graphs = "1.13,1.14"
 Interpolations = "~0.16"
 JLD2 = "0.6.1"
 Parameters = "~0.12"
