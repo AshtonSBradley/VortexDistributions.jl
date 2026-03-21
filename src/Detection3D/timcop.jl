@@ -34,7 +34,7 @@ function link_graph_vorts(g; repeat_end_of_ring = true)
         vc = pop!(deg_1)
 
         push!(current_vort, vc)
-        vc_neighbors = neighbors(g_temp, vc)
+        vc_neighbors = Set(neighbors(g_temp, vc))
 
         while length(vc_neighbors) <= 2
             push!(visited, vc)
@@ -44,7 +44,7 @@ function link_graph_vorts(g; repeat_end_of_ring = true)
             end
             vc = pop!(vc_neighbors)
             push!(current_vort, vc)
-            vc_neighbors = neighbors(g_temp, vc)
+            vc_neighbors = Set(neighbors(g_temp, vc))
         end
         push!(vort_lines, current_vort)
         setdiff!(deg_1, visited)
@@ -60,7 +60,7 @@ function link_graph_vorts(g; repeat_end_of_ring = true)
         push!(current_vort, vi)
         push!(visited, vi)
 
-        vi_neighbors = neighbors(g_temp, vi)
+        vi_neighbors = Set(neighbors(g_temp, vi))
 
         vi = nothing
         for v in vi_neighbors
@@ -73,7 +73,7 @@ function link_graph_vorts(g; repeat_end_of_ring = true)
         while !isnothing(vi)
             push!(current_vort, vi)
             push!(visited, vi)
-            vi_neighbors = neighbors(g_temp, vi)
+            vi_neighbors = Set(neighbors(g_temp, vi))
             setdiff!(vi_neighbors, visited)
             if length(vi_neighbors) == 1
                 vi = pop!(vi_neighbors)
@@ -101,13 +101,13 @@ function link_graph_vorts(g; repeat_end_of_ring = true)
         vi = pop!(deg_2)
         push!(current_vort, vi)
         push!(visited, vi)
-        vi_neighbors = neighbors(g_temp, vi)
+        vi_neighbors = Set(neighbors(g_temp, vi))
         setdiff!(vi_neighbors, visited)
         while length(vi_neighbors) != 0
             vc = pop!(vi_neighbors)
             push!(current_vort, vc)
             push!(visited, vc)
-            vi_neighbors = neighbors(g_temp, vc)
+            vi_neighbors = Set(neighbors(g_temp, vc))
             setdiff!(vi_neighbors, visited)
         end
         push!(vort_rings, current_vort)
