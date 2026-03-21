@@ -727,7 +727,7 @@ version = "1.11.0"
 deps = ["FFTW", "FLoops", "Graphs", "Interpolations", "JLD2", "LinearAlgebra", "Parameters", "SimpleWeightedGraphs", "SparseArrays", "SpecialFunctions", "UnPack"]
 path = "."
 uuid = "b688e990-d167-11e8-1f13-43a2532b2fa8"
-version = "0.3.8"
+version = "0.3.9"
 
 [[deps.WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
