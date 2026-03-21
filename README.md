@@ -110,13 +110,17 @@ const RCA = VortexDistributions.RecursiveClusterAlgorithm
 include("examples/rca_random_example.jl")
 ```
 
-A runnable usage example lives in `examples/rca_random_example.jl`. It:
+A runnable usage example lives in `examples/rca_random_example.jl`.
 
-- generates a random set of 10 positive and 10 negative vortices
-- runs `RCA.recursive_cluster_algorithm(...)`
-- saves a `Plots.jl` classification figure to `examples/rca_random_example.png`
-- overlays stream-function contours computed from the point-vortex field on a `100 x 100` grid
-- draws cluster minimal spanning trees and dipole links on top of the vortex markers
+It generates a random set of 10 positive and 10 negative vortices, runs
+`RCA.recursive_cluster_algorithm(...)`, and saves a `Plots.jl` classification
+figure with:
+
+- stream-function contours computed from the point-vortex field on a `100 x 100` grid
+- cluster minimal spanning trees and dipole links
+- color-coded positive and negative vortices
+
+![](/examples/rca_random_example.png)
 
 ## Experimental 3D API
 
