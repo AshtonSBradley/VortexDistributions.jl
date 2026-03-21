@@ -5,6 +5,7 @@ include("Analysis2D.jl")
 include("Creation2D.jl")
 include("Detection2D.jl")
 include("Detection3D.jl")
+include("RecursiveClusterAlgorithm.jl")
 
 using .Core: Ansatz,
     ChannelVortex,
@@ -37,6 +38,7 @@ using .Creation2D: gpecore_exact,
     vortex!
 using .Detection2D: findvortices, findvortices_grid, findvortices_jumps, found_near, remove_vortices_edge
 using .Detection3D: detect_vortices_3d, full_algorithm
+using .RecursiveClusterAlgorithm: RCAResult, recursive_cluster_algorithm
 
 const Detection3DLegacy = Detection3D.Legacy
 
@@ -53,6 +55,7 @@ export charge, xpos, ypos, pos
 export VortexGroup, Dipole, Cluster
 export Vortex, CoreShape, Ansatz, Exact
 export detect_vortices_3d
+export RecursiveClusterAlgorithm, RCAResult, recursive_cluster_algorithm
 
 using .Core: rand_pointvortex
 

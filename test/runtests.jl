@@ -53,6 +53,10 @@ end
     include("api_regression_test.jl")
 end
 
+@testset "Recursive Cluster Algorithm" begin
+    include("recursive_cluster_algorithm_test.jl")
+end
+
 @testset "TimCop 3D Backend" begin
     include("3d/timcop_backend_test.jl")
 end

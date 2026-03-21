@@ -8,6 +8,9 @@ using VortexDistributions
 @test isdefined(VortexDistributions, :Detection3D)
 @test isdefined(VortexDistributions, :Detection3DLegacy)
 @test isdefined(VortexDistributions, :detect_vortices_3d)
+@test isdefined(VortexDistributions, :RecursiveClusterAlgorithm)
+@test isdefined(VortexDistributions, :RCAResult)
+@test isdefined(VortexDistributions, :recursive_cluster_algorithm)
 
 for name in (
     :Field,
@@ -35,6 +38,9 @@ for name in (
     :rand_scalarvortex,
     :rand_vortex,
     :rand_vortexfield,
+    :RecursiveClusterAlgorithm,
+    :RCAResult,
+    :recursive_cluster_algorithm,
 )
     @test isdefined(VortexDistributions, name)
 end
