@@ -179,8 +179,6 @@ The script:
 
 This path is intended for exploratory validation and stress testing that is too heavy or dataset-specific for the package test suite.
 
-#### Acknowledgements
-Matthew Reeves, Thomas Billam, Michael Cawte
 
 # External links
 ___Signatures of Coherent Vortex Structures in a Disordered 2D Quantum Fluid___,\
