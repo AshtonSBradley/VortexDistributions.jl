@@ -201,13 +201,22 @@ julia --project=. examples/timcop_deep_test.jl \
   examples/3d_validation_data/sol_64.jld2
 ```
 
-4. Save a Makie figure for the same dataset:
+4. Run the literal upstream-style plotting workflow:
 
 ```bash
-julia --project=. examples/timcop_validation_plot.jl \
+julia --project=. examples/quench_64_3d_algo.jl \
   examples/3d_validation_data/sim_64.jld2 \
   examples/3d_validation_data/sol_64.jld2
 ```
+
+This script mirrors the original `timcop/VortexDetection.jl`
+`quench_64_3d_algo.jl` flow more literally:
+
+- show the iso-surface of the chosen state
+- run the 3D detector with `n_itp`
+- overlay the detection graph with `GraphMakie`
+- apply repeated CCMA smoothing to lines, loops, and rings
+- render the final smoothed filaments with `GLMakie`
 
 ## Deeper 3D Testing
 
