@@ -218,6 +218,10 @@ This script mirrors the original `timcop/VortexDetection.jl`
 - apply repeated CCMA smoothing to lines, loops, and rings
 - render the final smoothed filaments with `GLMakie`
 
+Example output from the validation workflow:
+
+![](/examples/quench_64_subfigures_taller.png)
+
 ## Deeper 3D Testing
 
 For heavier manual validation, this repo includes a local workflow for generating

@@ -49,11 +49,24 @@ end
 
 _get_3d_from_2d(points) = hcat(points, zeros(size(points, 1)))
 
+function _conv_valid(signal, weights)
+    n = length(weights)
+    out = Vector{Float64}(undef, length(signal) - n + 1)
+    for i in eachindex(out)
+        acc = 0.0
+        @inbounds for j in 1:n
+            acc += signal[i + j - 1] * weights[j]
+        end
+        out[i] = acc
+    end
+    return out
+end
+
 function _get_ma_points(points, weights)
     return hcat(
-        conv(points[:, 1], weights)[length(weights):end - length(weights) + 1],
-        conv(points[:, 2], weights)[length(weights):end - length(weights) + 1],
-        conv(points[:, 3], weights)[length(weights):end - length(weights) + 1],
+        _conv_valid(points[:, 1], weights),
+        _conv_valid(points[:, 2], weights),
+        _conv_valid(points[:, 3], weights),
     )
 end
 

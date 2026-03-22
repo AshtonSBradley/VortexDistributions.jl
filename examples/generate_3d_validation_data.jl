@@ -46,7 +46,7 @@ function main(args)
     ψi = randn(N) + im * randn(N)
     ϕi = kspace(ψi, sim)
 
-    @pack_Sim! sim = μ, γ, t, ψi, ϕi
+    @pack_Sim! sim
 
     println("Running FourierGPE simulation for 3D validation...")
     sol = runsim(sim)

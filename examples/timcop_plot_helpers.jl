@@ -74,10 +74,17 @@ function detect_validation_demo(sim_path::AbstractString, sol_path::AbstractStri
 end
 
 function load_validation_state(sim_path::AbstractString, sol_path::AbstractString; t::Int = 20)
+    if Base.find_package("FourierGPE") !== nothing
+        Core.eval(@__MODULE__, :(using FourierGPE))
+    end
     @load sim_path sim
     @load sol_path sol
 
-    psi = sol(t)
+    psi = try
+        Base.invokelatest(sol, t)
+    catch
+        Base.invokelatest(getindex, sol, t)
+    end
     X = sim.X
     x, y, z = X
     x = round.(x, digits = 3)
@@ -116,8 +123,7 @@ function _plot_structure!(backend, scene, coords, segments; color, linewidth)
     end
 end
 
-function plot_iso(psi, X; visible = true, isovalue = 0.7, isorange = 0.1, show_axis = true)
-    mk, _ = ensure_example_plotting_modules()
+function _plot_iso_loaded(mk, psi, X, visible, isovalue, isorange, show_axis)
     density = abs2.(psi)
     density ./= maximum(density)
     x, y, z = X
@@ -141,10 +147,19 @@ function plot_iso(psi, X; visible = true, isovalue = 0.7, isorange = 0.1, show_a
     return fig, scene
 end
 
-function graphplot_detection!(scene, graph, coords; edge_width = 1, node_size = 2)
-    _, gm = ensure_example_plotting_modules()
+function plot_iso(psi, X; visible = true, isovalue = 0.7, isorange = 0.1, show_axis = true)
+    mk, _ = ensure_example_plotting_modules()
+    return Base.invokelatest(_plot_iso_loaded, mk, psi, X, visible, isovalue, isorange, show_axis)
+end
+
+function _graphplot_detection_loaded(gm, scene, graph, coords, edge_width, node_size)
     gm.graphplot!(scene, graph; layout = (_) -> coords, edge_width = edge_width, node_size = node_size, show_axis = false)
     return scene
+end
+
+function graphplot_detection!(scene, graph, coords; edge_width = 1, node_size = 2)
+    _, gm = ensure_example_plotting_modules()
+    return Base.invokelatest(_graphplot_detection_loaded, gm, scene, graph, coords, edge_width, node_size)
 end
 
 function coords_to_path_matrices(coords, paths)
@@ -185,9 +200,7 @@ function vortex_ccma_j(vort_lines_mat, vort_loops_mat, vort_rings_mat; distrib =
     return vort_lines_ccma, vort_loops_ccma, vort_rings_ccma
 end
 
-function plot_unconnected_vorts_mat!(scene, vort_lines, vort_loops, vort_rings; linewidth = 5, mono = false,
-                                     color = :black, repeat_ring_ends = false)
-    mk, _ = ensure_example_plotting_modules()
+function _plot_unconnected_vorts_mat_loaded(mk, scene, vort_lines, vort_loops, vort_rings, linewidth, mono, color, repeat_ring_ends)
     colors = mk.distinguishable_colors(length(vort_lines) + length(vort_loops) + length(vort_rings))
 
     all_vorts = NTuple{3, Float64}[]
@@ -230,6 +243,23 @@ function plot_unconnected_vorts_mat!(scene, vort_lines, vort_loops, vort_rings; 
     line_colors = mono ? color : all_colors
     mk.lines!(scene, all_vorts; color = line_colors, linewidth = linewidth)
     return scene
+end
+
+function plot_unconnected_vorts_mat!(scene, vort_lines, vort_loops, vort_rings; linewidth = 5, mono = false,
+                                     color = :black, repeat_ring_ends = false)
+    mk, _ = ensure_example_plotting_modules()
+    return Base.invokelatest(
+        _plot_unconnected_vorts_mat_loaded,
+        mk,
+        scene,
+        vort_lines,
+        vort_loops,
+        vort_rings,
+        linewidth,
+        mono,
+        color,
+        repeat_ring_ends,
+    )
 end
 
 function _save_detection_figure_loaded(mk, gm, psi, X, result, output_path, isovalue, isorange)
