@@ -91,36 +91,29 @@ and density at successive zoom levels with vortex location and detected location
  julia> @btime vort = findvortices(psi)
    4.037 ms (585 allocations: 3.84 MiB)
  ```
-
-## Recursive Cluster Algorithm Example
-
-The recursive cluster algorithm (RCA) is available under:
-
-```julia
-VortexDistributions.RecursiveClusterAlgorithm
-```
-
-A simple usage example:
-
-```julia
-using VortexDistributions
-
-const RCA = VortexDistributions.RecursiveClusterAlgorithm
-
-include("examples/rca_random_example.jl")
-```
-
-A runnable usage example lives in `examples/rca_random_example.jl`.
-
-It generates a random set of 10 positive and 10 negative vortices, runs
-`RCA.recursive_cluster_algorithm(...)`, and saves a `Plots.jl` classification
-figure with:
-
-- stream-function contours computed from the point-vortex field on a `100 x 100` grid
-- cluster minimal spanning trees and dipole links
-- color-coded positive and negative vortices
+## Recursive cluster algorithm
 
 ![](/examples/rca_random_example.png)
+
+The recursive cluster algorithm decomposes 2D vortex distributions into
+- free vortices
+- vortex dipoles
+- vortex clusters
+
+using the algorithm developed in 
+
+___Onsager-Kraichnan Condensation in Decaying Two-Dimensional Quantum Turbulence___,\
+Thomas P. Billam, Matthew T. Reeves, Brian P. Anderson, and Ashton S. Bradley, \
+[Physical Review Letters 112, 145301 (2014)](http://dx.doi.org/10.1103/PhysRevLett.112.145301)
+
+### Usage
+```
+result = RCA.recursive_cluster_algorithm(vortices, Lx, Ly)
+```
+
+For more detail see the usage example script
+
+`/examples/rca_random_example.jl`
 
 ## Experimental 3D API
 
