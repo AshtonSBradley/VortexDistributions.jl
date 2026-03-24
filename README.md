@@ -7,9 +7,9 @@
 
 Tools for creating and detecting quantum vortices in Bose-Einstein condensates.
 
-## Stable 2D API
+## 2D API
 
-Phase 1 refactoring keeps the established 2D user-facing API at the package root:
+The main 2D entry points are:
 
 - `Field`, `Torus`, `Sphere`
 - `PointVortex`, `ScalarVortex`
@@ -18,25 +18,10 @@ Phase 1 refactoring keeps the established 2D user-facing API at the package root
 - `remove_vortices_edge`, `keep_vortices`, `circ_mask`
 - `vortex_array` and the current 2D vortex creation helpers
 
-Internally, the package is now split into:
-
-- `VortexDistributions.Core`
-- `VortexDistributions.Detection2D`
-- `VortexDistributions.Creation2D`
-- `VortexDistributions.Analysis2D`
-- `VortexDistributions.Detection3D.Legacy`
-
-Low-level helpers are no longer exported from the root namespace.
-
 # Installation
 ```julia
 ]add VortexDistributions
 ```
-
-See also:
-
-- [Phase 1 migration note](docs/phase1-migration.md)
-- [Phase 2 integration map](docs/phase2-integration-map.md)
 
 # Detection Example
 ```julia
@@ -117,7 +102,9 @@ For more detail see the usage example script
 
 ## Experimental 3D API
 
-The integrated 3D detection backend from `timcop/VortexDetection.jl` now lives under:
+![](/examples/quench_64_subfigures_taller.png)
+
+The 3D detection backend lives under:
 
 ```julia
 VortexDistributions.Detection3D.TimCop
@@ -134,13 +121,10 @@ The typed `Detection3DResult` returned by `detect_vortices_3d` is the preferred 
 
 The package test suite exercises the vendored backend against the reference fixture at `test/3d/box_vorts.jld2`.
 
-The imported detector corresponds to `timcop/VortexDetection.jl` commit `5ce3982`.
-The core detection code is vendored into `src/Detection3D/timcop.jl`, while the
-plotting workflow from the original repository is kept as runnable example
-scripts so `GLMakie` and `GraphMakie` stay out of the main package dependency
-graph.
+The plotting workflow is kept as runnable example scripts so `GLMakie` and
+`GraphMakie` stay out of the main package dependency graph.
 
-### 3D Detection Demo With GLMakie And GraphMakie
+### Quick 3D Demo
 
 The quickest end-to-end demonstration uses the bundled `box_vorts.jld2` fixture
 and writes a PNG plot of the detected 3D vortex structures. The example
@@ -168,11 +152,11 @@ This example is not part of package testing; it is a runnable usage
 demonstration with plotted results, following the original repository’s
 `GLMakie` + `GraphMakie` style.
 
-### Upstream-Style Validation Workflow
+### Full 64^3 Workflow
 
-The original `timcop/VortexDetection.jl` README describes generating 64^3
-simulation data and then visualizing the detected vortex structures. The same
-workflow is now available here with package-local examples.
+For the full `quench_64_3d_algo.jl` workflow, install the simulation dependency,
+generate the validation dataset, then run either the summary script or the full
+plotting script.
 
 1. Install the optional simulation dependency:
 
@@ -186,6 +170,11 @@ julia --project=. -e 'using Pkg; Pkg.add("FourierGPE")'
 julia --project=. examples/generate_3d_validation_data.jl
 ```
 
+This writes:
+
+- `examples/3d_validation_data/sim_64.jld2`
+- `examples/3d_validation_data/sol_64.jld2`
+
 3. Run the integrated detector and save a summary bundle:
 
 ```bash
@@ -194,7 +183,7 @@ julia --project=. examples/timcop_deep_test.jl \
   examples/3d_validation_data/sol_64.jld2
 ```
 
-4. Run the literal upstream-style plotting workflow:
+4. Run the full plotting workflow:
 
 ```bash
 julia --project=. examples/quench_64_3d_algo.jl \
@@ -202,8 +191,7 @@ julia --project=. examples/quench_64_3d_algo.jl \
   examples/3d_validation_data/sol_64.jld2
 ```
 
-This script mirrors the original `timcop/VortexDetection.jl`
-`quench_64_3d_algo.jl` flow more literally:
+The plotting script:
 
 - show the iso-surface of the chosen state
 - run the 3D detector with `n_itp`
@@ -211,46 +199,12 @@ This script mirrors the original `timcop/VortexDetection.jl`
 - apply repeated CCMA smoothing to lines, loops, and rings
 - render the final smoothed filaments with `GLMakie`
 
-Example output from the validation workflow:
-
-![](/examples/quench_64_subfigures_taller.png)
-
-## Deeper 3D Testing
-
-For heavier manual validation, this repo includes a local workflow for generating
-and analyzing 64^3 reference data with the experimental 3D detector.
-
-1. Install the optional simulation dependency:
-
-```bash
-julia --project=. -e 'using Pkg; Pkg.add("FourierGPE")'
-```
-
-2. Generate reference data:
-
-```bash
-julia --project=. examples/generate_3d_validation_data.jl
-```
-
-This writes:
-
-- `examples/3d_validation_data/sim_64.jld2`
-- `examples/3d_validation_data/sol_64.jld2`
-
-3. Run the deeper validation script:
-
-```bash
-julia --project=. examples/timcop_deep_test.jl \
-  examples/3d_validation_data/sim_64.jld2 \
-  examples/3d_validation_data/sol_64.jld2
-```
-
 Optional arguments:
 
 - third argument: simulation time index, default `20`
 - fourth argument: interpolation factor `n_itp`, default `4`
 
-The script:
+The summary script:
 
 - loads the generated 64^3 simulation data
 - runs `detect_vortices_3d(psi, x, y, z; n_itp=...)`
