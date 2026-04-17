@@ -1,0 +1,24 @@
+name: Aqua
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  aqua:
+    name: Aqua QA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: "1.12"
+      - name: Install package and Aqua
+        run: |
+          julia --project=. -e 'using Pkg; Pkg.add("Aqua"); Pkg.instantiate()'
+      - name: Run Aqua
+        run: |
+          julia --project=. -e 'using Aqua, VortexDistributions; Aqua.test_all(VortexDistributions)'

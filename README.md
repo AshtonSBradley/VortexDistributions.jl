@@ -4,6 +4,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://AshtonSBradley.github.io/VortexDistributions.jl/dev) -->
 [![Build Status](https://github.com/AshtonSBradley/VortexDistributions.jl/workflows/CI/badge.svg)](https://github.com/AshtonSBradley/VortexDistributions.jl/actions)
 [![Coverage](https://codecov.io/gh/AshtonSBradley/VortexDistributions.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/AshtonSBradley/VortexDistributions.jl)
+[![Code Quality](https://github.com/AshtonSBradley/VortexDistributions.jl/actions/workflows/Aqua.yml/badge.svg)](https://github.com/AshtonSBradley/VortexDistributions.jl/actions/workflows/Aqua.yml)
 
 Tools for creating and detecting quantum vortices in Bose-Einstein condensates.
 

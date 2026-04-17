@@ -80,3 +80,28 @@ end
     @test length(array_result.dipoles) == 1
     @test length(array_result.positive_clusters) == 1
 end
+
+@testset "Driver edge cases" begin
+    dipole_only = [
+        rca_pv(-0.10, 0.00, 1),
+        rca_pv(-0.08, 0.00, -1),
+    ]
+
+    dipole_result = RCA.recursive_cluster_algorithm(dipole_only, 1.0, 1.0)
+    @test length(dipole_result.dipoles) == 1
+    @test isempty(dipole_result.positive_clusters)
+    @test isempty(dipole_result.negative_clusters)
+    @test isempty(dipole_result.free_vortices)
+
+    array_dipole_result = RCA.recursive_cluster_algorithm(
+        [v.xv for v in dipole_only],
+        [v.yv for v in dipole_only],
+        [v.qv for v in dipole_only],
+        1.0,
+        1.0,
+    )
+    @test length(array_dipole_result.dipoles) == 1
+    @test isempty(array_dipole_result.free_vortices)
+
+    @test_throws AssertionError RCA.recursive_cluster_algorithm([0.0], [0.0, 1.0], [1], 1.0, 1.0)
+end
