@@ -1,0 +1,32 @@
+name: Quality
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  aqua:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: "1.10"
+
+      - uses: julia-actions/cache@v2
+
+      - name: Run Aqua checks
+        run: |
+          julia --color=yes -e '
+            using Pkg
+            Pkg.activate(temp=true)
+            Pkg.develop(PackageSpec(path=pwd()))
+            Pkg.add("Aqua")
+            using Aqua, VortexDistributions
+            Aqua.test_all(VortexDistributions)
+          '
