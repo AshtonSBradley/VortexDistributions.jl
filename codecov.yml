@@ -1,0 +1,67 @@
+codecov:
+  require_ci_to_pass: true
+
+coverage:
+  precision: 1
+  round: down
+  range: "60...100"
+
+comment:
+  layout: "header, diff, flags, components"
+  require_changes: false
+
+status:
+  project:
+    default:
+      target: auto
+      threshold: 2%
+  patch:
+    default:
+      target: 70%
+      threshold: 5%
+
+flag_management:
+  default_rules:
+    carryforward: true
+    statuses:
+      - type: project
+        target: auto
+        threshold: 2%
+      - type: patch
+        target: 70%
+        threshold: 5%
+  individual_flags:
+    - name: tests
+      paths:
+        - src/
+        - test/
+
+component_management:
+  default_rules:
+    statuses:
+      - type: project
+        target: auto
+        threshold: 3%
+  individual_components:
+    - component_id: core_2d
+      name: "Core and 2D"
+      paths:
+        - src/Core/**
+        - src/Creation2D/**
+        - src/Analysis2D/**
+        - src/Detection2D/**
+    - component_id: recursive_cluster_algorithm
+      name: "Recursive Cluster Algorithm"
+      paths:
+        - src/RecursiveClusterAlgorithm.jl
+        - src/RecursiveClusterAlgorithm/**
+    - component_id: detection_3d
+      name: "3D Detection"
+      paths:
+        - src/Detection3D.jl
+        - src/Detection3D/**
+
+ignore:
+  - "docs/**"
+  - "examples/**"
+  - ".github/**"
