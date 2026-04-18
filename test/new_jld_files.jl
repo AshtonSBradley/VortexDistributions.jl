@@ -1,18 +1,10 @@
-using JLD2, Interpolations
-@load joinpath(@__DIR__,"src/exactcore.jld2") ψi
-@load joinpath(@__DIR__,"src/ansatzcore.jld2") ψa
+using JLD2
+using Test
+using VortexDistributions
 
-psii_coefs = ψi.coefs
-psii_knots = ψi.knots
-psia_coefs = ψa.coefs
-psia_knots = ψa.knots
-@save joinpath(@__DIR__,"src/data.jld2") psii_coefs psii_knots psia_coefs psia_knots
+@load joinpath(dirname(pathof(VortexDistributions)), "cores.jld2") ψi ψa
 
-## save in new format
-@load joinpath(@__DIR__,"src/data.jld2") psii_coefs psii_knots psia_coefs psia_knots
-ψi = interpolate(psii_knots, psii_coefs, Gridded(Linear()))
-ψa = interpolate(psia_knots, psia_coefs, Gridded(Linear()))
-@save joinpath(@__DIR__,"src/cores.jld2") ψi ψa
-
-## load interp and check type 
-@load joinpath(@__DIR__,"src/cores.jld2") ψi ψa
+@test ψi(0.25) isa Real
+@test ψa(0.25) isa Real
+@test ψi(0.0) ≈ 0.0 atol = 1e-12
+@test ψa(0.0) ≈ 0.0 atol = 1e-12

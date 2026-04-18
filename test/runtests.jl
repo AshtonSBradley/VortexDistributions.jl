@@ -17,6 +17,10 @@ end
     include("multivort_test.jl")
 end
 
+@testset "Detection Helpers" begin
+    include("multivort_test2.jl")
+end
+
 @testset "Periodic Dipole" begin
     include("periodic_dipole_test.jl")
 end
@@ -31,6 +35,10 @@ end
 
 @testset "Unwrap2D" begin
     include("test_unwrap2D.jl")
+end
+
+@testset "Interpolation" begin
+    include("test_interp.jl")
 end
 
 @testset "Phase Jumps" begin
@@ -53,8 +61,24 @@ end
     include("api_regression_test.jl")
 end
 
+@testset "Core Assets" begin
+    include("new_jld_files.jl")
+end
+
 @testset "Recursive Cluster Algorithm" begin
     include("recursive_cluster_algorithm_test.jl")
+end
+
+@testset "3D TimCop Helpers" begin
+    include("3d/box_vorts_example_test.jl")
+end
+
+@testset "3D Connection Helpers" begin
+    include("3d/connect_vortex_points_3d_unit_tests.jl")
+end
+
+@testset "3D Interpolation" begin
+    include("3d/find_vortex_points_3d_unit_test.jl")
 end
 
 @testset "TimCop 3D Backend" begin

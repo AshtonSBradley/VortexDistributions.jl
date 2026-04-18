@@ -65,3 +65,4 @@ ignore:
   - "docs/**"
   - "examples/**"
   - ".github/**"
+  - "src/create_exact_core.jl"
