@@ -81,6 +81,10 @@ end
     include("3d/find_vortex_points_3d_unit_test.jl")
 end
 
+@testset "3D TimCop Ring Handling" begin
+    include("3d/sort_classified_vorts_3d_unit_tests.jl")
+end
+
 @testset "TimCop 3D Backend" begin
     include("3d/timcop_backend_test.jl")
 end
