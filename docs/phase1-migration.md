@@ -15,10 +15,10 @@ These root-level APIs are still the supported package entry points:
 
 ## User-visible changes
 
-- Internal code is now split across `Core`, `Detection2D`, `Creation2D`, `Analysis2D`, and `Detection3D.Legacy`.
+- Internal code is now split across `Core`, `Detection2D`, `Creation2D`, `Analysis2D`, and `Detection3D.TimCop`.
 - Low-level helper functions such as `Δ` and `find_where` are no longer exported from the package root.
-- The current 3D path is explicitly experimental and lives under `VortexDistributions.Detection3D.Legacy`.
-- `VortexDistributions.full_algorithm` remains available as a compatibility shim for the legacy 3D entry point.
+- The current 3D path is explicitly experimental and lives under `VortexDistributions.Detection3D.TimCop`.
+- `VortexDistributions.full_algorithm` remains available as a compatibility shim for the TimCop 3D entry point.
 
 ## Dependency hygiene
 

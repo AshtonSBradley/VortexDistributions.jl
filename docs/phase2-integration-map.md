@@ -12,9 +12,9 @@ This note describes where `VortexDetection.jl` components should land when phase
 ## 3D integration boundary
 
 - `src/Detection3D.jl`
-- `src/Detection3D/legacy.jl`
+- `src/Detection3D/timcop.jl`
 
-`Detection3D.Legacy` is the quarantine zone for the old threaded plane-linking approach. Phase 2 should add a new backend alongside it first, keep the legacy implementation available during transition, and only promote a new root-facing 3D API after validation.
+`Detection3D.TimCop` is the maintained 3D backend and the root-facing API path used by package tests.
 
 ## Suggested landing zones
 

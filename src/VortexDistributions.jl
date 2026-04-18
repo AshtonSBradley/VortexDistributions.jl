@@ -40,8 +40,6 @@ using .Detection2D: findvortices, findvortices_grid, findvortices_jumps, found_n
 using .Detection3D: detect_vortices_3d, full_algorithm
 using .RecursiveClusterAlgorithm: RCAResult, recursive_cluster_algorithm
 
-const Detection3DLegacy = Detection3D.Legacy
-
 export Field, Torus, Sphere
 export PointVortex, ScalarVortex
 export findvortices, findvortices_grid, findvortices_jumps

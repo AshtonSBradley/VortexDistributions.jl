@@ -6,7 +6,6 @@ using VortexDistributions
 @test isdefined(VortexDistributions, :Creation2D)
 @test isdefined(VortexDistributions, :Analysis2D)
 @test isdefined(VortexDistributions, :Detection3D)
-@test isdefined(VortexDistributions, :Detection3DLegacy)
 @test isdefined(VortexDistributions, :detect_vortices_3d)
 @test isdefined(VortexDistributions, :RecursiveClusterAlgorithm)
 @test isdefined(VortexDistributions, :RCAResult)

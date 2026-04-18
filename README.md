@@ -119,7 +119,7 @@ result = detect_vortices_3d(psi, x, y, z)
 g, lines, loops, rings, coords, periodic_edges = full_algorithm(psi, x, y, z) # compatibility wrapper
 ```
 
-The typed `Detection3DResult` returned by `detect_vortices_3d` is the preferred phase 3 API. The older code path is still preserved under `VortexDistributions.Detection3D.Legacy` for comparison only.
+The typed `Detection3DResult` returned by `detect_vortices_3d` is the preferred phase 3 API.
 
 The package test suite exercises the vendored backend against the reference fixture at `test/3d/box_vorts.jld2`.
 
