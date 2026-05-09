@@ -25,7 +25,21 @@ using .Core: Ansatz,
     xpos,
     ypos,
     vortex_array
-using .Analysis2D: circ_mask, keep_vortices, phase_jumps, phase_jumps!, unwrap, unwrap!, zoom_grid, zoom_interp
+using .Analysis2D: DiskWindow,
+    RipleyKResult,
+    besag_l,
+    circ_mask,
+    keep_vortices,
+    phase_jumps,
+    phase_jumps!,
+    ripley_csr_baseline,
+    ripley_clustering,
+    ripley_excess,
+    ripley_k,
+    unwrap,
+    unwrap!,
+    zoom_grid,
+    zoom_interp
 using .Creation2D: gpecore_exact,
     periodic_dipole!,
     rand_charge,
@@ -45,6 +59,7 @@ export PointVortex, ScalarVortex
 export findvortices, findvortices_grid, findvortices_jumps
 export phase_jumps, phase_jumps!, unwrap, unwrap!, zoom_interp, zoom_grid
 export remove_vortices_edge, keep_vortices, circ_mask
+export DiskWindow, RipleyKResult, besag_l, ripley_csr_baseline, ripley_clustering, ripley_excess, ripley_k
 export vortex_array
 export scalar_ansatz, vortex!, dipole_phase, periodic_dipole!
 export rand_charge, rand_pointvortex, rand_scalarvortex, rand_vortex, rand_vortexfield
