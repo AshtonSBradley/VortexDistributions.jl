@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="460" viewBox="0 0 780 460">
+<rect width="100%" height="100%" fill="white"/>
+<text x="24" y="34" font-family="Helvetica,Arial,sans-serif" font-size="20" fill="#222">Same-sign Ripley excess in a disk</text>
+<line x1="56" y1="404" x2="724" y2="404" stroke="#333"/>
+<line x1="56" y1="56" x2="56" y2="404" stroke="#333"/>
+<line x1="56" y1="350.08834578681115" x2="724" y2="350.08834578681115" stroke="#999" stroke-dasharray="5 5"/>
+<line x1="140.8253968253968" y1="404" x2="140.8253968253968" y2="410" stroke="#333"/>
+<text x="140.8253968253968" y="428" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.1</text>
+<line x1="246.8571428571429" y1="404" x2="246.8571428571429" y2="410" stroke="#333"/>
+<text x="246.8571428571429" y="428" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.2</text>
+<line x1="352.88888888888886" y1="404" x2="352.88888888888886" y2="410" stroke="#333"/>
+<text x="352.88888888888886" y="428" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.3</text>
+<line x1="458.9206349206349" y1="404" x2="458.9206349206349" y2="410" stroke="#333"/>
+<text x="458.9206349206349" y="428" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.4</text>
+<line x1="564.952380952381" y1="404" x2="564.952380952381" y2="410" stroke="#333"/>
+<text x="564.952380952381" y="428" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.5</text>
+<line x1="670.984126984127" y1="404" x2="670.984126984127" y2="410" stroke="#333"/>
+<text x="670.984126984127" y="428" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.6</text>
+<line x1="50" y1="350.08834578681115" x2="56" y2="350.08834578681115" stroke="#333"/>
+<text x="46" y="354.08834578681115" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.0</text>
+<line x1="50" y1="290.2650373604334" x2="56" y2="290.2650373604334" stroke="#333"/>
+<text x="46" y="294.2650373604334" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.1</text>
+<line x1="50" y1="230.44172893405562" x2="56" y2="230.44172893405562" stroke="#333"/>
+<text x="46" y="234.44172893405562" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.2</text>
+<line x1="50" y1="170.6184205076779" x2="56" y2="170.6184205076779" stroke="#333"/>
+<text x="46" y="174.6184205076779" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.3</text>
+<line x1="50" y1="110.79511208130015" x2="56" y2="110.79511208130015" stroke="#333"/>
+<text x="46" y="114.79511208130015" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.4</text>
+<line x1="50" y1="50.97180365492244" x2="56" y2="50.97180365492244" stroke="#333"/>
+<text x="46" y="54.97180365492244" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#222">0.5</text>
+<line x1="247.06920634920638" y1="56" x2="247.06920634920638" y2="404" stroke="#111" stroke-width="2.5" stroke-dasharray="6 4"/>
+<circle cx="247.06920634920638" cy="404" r="4" fill="#111"/>
+<polyline fill="none" stroke="#4b6cb7" stroke-width="3" points="56.0,325.53 66.6,332.19 77.21,332.21 87.81,339.72 98.41,346.78 109.02,354.5 119.62,360.47 130.22,350.77 140.83,345.9 151.43,348.53 162.03,343.34 172.63,345.59 183.24,344.94 193.84,333.84 204.44,336.85 215.05,340.53 225.65,340.59 236.25,342.52 246.86,343.76 257.46,345.93 268.06,346.08 278.67,350.46 289.27,348.74 299.87,348.81 310.48,348.8 321.08,343.84 331.68,344.85 342.29,342.42 352.89,345.58 363.49,348.31 374.1,348.86 384.7,352.47 395.3,352.48 405.9,352.73 416.51,353.98 427.11,353.63 437.71,352.66 448.32,351.67 458.92,351.73 469.52,352.64 480.13,353.59 490.73,352.29 501.33,354.1 511.94,356.28 522.54,353.78 533.14,354.71 543.75,357.22 554.35,358.21 564.95,357.5 575.56,358.11 586.16,359.27 596.76,357.7 607.37,362.5 617.97,365.6 628.57,367.73 639.17,370.83 649.78,369.76 660.38,368.26 670.98,365.13 681.59,366.22 692.19,363.1 702.79,361.13 713.4,360.26 724.0,356.89"/>
+<polyline fill="none" stroke="#c43c39" stroke-width="3" points="56.0,303.35 66.6,271.61 77.21,244.41 87.81,219.41 98.41,194.7 109.02,174.21 119.62,158.08 130.22,148.57 140.83,143.08 151.43,127.7 162.03,121.67 172.63,112.73 183.24,101.32 193.84,97.35 204.44,90.01 215.05,89.39 225.65,85.49 236.25,81.9 246.86,80.87 257.46,80.0 268.06,80.46 278.67,82.54 289.27,83.8 299.87,87.6 310.48,91.5 321.08,97.2 331.68,103.07 342.29,108.68 352.89,113.68 363.49,118.68 374.1,124.4 384.7,130.37 395.3,135.52 405.9,141.48 416.51,147.16 427.11,153.11 437.71,159.22 448.32,164.92 458.92,170.69 469.52,176.72 480.13,182.93 490.73,188.82 501.33,194.96 511.94,200.86 522.54,206.25 533.14,212.15 543.75,218.14 554.35,223.84 564.95,228.69 575.56,233.89 586.16,238.72 596.76,244.24 607.37,249.87 617.97,252.95 628.57,258.67 639.17,263.11 649.78,266.76 660.38,270.19 670.98,274.51 681.59,277.57 692.19,280.99 702.79,282.11 713.4,285.63 724.0,286.09"/>
+<text x="540" y="72" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="#4b6cb7">homogeneous - CSR</text>
+<text x="540" y="96" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="#c43c39">clustered - CSR</text>
+<text x="247.06920634920638" y="42" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="bold" fill="#111">reference r = 0.2</text>
+<text x="350.0" y="444" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="#222">r</text>
+<text x="14" y="230.0" transform="rotate(-90 14,230.0)" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="#222">H_excess(r)</text>
+</svg>
