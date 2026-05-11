@@ -50,9 +50,13 @@ function _circle_fraction_inside_disk(window::DiskWindow, x::Real, y::Real, r::R
     (; radius, center) = window
     x0, y0 = center
     ρ = hypot(x - x0, y - y0)
+    (!isfinite(ρ) || !isfinite(r)) && return zero(float(r))
     r <= radius - ρ && return one(float(r))
     (ρ == 0 || r == 0) && return zero(float(r))
-    c = (radius^2 - ρ^2 - r^2) / (2ρ * r)
+    denominator = 2ρ * r
+    (denominator == 0 || !isfinite(denominator)) && return zero(float(r))
+    c = (radius^2 - ρ^2 - r^2) / denominator
+    !isfinite(c) && return zero(float(c))
     c >= 1 && return one(float(c))
     c <= -1 && return zero(float(c))
     return 1 - acos(clamp(c, -1, 1)) / π
@@ -139,8 +143,10 @@ function ripley_k(
             i == j && continue
             d = hypot(xi - xs[j], yi - ys[j])
             fraction = _circle_fraction_inside_disk(window, xi, yi, d)
-            fraction <= 0 && continue
-            weight = inv(T(fraction))
+            fraction = T(fraction)
+            (!isfinite(fraction) || fraction <= eps(T)) && continue
+            weight = inv(fraction)
+            !isfinite(weight) && continue
             for k in eachindex(rs)
                 d <= rs[k] && (K[k] += weight)
             end
@@ -233,6 +239,7 @@ function _positive_integral(r::AbstractVector, y::AbstractVector)
     for i = 2:length(r)
         Δr = r[i] - r[i-1]
         h = max((y[i] + y[i-1]) / 2, zero(integral))
+        isfinite(h) || continue
         integral += h * Δr
     end
     return integral
@@ -264,7 +271,10 @@ function ripley_excess(
     H = result.H .- baseline.H
     isempty(H) &&
         return (; result, baseline, H, maximum = NaN, radius = NaN, integral = NaN)
-    index = argmax(H)
+    finite_indices = findall(isfinite, H)
+    isempty(finite_indices) &&
+        return (; result, baseline, H, maximum = NaN, radius = NaN, integral = NaN)
+    index = finite_indices[argmax(H[finite_indices])]
     return (;
         result,
         baseline,

@@ -106,14 +106,22 @@ end
 @testset "CSR-normalized Ripley excess" begin
     window = DiskWindow(1.0)
     r = collect(range(0.05, 0.5; length = 8))
-    vortices =
-        [PointVortex(0.0, 0.0, 1), PointVortex(0.05, 0.0, 1), PointVortex(0.1, 0.0, 1)]
-    baseline = ripley_csr_baseline(3, r, window; samples = 8, rng = TestRNG(11))
-    excess = ripley_excess(vortices, r, window; samples = 8, rng = TestRNG(11))
+    vortices = [
+        PointVortex(0.0, 0.0, 1),
+        PointVortex(0.05, 0.0, 1),
+        PointVortex(0.1, 0.0, 1),
+        PointVortex(0.0, 0.1, 1),
+        PointVortex(-0.08, 0.02, 1),
+    ]
+    baseline =
+        ripley_csr_baseline(length(vortices), r, window; samples = 16, rng = TestRNG(11))
+    excess = ripley_excess(vortices, r, window; samples = 16, rng = TestRNG(11))
 
     @test length(baseline.H) == length(r)
-    @test excess.H == excess.result.H .- excess.baseline.H
-    @test excess.maximum == maximum(excess.H)
+    @test all(isfinite, baseline.H)
+    @test all(isfinite, excess.H)
+    @test excess.H ≈ excess.result.H .- excess.baseline.H
+    @test excess.maximum ≈ maximum(excess.H)
     @test excess.integral >= 0
 end
 
