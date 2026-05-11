@@ -57,6 +57,10 @@ end
     include("keep_vortices_test.jl")
 end
 
+@testset "Ripley Clustering" begin
+    include("ripley_test.jl")
+end
+
 @testset "API Regression" begin
     include("api_regression_test.jl")
 end

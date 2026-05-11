@@ -102,6 +102,32 @@ For more detail see the usage example script
 
 `/examples/rca_random_example.jl`
 
+## Same-sign Ripley clustering
+
+The 2D analysis tools include same-sign Ripley K statistics in a physical disk
+window. The CSR-subtracted curve
+
+```julia
+H_excess(r) = H_observed(r) - mean(H_CSR(r))
+```
+
+quantifies excess clustering relative to homogeneous random same-sign vortices
+in the same disk. The example below compares homogeneous synthetic vortices
+with a two-cluster distribution and writes the plotted diagnostic:
+
+```bash
+julia --project=. examples/ripley_disk_synthetic.jl
+```
+
+![](/examples/ripley_disk_synthetic.svg)
+
+For Monte Carlo calibration of the Ripley peak against the known Gaussian
+cluster width, run:
+
+```bash
+julia --project=. examples/ripley_peak_calibration.jl
+```
+
 ## Experimental 3D API
 
 ![](/examples/quench_64_subfigures_taller.png)
